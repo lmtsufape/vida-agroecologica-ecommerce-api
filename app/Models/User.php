@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'apelido',
+        'telefone',
+        'cpf'
     ];
 
     /**
@@ -41,4 +44,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function papel()
+    {
+        return $this->morphTo();
+    }
+    public function endereco()
+    {
+        return $this->morphOne(Endereco::class, "origem");
+    }
 }
