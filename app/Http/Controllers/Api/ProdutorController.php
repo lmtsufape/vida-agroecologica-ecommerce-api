@@ -29,7 +29,7 @@ class ProdutorController extends Controller
         $produtor = new Produtor();
         $produtor->save();
         
-        $produtor = $produtor->user()->create($request->except('passowrd'));
+        $produtor = $produtor->user()->create($request->except('password'));
         if(!$produtor){
             return response()->json(['erro' =>'Não foi possível criar o usuário'],400);
         }
