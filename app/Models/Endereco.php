@@ -9,6 +9,8 @@ class Endereco extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['rua','cep','bairro','número'];
+
     public function origem()
     {
         return $this->morphTo();
