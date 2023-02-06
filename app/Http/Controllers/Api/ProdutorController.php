@@ -32,6 +32,7 @@ class ProdutorController extends Controller
         $produtor->save();
         
         $produtor = $produtor->user()->create($request->except('passowrd','distancia_feira','distancia_semana'));
+
         if(!$produtor){
             return response()->json(['erro' =>'Não foi possível criar o usuário'],400);
         }
