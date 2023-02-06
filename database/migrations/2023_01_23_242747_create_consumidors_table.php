@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('enderecos', function (Blueprint $table) {
+        Schema::create('consumidors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('rua');
-            $table->string('bairro');
-            $table->string('cep');
-            $table->integer('número');
-            $table->morphs('origem');
+            $table->integer('carrinho_id')->nullable(true);
+            $table->foreign('carrinho_id')->references('id')->on('carrinhos');
         });
     }
 
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('enderecos');
+        Schema::dropIfExists('consumidors');
     }
 };

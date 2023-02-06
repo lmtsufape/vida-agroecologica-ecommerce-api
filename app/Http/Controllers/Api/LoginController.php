@@ -24,6 +24,18 @@ class LoginController extends Controller{
 
         return response()->json(['user' =>$usuario],200);
     }
+    public function token(Request $request)
+    {
+        $dados = $request->only(['email','password']);
+        if(!Auth::attempt($dados))
+        {
+            return response()->json(['erro'=> 'E-mail ou senha inválidos'],406);
+        }
+        $user = Auth::user();
+        $token =  $user->createToken('verified')->plainTextToken;
+
+        return response()->json($token,200);
+    }
 
 
 

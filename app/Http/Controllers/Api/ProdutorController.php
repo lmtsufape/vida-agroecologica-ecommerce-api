@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 
 use App\Models\Produtor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,8 @@ class ProdutorController extends Controller
 {
     public function index()
     {
-        $produtores = Produtor::join("users", "users.papel_id", "=", "produtors.id")->orderBy('name')
+        $produtores = User::where("users.papel_type", "=", "Produtor")->join("produtors","produtors.id","=","users.papel_id")
+		->orderBy('name')
         ->get();
         if(!$produtores){
             return response()->json(['erro'=>'Nenhum usuário cadastrado'],200);
@@ -26,10 +28,11 @@ class ProdutorController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();   
-        $produtor = new Produtor();
+        $produtor = new Produtor(["distancia_feira"=>$request->distancia_feira,"distancia_semana"=>$request->distancia_semana]);
         $produtor->save();
         
-        $produtor = $produtor->user()->create($request->except('password'));
+        $produtor = $produtor->user()->create($request->except('passowrd','distancia_feira','distancia_semana'));
+
         if(!$produtor){
             return response()->json(['erro' =>'Não foi possível criar o usuário'],400);
         }
