@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Endereco extends Model
+class Consumidor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['rua','cep','bairro','número'];
-
-    public function origem()
+    public function user()
     {
-        return $this->morphTo();
+        return $this->morphOne(User::class, "papel");
     }
+    
 }
