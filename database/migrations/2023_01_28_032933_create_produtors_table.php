@@ -20,8 +20,8 @@ return new class extends Migration
             $table->foreign('banco_id')->references('id')->on('bancos');
             $table->integer('banca_id')->nullable();
             $table->foreign('banca_id')->references('id')->on('bancas');
-            $table->decimal('distancia_feira',6,3);
-            $table->decimal('distancia_semana',6,3,);
+            $table->integer('distancia_feira');
+            $table->integer('distancia_semana');
         });
     }
 

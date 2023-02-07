@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('rua');
             $table->string('bairro');
             $table->string('cep');
-            $table->integer('número');
+            $table->integer('numero');
             $table->morphs('origem');
         });
     }
