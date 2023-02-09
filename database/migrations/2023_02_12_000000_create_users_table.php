@@ -24,8 +24,7 @@ return new class extends Migration
             $table->string('telefone');
             $table->string('cpf')->unique()->nullable(true);
             $table->string('cnpj')->unique()->nullable(true);
-            $table->integer('endereco_id')->nullable(true);
-            $table->foreign('endereco_id')->references('id')->on('enderecos');
+            $table->foreignId('endereco_id')->nullable(true)->constrained('enderecos');
             $table->morphs("papel");
             $table->timestamps();
         });

@@ -16,12 +16,9 @@ return new class extends Migration
         Schema::create('produtors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('banco_id')->nullable();
-            $table->foreign('banco_id')->references('id')->on('bancos');
-            $table->integer('banca_id')->nullable();
-            $table->foreign('banca_id')->references('id')->on('bancas');
-            $table->decimal('distancia_feira',6,3);
-            $table->decimal('distancia_semana',6,3,);
+            //$table->foreignId('banco_id')->nullable(false)->constrained('bancos');
+            $table->decimal('distancia_feira', 6, 3);
+            $table->decimal('distancia_semana', 6, 3,);
         });
     }
 
