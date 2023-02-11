@@ -26,11 +26,13 @@ class BancasController extends Controller
     public function store(StoreBancaRequest $request)
     {
 
+        $user = Auth::user();
         DB::beginTransaction();
 
-        dd($request);
+        $banca = $user->papel->banca()->create($request->all());
 
         DB::commit();
+        return response()->json(['banca' => $banca], 201);
     }
 
     public function show($id)

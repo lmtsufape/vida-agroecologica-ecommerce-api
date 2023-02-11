@@ -22,12 +22,12 @@ class StoreBancaRequest extends FormRequest
             ],
             'horario_funcionamento' => [
                 'required',
-                'date_format:H:i',
+                'date_format:H:i:s',
                 'before:horario_fechamento'
             ],
             'horario_fechamento' => [
                 'required',
-                'date_format:H:i',
+                'date_format:H:i:s',
                 'after:horario_funcionamento'
             ],
             'preco_minimo' => [

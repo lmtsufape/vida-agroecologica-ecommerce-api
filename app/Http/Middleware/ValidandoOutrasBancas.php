@@ -18,7 +18,7 @@ class ValidandoOutrasBancas
             return response()->json(
                 [
                     'error' => [
-                        'message' => 'Já existe uma banca criada.'
+                        'message' => 'Usuário já possui uma banca.'
                     ]
                 ],
                 400

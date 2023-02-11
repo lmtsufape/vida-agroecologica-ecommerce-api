@@ -31,10 +31,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('/consumidor', ConsumidorController::class)->except('store');
     Route::apiResource('/{userId}/endereco', EnderecoController::class);
     Route::controller(ApiBancasController::class)->group(function () {
-
-
-        Route::post('bancas', 'store')->name('bancas.store')
-            ->middleware(['check_produtor', 'check_bancas']);
+        Route::post('bancas', 'store')->middleware(['check_produtor', 'check_bancas']);
         Route::get('bancas', 'index')->name('bancas.index');
         //Route::get('items/create', 'create')->name('items.create');
         //Route::get('items/{item}', 'show')->name('items.show');
