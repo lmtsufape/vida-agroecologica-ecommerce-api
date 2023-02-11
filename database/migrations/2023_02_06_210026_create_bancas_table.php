@@ -18,8 +18,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('nome')->nullable(false);
             $table->string('descricao')->nullable(false);
-            $table->date("h,i"('horario_funcionamento'))->nullable(false);
-            $table->date("h,i"('horario_fechamento'))->nullable(false);
+            $table->time('horario_funcionamento')->nullable(false);
+            $table->time('horario_fechamento')->nullable(false);
             $table->boolean('funcionamento')->default(false);
             $table->float('preco_minimo')->nullable(false);
             $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA'])->nullable(false);
