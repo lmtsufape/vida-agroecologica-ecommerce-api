@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('consumidors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('carrinho_id')->nullable(true);
-            $table->foreign('carrinho_id')->references('id')->on('carrinhos');
+            //$table->foreignId('carrinho_id')->nullable(false)->constrained('carrinhos');
         });
     }
 
