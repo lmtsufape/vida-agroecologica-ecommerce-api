@@ -18,4 +18,15 @@ class Banca extends Model
         'preco_minimo',
         'tipo_entrega'
     ];
+
+    protected $visible = [
+        'id',
+        'nome',
+        'descricao',
+        'horario_funcionamento',
+        'horario_fechamento',
+        'funcionamento',
+        'preco_minimo',
+        'tipo_entrega'
+    ];
 }
