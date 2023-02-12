@@ -34,11 +34,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('bancas', 'store')->middleware(['check_produtor', 'check_bancas']);
         Route::get('bancas', 'index');
         Route::get('bancas/{id}', 'show');
-        //Route::get('items/create', 'create')->name('items.create');
         Route::put('bancas/{banca}', 'update')->middleware('check_produtor');
-        //Route::delete('items/{item}', 'destroy')->name('items.destroy');
-        //Route::get('items/{item}/edit', 'edit')->name('items.edit');
-
+        Route::delete('bancas/{id}', 'destroy')->middleware(['check_produtor', 'check_valid_banca']);
     });
 });
 

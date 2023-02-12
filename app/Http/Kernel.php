@@ -64,6 +64,8 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check_produtor' => \App\Http\Middleware\CheckProdutor::class,
-        'check_bancas' => \App\Http\Middleware\ValidandoOutrasBancas::class
+        'check_bancas' => \App\Http\Middleware\ValidandoOutrasBancas::class,
+        'check_valid_banca' => \App\Http\Middleware\CheckBancaValida::class
+
     ];
 }
