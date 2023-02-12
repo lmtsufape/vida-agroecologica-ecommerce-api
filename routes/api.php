@@ -32,10 +32,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('/{userId}/endereco', EnderecoController::class);
     Route::controller(ApiBancasController::class)->group(function () {
         Route::post('bancas', 'store')->middleware(['check_produtor', 'check_bancas']);
-        Route::get('bancas', 'index')->name('bancas.index');
+        Route::get('bancas', 'index');
+        Route::get('bancas/{id}', 'show');
         //Route::get('items/create', 'create')->name('items.create');
-        //Route::get('items/{item}', 'show')->name('items.show');
-        //Route::put('items/{item}', 'update')->name('items.update');
+        Route::put('bancas/{banca}', 'update')->middleware('check_produtor');
         //Route::delete('items/{item}', 'destroy')->name('items.destroy');
         //Route::get('items/{item}/edit', 'edit')->name('items.edit');
 
