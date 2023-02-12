@@ -27,14 +27,15 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
             'remember_token' => Str::random(10),
-            'telefone'=> fake()->numerify('##-#####-####')
+            'telefone' => fake()->numerify('##-#####-####')
         ]);
-       
+
         //$produtor->user()->endereco->create(Endereco::factory()->create());
         $produtor->save();
         $this->call([
             ProdutorSeeder::class,
-            ConsumidorSeeder::class
+            ConsumidorSeeder::class,
+            FeiraSeeder::class
         ]);
     }
 }
