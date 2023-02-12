@@ -24,10 +24,14 @@ class BancasController extends Controller
         $user = Auth::user();
         DB::beginTransaction();
 
-        $banca = $user->papel->banca()->create($request->all());
+        try {
+            $banca = $user->papel->banca()->create($request->all());
 
-        DB::commit();
-        return response()->json(['banca' => $banca], 201);
+            DB::commit();
+            return response()->json(['banca' => $banca], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Ocorreu um erro ao salvar a banca']);
+        }
     }
 
     public function show($id)
@@ -56,6 +60,8 @@ class BancasController extends Controller
 
     public function destroy($id)
     {
-        //
+        Auth::user()->papel->banca()->delete();
+
+        return response()->json(true);
     }
 }

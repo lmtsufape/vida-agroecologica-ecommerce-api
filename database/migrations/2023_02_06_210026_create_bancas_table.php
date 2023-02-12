@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA'])->nullable(false);
             //$table->foreignId('feira_id')->nullable(false)->constrained('feiras');
             $table->foreignId('produtor_id')->nullable(false)->constrained('produtors');
+            $table->softDeletes();
         });
     }
 
