@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('consumidors', function (Blueprint $table) {
+        Schema::create('feiras', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            //$table->foreignId('carrinho_id')->nullable(false)->constrained('carrinhos');
+            $table->double('latitude')->nullable(false);
+            $table->double('longitude')->nullable(false);
+            $table->json('funcionamento')->nullable(false);
+            $table->date('horario_abertura')->nullable(false);
+            $table->date('horario_fechamento')->nullable(false);
         });
     }
 
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('consumidors');
+        Schema::dropIfExists('feiras');
     }
 };
