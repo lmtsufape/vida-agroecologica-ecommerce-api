@@ -18,4 +18,8 @@ class Produto extends Model
         'custo'
     ];
     
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class,'produto_categorias', 'produto_id', 'categoria_id');
+    }
 }
