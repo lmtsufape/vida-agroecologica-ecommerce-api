@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\api\BancasController as ApiBancasController;
+use App\Http\Controllers\Api\BancasController as ApiBancasController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\BancasController;
@@ -37,6 +38,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::put('bancas/{banca}', 'update')->middleware('check_produtor');
         Route::delete('bancas/{id}', 'destroy')->middleware(['check_produtor', 'check_valid_banca']);
     });
+    Route::apiResource('banca/produto',ProdutoController::class);
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);
