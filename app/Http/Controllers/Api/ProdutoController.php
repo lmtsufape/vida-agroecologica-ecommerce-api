@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProdutoRequest;
 use App\Models\Banca;
 use App\Models\Produto;
 use Illuminate\Http\Request;
@@ -34,19 +35,21 @@ class ProdutoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProdutoRequest $request)
     {
         $user = Auth::user();
         $banca = $user->papel->banca;
-
+        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->get();
         DB::beginTransaction();
         $produto = $banca->produtos()->create($request->all());
 
         if(!$produto){
             return response()->json(['erro' =>'Não foi possível criar o produto'],400);
         }
+
         $banca->save();
         $produto->banca;
+        $produto->categorias = $categoria;
         DB::commit();
         return response()->json(['produto' => $produto],201);
     }
@@ -73,13 +76,12 @@ class ProdutoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreProdutoRequest $request, $id)
     {
         DB::beginTransaction();
 
         $produto = Produto::find($id);
         if(!$produto){
-
             return response()->json(['erro'=>'Não foi encontrar o produto'],404);
         }
         $produto->fill($request->all());
