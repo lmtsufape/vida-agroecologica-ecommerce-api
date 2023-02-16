@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('apelido');
+            $table->string('apelido')->nullable(true);
             $table->string('telefone');
             $table->string('cpf')->unique()->nullable(true);
             $table->string('cnpj')->unique()->nullable(true);
