@@ -39,6 +39,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('bancas/{id}', 'destroy')->middleware(['check_produtor', 'check_valid_banca']);
     });
     Route::apiResource('banca/produto',ProdutoController::class);
+    Route::get('/categorias', function (Request $request) {
+
+        return response()->json(['categorias'=> \App\Models\Categoria::all()]);
+    });
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);
