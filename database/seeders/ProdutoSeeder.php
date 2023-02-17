@@ -17,11 +17,12 @@ class ProdutoSeeder extends Seeder
      */
     public function run()
     {
-
+        $produtos = ['Cenoura','Tomate','Ervilha','Espinafre'];
         $banca = Banca::find(1);
-        for ($i=0; $i < 10; $i++) {
-            $banca->produtos = Produto::factory()->create();
-            $banca->produtos->categorias = Categoria::find(1);
+        for ($i=0; $i < sizeof($produtos); $i++) {
+            $produto = Produto::factory()->create(['nome'=> $produtos[$i]]);
+            $banca->produtos()->save($produto);
+            $produto->categorias()->save( Categoria::find(1));
         }
         //$banca->save();
 
