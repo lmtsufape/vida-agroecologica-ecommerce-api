@@ -32,7 +32,8 @@ class ConsumidorController extends Controller
             return response()->json(['erro' => 'Não foi possível criar o usuário'], 400);
         }
         $consumidor->password = Hash::make($request->password);
-        $consumidor->save();
+        $consumidor->papel->carrinho()->create()->save();
+        $consumidor->papel->carrinho_id = $consumidor->papel->carrinho->id;
         $consumidor->user;
         DB::commit();
         return response()->json(['usuário' => $consumidor], 201);
@@ -44,7 +45,7 @@ class ConsumidorController extends Controller
         if (!$consumidor) {
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-        return response()->json(['usuário' => $consumidor], 200);
+        return response()->json(['usuário' => $consumidor,$consumidor->carrinho], 200);
     }
     public function update(Request $request)
     {
