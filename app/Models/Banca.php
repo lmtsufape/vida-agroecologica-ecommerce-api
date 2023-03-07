@@ -31,4 +31,9 @@ class Banca extends Model
         'preco_minimo',
         'tipo_entrega'
     ];
+
+    public function produtos()
+    {
+        return $this->hasMany(Produto::class);
+    }
 }
