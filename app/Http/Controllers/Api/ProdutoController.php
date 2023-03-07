@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Models\Banca;
 use App\Models\Produto;
+use App\Models\Produtor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -104,5 +105,18 @@ class ProdutoController extends Controller
         $produto->delete();
         DB::commit();
         return response()->noContent();
+    }
+
+    public function buscar(Request $request)
+    {
+        // A tabela de produtores não possui a coluna nome.
+        
+        $produtos = Produto::where('nome', 'like', '%' . $request->search . '%')->get();
+        $produtores = Produtor::where('nome', 'like', '%' . $request->search . '%')->get();
+        $bancas = Banca::where('nome', 'like', '%' . $request->search . '%')->get();
+        if ($produtos || $produtores || $bancas) {
+            return response()->json(['produtos' => $produtos, 'produtores' => $produtores, 'bancas' => $bancas], 200);
+        }
+        return response()->json(['erro' => 'Nenhum elemento encontrado.'], 404);
     }
 }
