@@ -108,12 +108,15 @@ class ProdutoController extends Controller
     }
 
     public function buscar(Request $request)
-    {
-        // A tabela de produtores não possui a coluna nome.
+    {        
+        $busca = $request->input('search');
+
+        $produtos = Produto::where('nome', 'like', "%$busca%")->get();
+        $bancas = Banca::where('nome', 'like', "%$busca%")->get();
+        $produtores = Produtor::whereHas('user', function ($query) use ($busca) {
+            $query->where('name', 'like', "%$busca%");
+        })->get();
         
-        $produtos = Produto::where('nome', 'like', '%' . $request->search . '%')->get();
-        $produtores = Produtor::where('nome', 'like', '%' . $request->search . '%')->get();
-        $bancas = Banca::where('nome', 'like', '%' . $request->search . '%')->get();
         if ($produtos || $produtores || $bancas) {
             return response()->json(['produtos' => $produtos, 'produtores' => $produtores, 'bancas' => $bancas], 200);
         }
