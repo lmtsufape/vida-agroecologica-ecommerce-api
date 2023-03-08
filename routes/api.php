@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         return response()->json(['categorias'=> \App\Models\Categoria::all()]);
     });
+    Route::post('/busca', [ProdutoController::class, 'buscar']);
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);
