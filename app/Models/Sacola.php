@@ -9,5 +9,14 @@ class Sacola extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['total'];
+    protected $fillable = ['total','loja_id'];
+
+    public function carrinho()
+    {
+        return $this->belongsTo(Carrinho::class);
+    }
+    public function itens()
+    {
+        return $this->hasMany(ItemSacola::class);
+    }
 }
