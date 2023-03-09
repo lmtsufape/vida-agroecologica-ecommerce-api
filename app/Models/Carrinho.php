@@ -13,4 +13,8 @@ class Carrinho extends Model
     {
         return $this->belongsTo(Consumidor::class);
     }
+    public function sacolas()
+    {
+        return $this->hasMany(Sacola::class);
+    }
 }
