@@ -34,7 +34,7 @@ class ConsumidorController extends Controller
         $consumidor->password = Hash::make($request->password);
         $consumidor->papel->carrinho()->create()->save();
         $consumidor->papel->carrinho_id = $consumidor->papel->carrinho->id;
-        $consumidor->user;
+        $consumidor->save();
         DB::commit();
         return response()->json(['usuário' => $consumidor], 201);
     }
