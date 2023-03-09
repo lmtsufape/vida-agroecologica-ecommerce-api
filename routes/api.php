@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\SacolaController;
 use App\Http\Controllers\BancasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,11 +39,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::put('bancas/{banca}', 'update')->middleware('check_produtor');
         Route::delete('bancas/{id}', 'destroy')->middleware(['check_produtor', 'check_valid_banca']);
     });
+
     Route::apiResource('banca/produto',ProdutoController::class);
     Route::get('/categorias', function (Request $request) {
 
         return response()->json(['categorias'=> \App\Models\Categoria::all()]);
     });
+    Route::apiResource('/sacolas', SacolaController::class);
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);
