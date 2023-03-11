@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Models\Banca;
+use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\Produtor;
 use Illuminate\Http\Request;
@@ -117,9 +118,10 @@ class ProdutoController extends Controller
 
         $tabelas = array();
 
-        $tabelas["produtos"] = Produto::where('nome', 'like', "%$busca%")->get();
-        $tabelas["bancas"] = Banca::where('nome', 'like', "%$busca%")->get();
-        $tabelas["produtores"] = Produtor::whereHas('user', function ($query) use ($busca) {
+        $tabelas['produtos'] = Produto::where('nome', 'like', "%$busca%")->get();
+        $tabelas['bancas'] = Banca::where('nome', 'like', "%$busca%")->get();
+        $tabelas['categorias'] = Categoria::where('nome', 'like', "%$busca%")->get();
+        $tabelas['produtores'] = Produtor::whereHas('user', function ($query) use ($busca) {
             $query->where('name', 'like', "%$busca%");
         })->get();
 
