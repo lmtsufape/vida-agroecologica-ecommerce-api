@@ -25,37 +25,62 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name' => [
-                'required', 'regex:/^[a-zA-ZÀ-ÿ\s]+$/', 'min:3', 'max:50'  // regex para validar apenas letras do alfabeto (maiúsculas e minúsculas, com acento ou não) e espaços em branco.
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // regex para validar apenas letras do alfabeto (maiúsculas e minúsculas, com acento ou não) e espaços em branco.
+                'min:3',
+                'max:50'
             ],
             'email' => [
-                'required', 'string', 'email', 'unique:users'
+                'required',
+                'string',
+                'email',
+                'unique:users'
             ],
             'password' => [
-                'required', 'string', 'min:8', 'max:30'
+                'required',
+                'string',
+                'min:8',
+                'max:30'
             ],
             'apelido' => [
-                'nullable', 'string', 'min:3', 'max:30'
+                'nullable',
+                'string',
+                'min:3',
+                'max:30'
             ],
             'telefone' => [
-                'required', 'regex:/^\(\d{2}\)\s\d{4,5}\-\d{4}$/', 'unique:users' // considerando telefone no formato "(99) 99999-9999"
+                'required',
+                'regex:/^\(\d{2}\)\s\d{4,5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
+                'unique:users'
             ],
             'cpf' => [
-                'nullable', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:users' // considerando cpf no formato "999.999.999-99"
+                'nullable',
+                'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"
+                'unique:users'
             ],
             'cnpj' => [
-                'nullable', 'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/', 'unique:users' // considerando cnpj no formato "99.999.999/9999-99"
+                'nullable',
+                'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/', // considerando cnpj no formato "99.999.999/9999-99"
+                'unique:users'
             ],
             'rua' => [
-                'required', 'regex:/^[a-zA-ZÀ-ÿ\s]+$/', 'max:50'  // mesmo do "name"
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
+                'max:50'
             ],
             'bairro' => [
-                'required', 'regex:/^[a-zA-ZÀ-ÿ\s]+$/', 'max:50'
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',
+                'max:50'
             ],
             'cep' => [
-                'required', 'regex:/^\d{5}\-\d{3}$/' // considerando cep no formato "99999-999"
+                'required',
+                'regex:/^\d{5}\-\d{3}$/' // considerando cep no formato "99999-999"
             ],
             'numero' => [
-                'required', 'integer', 'max:5'
+                'required',
+                'integer',
+                'max:5'
             ]
         ];
     }
