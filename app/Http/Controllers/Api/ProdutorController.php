@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
-
+use App\Http\Requests\StoreUserRequest;
 use App\Models\Produtor;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,7 +24,7 @@ class ProdutorController extends Controller
         }
         return response()->json(['usuários' => $produtores],200);
     }
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
         DB::beginTransaction();   
         $produtor = new Produtor(["distancia_feira"=>$request->distancia_feira,"distancia_semana"=>$request->distancia_semana]);
@@ -52,7 +51,7 @@ class ProdutorController extends Controller
       
         return response()->json(['usuário' => $produtor],200);
     } 
-    public function update(Request $request)
+    public function update(StoreUserRequest $request)
     {
 
         DB::beginTransaction();
