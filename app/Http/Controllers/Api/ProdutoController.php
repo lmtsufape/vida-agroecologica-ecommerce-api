@@ -111,15 +111,25 @@ class ProdutoController extends Controller
     {        
         $busca = $request->input('search');
 
-        $produtos = Produto::where('nome', 'like', "%$busca%")->get();
-        $bancas = Banca::where('nome', 'like', "%$busca%")->get();
-        $produtores = Produtor::whereHas('user', function ($query) use ($busca) {
+        if (empty($busca)) {
+            return response()->json(['erro' => 'Nenhum critério de busca fornecido.'], 400);
+        }
+
+        $tabelas = array();
+
+        $tabelas["produtos"] = Produto::where('nome', 'like', "%$busca%")->get();
+        $tabelas["bancas"] = Banca::where('nome', 'like', "%$busca%")->get();
+        $tabelas["produtores"] = Produtor::whereHas('user', function ($query) use ($busca) {
             $query->where('name', 'like', "%$busca%");
         })->get();
+
+        $tabelas = array_filter($tabelas, function($valor) {
+            return !$valor->isEmpty();
+        });
         
-        if ($produtos || $produtores || $bancas) {
-            return response()->json(['produtos' => $produtos, 'produtores' => $produtores, 'bancas' => $bancas], 200);
+        if (empty($tabelas)) {
+            return response()->json(['No Content' => 'Nenhum elemento encontrado.'], 204);
         }
-        return response()->json(['erro' => 'Nenhum elemento encontrado.'], 404);
+        return response()->json($tabelas, 200);
     }
 }
