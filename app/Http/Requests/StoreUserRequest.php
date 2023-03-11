@@ -50,7 +50,7 @@ class StoreUserRequest extends FormRequest
             ],
             'telefone' => [
                 'required',
-                'regex:/^\(\d{2}\)\s\d{4,5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
+                'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
                 'unique:users'
             ],
             'cpf' => [
