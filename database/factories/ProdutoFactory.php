@@ -18,10 +18,10 @@ class ProdutoFactory extends Factory
     {
         return [
             'nome' => fake()->name(),
-            'descrição' => fake()->realText(50),
+            'descricao' => fake()->realText(50),
             'tipo_unidade' => false,
             'estoque' => fake()->numberBetween(1,20),
-            'preço' => fake()->randomFloat(4,1,20),
+            'preco' => fake()->randomFloat(4,1,20),
             'custo' => fake()->randomFloat(4,1,20),
 
         ];
