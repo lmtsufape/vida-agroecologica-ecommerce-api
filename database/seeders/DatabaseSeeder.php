@@ -20,31 +20,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $produtor = Produtor::factory()->create();
-        $produtor->user()->create([
-            'name' => 'admin',
-            'email' => 'admin@admin.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('12345678'),
-            'remember_token' => Str::random(10),
-            'telefone' => fake()->numerify('##-#####-####')
-        ]);
-        $produtor->banca()->create(["nome" => "Feira bicho",
-        "descricao"=>"Loja de frutas",
-        "horario_funcionamento"=>"08:00:00",
-        "horario_fechamento"=>"18:00:00",
-        "funcionamento"=>"10:00:00",
-        "preco_minimo"=>7.00,
-        "tipo_entrega"=>"ENTREGA"]);
-        //$produtor->user()->endereco->create(Endereco::factory()->create());
-        $produtor->save();
-
+        DB::beginTransaction();
         $this->call([
+            FeiraSeeder::class,
             ProdutorSeeder::class,
             ConsumidorSeeder::class,
-            FeiraSeeder::class,
             CategoriaSeeder::class,
             ProdutoSeeder::class
         ]);
+        Db::commit();
     }
 }
