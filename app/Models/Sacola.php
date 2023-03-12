@@ -19,4 +19,9 @@ class Sacola extends Model
     {
         return $this->hasMany(ItemSacola::class);
     }
+    public function banca()
+    {
+        return $this->belongsTo(Banca::class,'loja_id');
+    }
+    
 }

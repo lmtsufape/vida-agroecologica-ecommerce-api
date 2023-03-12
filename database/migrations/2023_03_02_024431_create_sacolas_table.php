@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->decimal('total');
             $table->foreignId('carrinho_id')->nullable(true)->constrained('carrinhos');
-            //$table->foreignId('loja_id')->nullable(false)->constrained('produtors');
+            $table->foreignId('loja_id')->nullable(false)->constrained('bancas');
         });
     }
 
