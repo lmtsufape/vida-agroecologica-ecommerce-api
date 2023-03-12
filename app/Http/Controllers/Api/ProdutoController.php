@@ -134,4 +134,25 @@ class ProdutoController extends Controller
         }
         return response()->json($tabelas, 200);
     }
+
+    public function buscarCategoria(String $nomeCategoria)
+    {
+        if (empty($nomeCategoria)){
+            return response()->json(['erro' => 'Nenhum critério de busca fornecido.'], 400);
+        }
+
+        $categoria = Categoria::where('nome', $nomeCategoria)->first();
+
+        if (empty($categoria)) {
+            return response()->json(['erro' => 'Nenhuma categoria encontrada.', 404]);
+        }
+
+        $produtos = $categoria->produtos();
+
+        if (empty($produtos)) {
+            return response()->json(['No Content' => "Nenhum produto encontrado em $nomeCategoria."], 204);
+        }
+
+        return response()->json(['produtos' => $produtos], 200);
+    }
 }
