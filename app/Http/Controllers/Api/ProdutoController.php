@@ -41,17 +41,16 @@ class ProdutoController extends Controller
     {
         $user = Auth::user();
         $banca = $user->papel->banca;
-        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->get();
+        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->first();
         DB::beginTransaction();
         $produto = $banca->produtos()->create($request->all());
 
         if(!$produto){
             return response()->json(['erro' =>'Não foi possível criar o produto'],400);
         }
-
         $banca->save();
         $produto->banca;
-        $produto->categorias = $categoria;
+        $produto->categorias()->attach(Categoria::find($categoria->id));
         DB::commit();
         return response()->json(['produto' => $produto],201);
     }
@@ -109,7 +108,7 @@ class ProdutoController extends Controller
     }
 
     public function buscar(Request $request)
-    {        
+    {
         $busca = $request->input('search');
 
         if (empty($busca)) {
@@ -128,7 +127,6 @@ class ProdutoController extends Controller
         $tabelas = array_filter($tabelas, function($valor) {
             return !$valor->isEmpty();
         });
-        
         if (empty($tabelas)) {
             return response()->json(['No Content' => 'Nenhum elemento encontrado.'], 204);
         }
@@ -144,13 +142,12 @@ class ProdutoController extends Controller
         $categoria = Categoria::where('nome', $nomeCategoria)->first();
 
         if (empty($categoria)) {
-            return response()->json(['erro' => 'Nenhuma categoria encontrada.', 404]);
+            return response()->json(['erro' => 'Nenhuma categoria encontrada.'], 404);
         }
 
-        $produtos = $categoria->produtos();
-
-        if (empty($produtos)) {
-            return response()->json(['No Content' => "Nenhum produto encontrado em $nomeCategoria."], 204);
+        $produtos = $categoria->produtos;
+        if ($produtos->isEmpty()) {
+            return response()->json(['erro' => "Nenhum produto encontrado em $nomeCategoria."], 400);
         }
 
         return response()->json(['produtos' => $produtos], 200);
