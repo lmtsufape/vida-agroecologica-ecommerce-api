@@ -27,10 +27,10 @@ class StoreProdutoRequest extends FormRequest
     {
         return [
             'nome' => 'required|min:3|max:25|string',
-            'descrição' =>  'required|max:250|string',
+            'descricao' =>  'required|max:250|string',
             'tipo_unidade' => 'required',
             'estoque' => 'required|integer',
-            'preço' => 'required|decimal:1,3',
+            'preco' => 'required|decimal:1,3',
             'custo' => 'required|decimal:1,3',
 
         ];
