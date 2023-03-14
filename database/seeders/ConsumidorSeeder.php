@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Consumidor;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class ConsumidorSeeder extends Seeder
 {
@@ -15,6 +17,16 @@ class ConsumidorSeeder extends Seeder
      */
     public function run()
     {
-        Consumidor::factory()->count(10)->create();
+        $consumidor = Consumidor::factory()->create();
+        $consumidor->user()->update([
+            'name' => 'Consumidor',
+            'email' => 'consumidor@consumidor.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('12345678'),
+            'remember_token' => Str::random(10),
+            'telefone' => fake()->numerify('##-#####-####')
+        ]);
+        
+        //Consumidor::factory()->count(10)->create();
     }
 }

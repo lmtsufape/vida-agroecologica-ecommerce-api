@@ -20,7 +20,7 @@ class ProdutoSeeder extends Seeder
         $produtos = ['Cenoura','Tomate','Ervilha','Espinafre'];
         $banca = Banca::find(1);
         for ($i=0; $i < sizeof($produtos); $i++) {
-            $produto = Produto::factory()->create(['nome'=> $produtos[$i]]);
+            $produto = Produto::factory()->create(['nome'=> $produtos[$i],'banca_id'=>$banca->id]);
             $banca->produtos()->save($produto);
             $produto->categorias()->save( Categoria::find(1));
         }

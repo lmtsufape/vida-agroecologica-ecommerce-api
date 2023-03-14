@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Models\Banca;
+use App\Models\Categoria;
 use App\Models\Produto;
+use App\Models\Produtor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,17 +41,16 @@ class ProdutoController extends Controller
     {
         $user = Auth::user();
         $banca = $user->papel->banca;
-        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->get();
+        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->first();
         DB::beginTransaction();
         $produto = $banca->produtos()->create($request->all());
 
         if(!$produto){
             return response()->json(['erro' =>'Não foi possível criar o produto'],400);
         }
-
         $banca->save();
         $produto->banca;
-        $produto->categorias = $categoria;
+        $produto->categorias()->attach(Categoria::find($categoria->id));
         DB::commit();
         return response()->json(['produto' => $produto],201);
     }
@@ -104,5 +105,51 @@ class ProdutoController extends Controller
         $produto->delete();
         DB::commit();
         return response()->noContent();
+    }
+
+    public function buscar(Request $request)
+    {
+        $busca = $request->input('search');
+
+        if (empty($busca)) {
+            return response()->json(['erro' => 'Nenhum critério de busca fornecido.'], 400);
+        }
+
+        $tabelas = array();
+
+        $tabelas['produtos'] = Produto::where('nome', 'like', "%$busca%")->get();
+        $tabelas['bancas'] = Banca::where('nome', 'like', "%$busca%")->get();
+        $tabelas['categorias'] = Categoria::where('nome', 'like', "%$busca%")->get();
+        $tabelas['produtores'] = Produtor::whereHas('user', function ($query) use ($busca) {
+            $query->where('name', 'like', "%$busca%");
+        })->get();
+
+        $tabelas = array_filter($tabelas, function($valor) {
+            return !$valor->isEmpty();
+        });
+        if (empty($tabelas)) {
+            return response()->json(['No Content' => 'Nenhum elemento encontrado.'], 204);
+        }
+        return response()->json($tabelas, 200);
+    }
+
+    public function buscarCategoria(String $nomeCategoria)
+    {
+        if (empty($nomeCategoria)){
+            return response()->json(['erro' => 'Nenhum critério de busca fornecido.'], 400);
+        }
+
+        $categoria = Categoria::where('nome', $nomeCategoria)->first();
+
+        if (empty($categoria)) {
+            return response()->json(['erro' => 'Nenhuma categoria encontrada.'], 404);
+        }
+
+        $produtos = $categoria->produtos;
+        if ($produtos->isEmpty()) {
+            return response()->json(['erro' => "Nenhum produto encontrado em $nomeCategoria."], 400);
+        }
+
+        return response()->json(['produtos' => $produtos], 200);
     }
 }
