@@ -62,30 +62,30 @@ class StoreUserRequest extends FormRequest
                 'nullable',
                 'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/', // considerando cnpj no formato "99.999.999/9999-99"
                 'unique:users'
-            ],
-            'rua' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:50'
-            ],
-            'bairro' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',
-                'max:50'
-            ],
-            'cep' => [
-                'required',
-                'regex:/^\d{5}\-\d{3}$/' // considerando cep no formato "99999-999"
-            ],
-            'numero' => [
-                'required',
-                'integer',
-                'max:5'
             ]
+            //'rua' => [
+            //    'required',
+            //    'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
+            //    'max:50'
+            //],
+            //'bairro' => [
+            //    'required',
+            //    'regex:/^[a-zA-ZÀ-ÿ\s]+$/',
+            //    'max:50'
+            //],
+            //'cep' => [
+            //    'required',
+            //    'regex:/^\d{5}\-\d{3}$/' // considerando cep no formato "99999-999"
+            //],
+            //'numero' => [
+            //    'required',
+            //    'integer',
+            //    'max:5'
+            //]
         ];
     }
 
-    public function messages() 
+    public function messages()
     {
         return [
             'required' => 'O campo :attribute é obrigatório.',
