@@ -13,6 +13,6 @@ class Bairro extends Model
 
     public function cep()
     {
-        return $this->belongsTo(Cep::class);
+        return $this->hasMany(Endereco::class);
     }
 }

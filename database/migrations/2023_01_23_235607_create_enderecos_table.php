@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('rua');
-            $table->string('bairro');
             $table->string('cep');
             $table->integer('numero');
             $table->morphs('origem');
+            $table->foreignId('bairro_id')->constrained('bairros');
         });
     }
 

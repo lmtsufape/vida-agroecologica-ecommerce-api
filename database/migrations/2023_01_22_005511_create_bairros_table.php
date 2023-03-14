@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ruas', function (Blueprint $table) {
+        Schema::create('bairros', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->string('numero');
-            $table->string('complemento')->nullable(true);
-            $table->foreignId('bairro_id')->nullable(false)->constrained('bairros');
-            $table->foreignId('cep_id')->nullable(false)->constrained('ceps');
+            $table->string('nome')->unique();
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ruas');
+        Schema::dropIfExists('bairros');
     }
 };

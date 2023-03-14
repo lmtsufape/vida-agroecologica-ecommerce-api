@@ -9,10 +9,15 @@ class Endereco extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['rua','cep','bairro','numero'];
+    protected $fillable = ['rua', 'cep', 'numero'];
 
     public function origem()
     {
         return $this->morphTo();
+    }
+
+    public function bairro()
+    {
+        return $this->belongsTo(Bairro::class);
     }
 }
