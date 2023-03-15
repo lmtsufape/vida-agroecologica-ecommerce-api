@@ -9,7 +9,7 @@ class ItemSacola extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['quantidade','preço','produto_id'];
+    protected $fillable = ['quantidade','preco','produto_id'];
 
     public function produto()
     {

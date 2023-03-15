@@ -13,7 +13,7 @@ class Produto extends Model
         'nome',
         'descricao',
         'estoque',
-        'preço',
+        'preco',
         'tipo_unidade',
         'custo'
     ];

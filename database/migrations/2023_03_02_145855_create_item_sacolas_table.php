@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->integer('quantidade');
-            $table->decimal('preço');
-            $table->foreignId('produto_id')->nullable(true)->constrained('produtos');
-            $table->foreignId('sacola_id')->nullable(true)->constrained('sacolas');
+            $table->decimal('preco');
+            $table->foreignId('produto_id')->nullable(true)->constrained('produtos')->onDelete('cascade');;
+            $table->foreignId('sacola_id')->nullable(true)->constrained('sacolas')->onDelete('cascade');;
         });
     }
 
