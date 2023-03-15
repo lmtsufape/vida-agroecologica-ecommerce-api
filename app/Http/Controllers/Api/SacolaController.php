@@ -17,10 +17,8 @@ class SacolaController extends Controller
         $sacolas = Sacola::where("sacolas.carrinho_id", "=", $carrinho->id)
         ->join("item_sacolas","item_sacolas.sacola_id","=","sacolas.id")
         ->join("produtos","produtos.id","=","produto_id")
-		->select(DB::raw("produtos.preço as produto_preco"), "nome","item_sacolas.preço",
-       "quantidade","produto_id","sacolas.total")
-
-        ->get();
+		->select(DB::raw("produtos.preco as produto_preço"), "nome",DB::raw("item_sacolas.preco as preço"),
+       "quantidade","produto_id","sacolas.total","sacolas.loja_id")->get();
     
         if($sacolas->isEmpty()){
             return response()->json(['erro' =>'O carrinho está vazio'],400);
@@ -41,30 +39,32 @@ class SacolaController extends Controller
             'total'=>0]);
         }
         $item = $sacola->itens->where('produto_id',$produto->id)->first();
-        $valorCompra = $produto->preço*$request->quantidade;
+        $valorCompra = $produto->preco*$request->quantidade;
         if($item){
             //item existe na sacola
-            $item->update(['preço'=>$item->preço+$valorCompra,'quantidade'=>$item->quantidade+$request->quantidade]);
+            $item->update(['preço'=>$item->preco+$valorCompra,'quantidade'=>$item->quantidade+$request->quantidade]);
             $sacola->update(['total'=>($sacola->total+$valorCompra)]);
         }else{
-            //item n existe na sacola
+            //item não existe na sacola
             $sacola->itens()->create(['quantidade'=>$request->quantidade,
-            'produto_id'=>$produto->id,'preço'=>$valorCompra])->save();
+            'produto_id'=>$produto->id,'preco'=>$valorCompra])->save();
             $sacola->update(['total'=>($sacola->total+$valorCompra)]);
         }
         DB::commit();
         return response()->json(['sacola'=>$sacola,'produto'=>$produto],201);
-        
     }
     //remover um produto
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $carrinho = Auth::user()->papel->carrinho;
-        $produto = Produto::find($request->produto_id);
-        $sacola = $carrinho->sacolas()->where("loja_id","=",$produto->banca->id)->first();
+        $produto = Produto::find($id);
+        $sacola = Auth::user()->papel->carrinho->sacolas()->where("loja_id","=",$produto->banca->id)->first();
+        $sacola->total = $sacola->total-$produto->preco;
         $item = $sacola->itens->where('produto_id',$produto->id)->first();
         $item->delete();
         $sacola->save();
+        if(!$sacola->itens()->exists()){
+            $sacola->delete();
+        }
         return response()->noContent();
     }
 }
