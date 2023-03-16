@@ -9,7 +9,7 @@ class Bairro extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome'];
+    protected $fillable = ['nome', 'taxa'];
 
     public function cep()
     {
