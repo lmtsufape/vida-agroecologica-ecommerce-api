@@ -31,7 +31,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('/produtor', ProdutorController::class)->except('store');
 
     Route::apiResource('/consumidor', ConsumidorController::class)->except('store');
-    Route::apiResource('/{userId}/endereco', EnderecoController::class);
+    Route::controller(EnderecoController::class)->group(function () {
+        Route::get('/enderecos', 'show');
+        Route::put('/enderecos', 'update');
+    });
+
     // bancas
     Route::controller(ApiBancasController::class)->group(function () {
         Route::post('bancas', 'store')->middleware(['check_produtor', 'check_bancas']);

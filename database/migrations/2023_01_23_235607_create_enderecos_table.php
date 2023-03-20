@@ -19,8 +19,9 @@ return new class extends Migration
             $table->string('rua');
             $table->string('cep');
             $table->integer('numero');
+            $table->string('complemento')->nullable(true);
             $table->morphs('origem');
-            $table->foreignId('bairro_id')->constrained('bairros');
+            $table->foreignId('bairro_id')->nullable(false)->constrained('bairros');
         });
     }
 

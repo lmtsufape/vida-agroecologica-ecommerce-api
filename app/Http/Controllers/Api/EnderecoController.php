@@ -4,54 +4,30 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateEnderecoRequest;
 use App\Models\Endereco;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EnderecoController extends Controller
 {
-    public function store(StoreUserRequest $request)
+    public function show()
     {
-        DB::beginTransaction();
-        $user = User::find($request->userId);        
-        $endereco = $user->endereco()->create($request->all());
-        if(!$endereco){
-            return response()->json(['erro' =>'Não foi possível criar o Endereço'],400);
-        }
-    
-        DB::commit();
-        return response()->json(['Endereço' => $endereco],201);
+        return response()->json(['Endereço' => Auth::user()->endereco], 200);
     }
-    public function show($id)
-    {
-        $endereco = Endereco::find($id);
-        $endereco->user;
-        if(!$endereco){
-        	return response()->json(['erro'=>'Endereço não encontrado'],404);
-        }
-        return response()->json(['Endereço' => $endereco],200);
-    } 
-    public function update(StoreUserRequest $request)
+
+    public function update(UpdateEnderecoRequest $request)
     {
         DB::beginTransaction();
 
-        $endereco = Endereco::find($request->endereco);
-        if(!$endereco){
-            return response()->json(['erro'=>'Endereço não encontrado'],404);
-        }
+        $endereco = Auth::user()->endereco;
+
         $endereco->fill($request->all());
         $endereco->save();
         $endereco->user;
         DB::commit();
-        return response()->json([$endereco],200);
-    }
-    public function destroy($id)
-    {
-        DB::beginTransaction();
-        $endereco = Endereco::find($id);
-        $endereco->delete();
-        DB::commit();
-        return response()->noContent();
+        return response()->json([$endereco], 200);
     }
 }

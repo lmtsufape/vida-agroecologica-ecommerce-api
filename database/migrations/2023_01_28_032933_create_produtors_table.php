@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             //$table->foreignId('banco_id')->nullable(false)->constrained('bancos');
-            $table->decimal('distancia_feira', 6, 3);
-            $table->decimal('distancia_semana', 6, 3,);
         });
     }
 
