@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ItemSacola;
 use App\Models\Produto;
 use App\Models\Sacola;
 use Illuminate\Http\Request;
@@ -31,27 +32,36 @@ class SacolaController extends Controller
     {
         $carrinho = Auth::user()->papel->carrinho;
         $produto = Produto::find($request->produto_id);
-        $sacola = $carrinho->sacolas()->where("banca_id","=",$produto->banca->id)->first();
         DB::beginTransaction();
-        //verifica se já existe uma banca com aquele id, caso exista, faz apenas um update no preço total
-        if(!$sacola){
-            //cria sacola
-            $sacola = $carrinho->sacolas()->create(['banca_id' => $produto->banca->id]);
-        }
-        $item = $sacola->itens->where('produto_id',$produto->id)->first();
+        $sacola = $carrinho->sacolas()->firstOrCreate(['banca_id' => $produto->banca->id]);
+
         $valorCompra = $produto->preco*$request->quantidade;
-        if($item){
-            //item existe na sacola
-            $item->update(['preco' => $item->preco+$valorCompra,'quantidade' => $item->quantidade+$request->quantidade]);
-            $sacola->update(['total' => ($sacola->total+$valorCompra)]);
-        }else{
-            //item não existe na sacola
-            $sacola->itens()->create(['quantidade' => $request->quantidade,
-            'produto_id' => $produto->id,'preco' => $valorCompra])->save();
-            $sacola->update(['total' => ($sacola->total+$valorCompra)]);
-        }
+        $sacola->itens()->create(['quantidade' => $request->quantidade,
+        'produto_id' => $produto->id,'preco' => $valorCompra])->save();
+
+        $sacola->update(['total' => ($sacola->total+$valorCompra)]);
         DB::commit();
-        return response()->json(['sacola' => $sacola, 'produto' => $produto],201);
+        return response()->json(['sacola' => $sacola],201);
+    }
+    public function update(Request $request)
+    {
+        $produto = Produto::find($request->produto_id);
+        $item = ItemSacola::find($request->itemId);
+
+        if(!$item){
+            return response()->json(['erro' => 'O produto não existe'],404);
+        }
+        DB::beginTransaction();
+        $sacola = $item->sacola;
+
+        $valorCompra = $produto->preco*$request->quantidade;
+
+        $item->update(['preco' => $item->preco+$valorCompra,
+            'quantidade' =>$item->quantidade+$request->quantidade]);
+
+        $sacola->update(['total' => ($sacola->total+$valorCompra)]);
+        DB::commit();
+        return response()->json(['sacola' => $sacola],201);
     }
     //remover um produto
     public function destroy($id)
