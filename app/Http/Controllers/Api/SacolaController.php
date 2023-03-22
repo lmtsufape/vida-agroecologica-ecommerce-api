@@ -19,8 +19,9 @@ class SacolaController extends Controller
         ->join("item_sacolas","item_sacolas.sacola_id","=","sacolas.id")
         ->join("produtos","produtos.id","=","item_sacolas.produto_id")
 		->select(DB::raw("produtos.preco as produto_preco"), "produtos.nome",
-        DB::raw("item_sacolas.preco as preco"),"quantidade","produto_id",
-        "sacolas.total","sacolas.banca_id")->get();
+        DB::raw("item_sacolas.preco as preco"),DB::raw("item_sacolas.id as item_id"),
+        "quantidade","produto_id","sacolas.total","sacolas.banca_id")
+        ->orderBy("sacolas.banca_id")->get();
 
         if($sacolas->isEmpty()){
             return response()->json(['erro' => 'O carrinho está vazio'],404);
@@ -75,6 +76,11 @@ class SacolaController extends Controller
         if(!$sacola->itens()->exists()){
             $sacola->delete();
         }
+        return response()->noContent();
+    }
+    public function limparCarrinho()
+    {
+        Auth::user()->papel->carrinho->sacolas()->delete();
         return response()->noContent();
     }
 }
