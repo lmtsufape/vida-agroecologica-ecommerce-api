@@ -49,6 +49,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::apiResource('/sacolas', SacolaController::class)->only('index','destroy');
         Route::post('/sacolas', [SacolaController::class, 'store'])->middleware('check_estoque');
+        Route::patch('/sacolas/{itemId}', [SacolaController::class, 'update'])->middleware('check_estoque');
+        Route::delete('/sacolas/carrinho', [SacolaController::class, 'limparCarrinho']);
     });
 
     Route::get('/categorias', function (Request $request) {
