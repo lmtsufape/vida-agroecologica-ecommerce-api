@@ -11,12 +11,16 @@ class BairroSeeder extends Seeder
     public function run()
     {
         $dir = __DIR__;
-        $handle = fopen("{$dir}\..\..\public\storage\bairros.csv", "r");
-        while ($line = fgetcsv($handle, 1000, ",")) {
-            $bairro = Bairro::firstOrNew(['nome' => $line[0]]);
-            $bairro->taxa = $line[1];
-            $bairro->save();
+        try {
+            $handle = fopen("{$dir}\..\..\public\storagse\bairros.csv", "r");
+            while ($line = fgetcsv($handle, 1000, ",")) {
+                $bairro = Bairro::firstOrNew(['nome' => $line[0]]);
+                $bairro->taxa = $line[1];
+                $bairro->save();
+            }
+            fclose($handle);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
         }
-        fclose($handle);
     }
 }
