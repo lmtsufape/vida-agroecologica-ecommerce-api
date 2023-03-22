@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('sacolas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->decimal('total');
+            $table->decimal('total')->default(0.00);
             $table->foreignId('carrinho_id')->nullable(true)->constrained('carrinhos');
-            $table->foreignId('loja_id')->nullable(false)->constrained('bancas');
+            $table->foreignId('banca_id')->nullable(false)->constrained('bancas');
         });
     }
 

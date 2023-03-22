@@ -9,7 +9,7 @@ class Sacola extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['total','loja_id'];
+    protected $fillable = ['total','banca_id'];
 
     public function carrinho()
     {
@@ -21,7 +21,7 @@ class Sacola extends Model
     }
     public function banca()
     {
-        return $this->belongsTo(Banca::class,'loja_id');
+        return $this->belongsTo(Banca::class,'banca_id');
     }
-    
+
 }
