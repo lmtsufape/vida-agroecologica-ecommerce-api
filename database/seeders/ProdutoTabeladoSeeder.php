@@ -15,6 +15,9 @@ class ProdutoTabeladoSeeder extends Seeder
      */
     public function run()
     {
+        // Deletando produtos já existentes para evitar duplicação ao rodar os seeder mais de uma vez
+        ProdutoTabelado::truncate();
+
         $arquivo_csv = database_path('seeders/ProdutosTabelados.csv'); // caminho do arquivo CSV
         $dados_csv = array_map('str_getcsv', file($arquivo_csv)); // lê o arquivo CSV
 
