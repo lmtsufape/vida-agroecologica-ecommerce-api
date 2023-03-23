@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BairrosController;
 use App\Http\Controllers\Api\BancasController as ApiBancasController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
@@ -30,7 +31,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('/produtor', ProdutorController::class)->except('store');
 
     Route::apiResource('/consumidor', ConsumidorController::class)->except('store');
-    Route::apiResource('/{userId}/endereco', EnderecoController::class);
+    Route::controller(EnderecoController::class)->group(function () {
+        Route::get('/enderecos', 'show');
+        Route::put('/enderecos', 'update');
+    });
+
+    // bancas
     Route::controller(ApiBancasController::class)->group(function () {
         Route::post('bancas', 'store')->middleware(['check_produtor', 'check_bancas']);
         Route::get('bancas', 'index');
@@ -38,10 +44,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::put('bancas/{banca}', 'update')->middleware('check_produtor');
         Route::delete('bancas/{id}', 'destroy')->middleware(['check_produtor', 'check_valid_banca']);
     });
-    Route::apiResource('banca/produto',ProdutoController::class);
+    // bairros
+    Route::controller(BairrosController::class)->group(function () {
+        Route::get('bairros', 'index');
+    });
+
+    Route::apiResource('banca/produto', ProdutoController::class);
     Route::get('/categorias', function (Request $request) {
 
-        return response()->json(['categorias'=> \App\Models\Categoria::all()]);
+        return response()->json(['categorias' => \App\Models\Categoria::all()]);
     });
     Route::post('/busca', [ProdutoController::class, 'buscar']);
     Route::get('/produtos/{nomeCategoria}', [ProdutoController::class, 'buscarCategoria']);

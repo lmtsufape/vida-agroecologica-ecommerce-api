@@ -16,57 +16,67 @@ class ProdutorController extends Controller
 {
     public function index()
     {
-        $produtores = User::where("users.papel_type", "=", "Produtor")->join("produtors","produtors.id","=","users.papel_id")
-		->orderBy('name')
-        ->get();
-        if(!$produtores){
-            return response()->json(['erro'=>'Nenhum usuário cadastrado'],200);
+        $produtores = User::where("users.papel_type", "=", "Produtor")->join("produtors", "produtors.id", "=", "users.papel_id")
+            ->orderBy('name')
+            ->get();
+        if (!$produtores) {
+            return response()->json(['erro' => 'Nenhum usuário cadastrado'], 200);
         }
-        return response()->json(['usuários' => $produtores],200);
+        return response()->json(['usuários' => $produtores], 200);
     }
+
     public function store(StoreUserRequest $request)
     {
-        DB::beginTransaction();   
-        $produtor = new Produtor(["distancia_feira"=>$request->distancia_feira,"distancia_semana"=>$request->distancia_semana]);
-        $produtor->save();
-        
-        $produtor = $produtor->user()->create($request->except('passowrd','distancia_feira','distancia_semana'));
+        DB::beginTransaction();
+        try {
+            $produtor = Produtor::create();
 
-        if(!$produtor){
-            return response()->json(['erro' =>'Não foi possível criar o usuário'],400);
+            $data_user = $request->only(['name', 'email', 'apelido', 'telefone', 'cpf', 'cnpj']);
+            $data_user['password'] = Hash::make($request->password);
+            $produtor = $produtor->user()->create($data_user);
+
+            $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento', 'bairro_id']);
+            $endereco = $produtor->endereco()->create($data_endereco);
+
+            DB::commit();
+            return response()->json([
+                'produtor' => $produtor,
+                'endereco' => $endereco
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e]);
         }
-        $produtor->password = Hash::make($request->password);
-        $produtor->save();
-        $produtor->user;
-        DB::commit();
-        return response()->json(['usuário' => $produtor],201);
     }
+
     public function show($id)
     {
         $produtor = Produtor::find($id);
         $produtor->user;
-        if(!$produtor){
-            return response()->json(['erro'=>'Usuário não encontrado'],404);
+        if (!$produtor) {
+            return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-      
-        return response()->json(['usuário' => $produtor],200);
-    } 
+
+        return response()->json(['usuário' => $produtor], 200);
+    }
+
     public function update(StoreUserRequest $request)
     {
 
         DB::beginTransaction();
 
         $produtor = Produtor::find($request->produtor);
-        if(!$produtor){
+        if (!$produtor) {
 
-            return response()->json(['erro'=>'Usuário não encontrado'],404);
+            return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
         $produtor->fill($request->all());
         $produtor->save();
         $produtor->user;
         DB::commit();
-        return response()->json([$produtor],200);
+        return response()->json([$produtor], 200);
     }
+
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -74,7 +84,5 @@ class ProdutorController extends Controller
         $produtor->delete();
         DB::commit();
         return response()->noContent();
-        
     }
-
 }

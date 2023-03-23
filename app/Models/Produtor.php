@@ -9,7 +9,7 @@ class Produtor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['banco_id', 'banca_id', 'distancia_feira', 'distancia_semana'];
+    protected $fillable = [];
 
     public function user()
     {
