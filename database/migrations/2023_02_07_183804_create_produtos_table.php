@@ -16,13 +16,13 @@ return new class extends Migration
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('nome');
             $table->string('descricao');
             $table->boolean('tipo_unidade');
             $table->integer('estoque');
             $table->decimal('preco');
             $table->decimal('custo');
             $table->foreignId('banca_id')->nullable(false)->constrained('bancas')->onDelete('cascade');
+            $table->foreignId('produto_tabelado_id')->nullable(false)->constrained('produtos_tabelados')->onDelete('restrict');
         });
     }
 
