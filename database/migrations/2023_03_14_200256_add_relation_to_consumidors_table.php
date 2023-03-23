@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('consumidors', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->foreignId('carrinho_id')->nullable(true)->constrained('carrinhos');
+        Schema::table('carrinhos', function (Blueprint $table) {
+            $table->foreignId('consumidor_id')->nullable(false)->constrained('consumidors');
         });
     }
 
@@ -27,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('consumidors');
+        Schema::table('carrinhos', function (Blueprint $table) {
+            //
+        });
     }
 };

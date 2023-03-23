@@ -13,5 +13,9 @@ class Consumidor extends Model
     {
         return $this->morphOne(User::class, "papel");
     }
-    
+
+    public function carrinho()
+    {
+        return $this->hasOne(Carrinho::class);
+    }
 }
