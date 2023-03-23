@@ -13,15 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('enderecos', function (Blueprint $table) {
+        Schema::create('bairros', function (Blueprint $table) {
             $table->id();
+            $table->string('nome')->unique();
+            $table->float('taxa')->nullable(false);
             $table->timestamps();
-            $table->string('rua');
-            $table->string('cep');
-            $table->integer('numero');
-            $table->string('complemento')->nullable(true);
-            $table->morphs('origem');
-            $table->foreignId('bairro_id')->nullable(false)->constrained('bairros');
         });
     }
 
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('enderecos');
+        Schema::dropIfExists('bairros');
     }
 };
