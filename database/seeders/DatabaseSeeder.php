@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
             ProdutorSeeder::class,
             ConsumidorSeeder::class,
             CategoriaSeeder::class,
-            ProdutoSeeder::class,
-            ProdutoTabeladoSeeder::class
+            ProdutoTabeladoSeeder::class,
+            ProdutoSeeder::class
         ]);
         Db::commit();
     }
