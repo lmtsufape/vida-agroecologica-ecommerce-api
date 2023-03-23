@@ -12,7 +12,7 @@ class ProdutoTabelado extends Model
 
     protected $table = 'produtos_tabelados';
 
-    public function produto(): HasMany
+    public function produtos(): HasMany
     {
         return $this->hasMany(Produto::class, 'produto_tabelado_id');
     }
