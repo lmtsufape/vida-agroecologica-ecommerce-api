@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BairrosController;
 use App\Http\Controllers\Api\BancasController as ApiBancasController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
@@ -28,7 +29,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::apiResource('/{userId}/endereco', EnderecoController::class);
+    Route::controller(EnderecoController::class)->group(function () {
+        Route::get('/enderecos', 'show');
+        Route::put('/enderecos', 'update');
+    });
+    Route::controller(BairrosController::class)->group(function () {
+        Route::get('bairros', 'index');
+    });
     //produtor
     Route::middleware('check_produtor')->group(function () {
         Route::apiResource('/produtor', ProdutorController::class)->except('store');
@@ -48,17 +55,23 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::apiResource('/consumidor', ConsumidorController::class)->except('store');
 
         Route::apiResource('/sacolas', SacolaController::class)->only('index','destroy');
-        Route::post('/sacolas', [SacolaController::class, 'store'])->middleware('check_estoque');
-        Route::patch('/sacolas/{itemId}', [SacolaController::class, 'update'])->middleware('check_estoque');
-        Route::delete('/sacolas/carrinho', [SacolaController::class, 'limparCarrinho']);
-    });
+        Route::controller(SacolaController::class)->group(function () {
+            Route::post('/sacolas', 'store')->middleware('check_estoque');
+            Route::patch('/sacolas/{itemId}','update')->middleware('check_estoque');
+            Route::delete('/sacolas/carrinho', 'limparCarrinho');
+        });
 
+    });
+    //fora dos middlewares
     Route::get('/categorias', function (Request $request) {
 
-        return response()->json(['categorias'=> \App\Models\Categoria::all()]);
+        return response()->json(['categorias' => \App\Models\Categoria::all()]);
     });
-    Route::post('/busca', [ProdutoController::class, 'buscar']);
-    Route::get('/produtos/{nomeCategoria}', [ProdutoController::class, 'buscarCategoria']);
+    Route::controller(ProdutoController::class)->group(function () {
+        Route::post('/busca','buscar');
+        Route::get('/produtos/{nomeCategoria}', 'buscarCategoria');
+    });
+
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);
