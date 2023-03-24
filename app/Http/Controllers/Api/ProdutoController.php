@@ -40,7 +40,7 @@ class ProdutoController extends Controller
      */
     public function store(StoreProdutoRequest $request)
     {
-        $produtoTabelado = ProdutoTabelado::find($request->input('produto_id'));
+        $produtoTabelado = ProdutoTabelado::find($request->input('produto_id')); // id do produto tabelado que se quer referenciar
         if ($produtoTabelado) {
             $user = Auth::user();
             $banca = $user->papel->banca;
@@ -89,10 +89,12 @@ class ProdutoController extends Controller
         DB::beginTransaction();
 
         $produto = Produto::find($id);
-        if (!$produto) {
+        $produtoTabelado = ProdutoTabelado::find($request->produto_id);
+        if (!$produto || !$produtoTabelado) {
             return response()->json(['erro' => 'Não foi encontrar o produto'], 404);
         }
         $produto->fill($request->all());
+        $produto->produtoTabelado()->associate($produtoTabelado);
         $produto->save();
         $produto->banca;
         DB::commit();
