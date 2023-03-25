@@ -23,11 +23,6 @@ class Produto extends Model
         return $this->belongsTo(Banca::class);
     }
 
-    public function categorias()
-    {
-        return $this->belongsToMany(Categoria::class,'produto_categorias', 'produto_id', 'categoria_id');
-    }
-
     public function produtoTabelado(): BelongsTo
     {
         return $this->belongsTo(ProdutoTabelado::class, 'produto_tabelado_id');

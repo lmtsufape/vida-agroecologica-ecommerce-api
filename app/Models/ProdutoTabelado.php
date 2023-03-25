@@ -12,6 +12,11 @@ class ProdutoTabelado extends Model
 
     protected $table = 'produtos_tabelados';
 
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class, 'produto_categorias', 'produto_tabelado_id', 'categoria_id');
+    }
+
     public function produtos(): HasMany
     {
         return $this->hasMany(Produto::class, 'produto_tabelado_id');
