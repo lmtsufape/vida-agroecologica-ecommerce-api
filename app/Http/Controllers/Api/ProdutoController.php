@@ -124,7 +124,7 @@ class ProdutoController extends Controller
 
         $tabelas = array();
 
-        $tabelas['produtos'] = Produto::where('nome', 'like', "%$busca%")->get();
+        $tabelas['produtos'] = ProdutoTabelado::where('nome', 'like', "%$busca%")->get();
         $tabelas['bancas'] = Banca::where('nome', 'like', "%$busca%")->get();
         $tabelas['categorias'] = Categoria::where('nome', 'like', "%$busca%")->get();
         $tabelas['produtores'] = Produtor::whereHas('user', function ($query) use ($busca) {
