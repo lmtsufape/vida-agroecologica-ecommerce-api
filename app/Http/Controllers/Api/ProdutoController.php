@@ -44,7 +44,6 @@ class ProdutoController extends Controller
         if ($produtoTabelado) {
             $user = Auth::user();
             $banca = $user->papel->banca;
-            $categoria = DB::table('categorias')->where('nome', '=', $request->categoria)->first();
             DB::beginTransaction();
             $produto = $banca->produtos()->make($request->all());
             $produto->produtoTabelado()->associate($produtoTabelado);
@@ -54,7 +53,6 @@ class ProdutoController extends Controller
             }
             $banca->save();
             $produto->banca;
-            $produto->categorias()->attach(Categoria::find($categoria->id));
             DB::commit();
         } else {
             return response()->json(['erro' => 'Nenhum produto tabelado corresponde ao id fornecido.'], 400);

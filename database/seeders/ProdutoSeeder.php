@@ -23,7 +23,6 @@ class ProdutoSeeder extends Seeder
             $produto = Produto::factory()->make(['banca_id' => $banca->id]);
             $produto->produtoTabelado()->associate(ProdutoTabelado::inRandomOrder()->first());
             $banca->produtos()->save($produto);
-            $produto->categorias()->save( Categoria::find(1));
             $produto->save();
         }
         //$banca->save();

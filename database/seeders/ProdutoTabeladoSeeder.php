@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Categoria;
 use App\Models\ProdutoTabelado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,6 +26,7 @@ class ProdutoTabeladoSeeder extends Seeder
                 $produto = new ProdutoTabelado;
                 $produto->nome = $linha[0];
                 $produto->save();
+                $produto->categorias()->attach(Categoria::inRandomOrder()->first());
             }
         }
     }

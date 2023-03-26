@@ -26,13 +26,11 @@ class StoreProdutoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => 'required|min:3|max:25|string',
             'descricao' =>  'required|max:250|string',
             'tipo_unidade' => 'required',
             'estoque' => 'required|integer',
             'preco' => 'required|decimal:1,3',
-            'custo' => 'required|decimal:1,3',
-
+            'custo' => 'required|decimal:1,3'
         ];
     }
     public function messages()
