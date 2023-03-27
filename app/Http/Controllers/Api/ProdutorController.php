@@ -16,7 +16,7 @@ class ProdutorController extends Controller
 {
     public function index()
     {
-        $produtores = User::where("users.papel_type", "=", "Produtor")->join("produtors", "produtors.id", "=", "users.papel_id")
+        $produtores = User::where("users.papel_type", "=", "Produtor")->join("produtores", "produtores.id", "=", "users.papel_id")
             ->orderBy('name')
             ->get();
         if (!$produtores) {
