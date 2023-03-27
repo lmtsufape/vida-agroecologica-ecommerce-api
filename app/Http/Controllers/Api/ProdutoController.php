@@ -45,7 +45,7 @@ class ProdutoController extends Controller
      */
     public function store(StoreProdutoRequest $request)
     {
-        $produtoTabelado = ProdutoTabelado::find($request->input('produto_id')); // id do produto tabelado que se quer referenciar
+        $produtoTabelado = ProdutoTabelado::find($request->produto_id); // id do produto tabelado que se quer referenciar
         if ($produtoTabelado) {
             $user = Auth::user();
             $banca = $user->papel->banca;
