@@ -23,12 +23,17 @@ class ProdutoController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $banca = $user->papel->banca;
+        $banca_id = 1;//$user->papel->banca->id;
+        $produtos = DB::table('produtos')
+                        ->where('banca_id', $banca_id)
+                        ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
+                        ->select('produtos_tabelados.nome', 'produtos.*')
+                        ->get();
 
-        $produtos = $banca->produtos;
         if (!$produtos ||  sizeof($produtos) == 0) {
             return response()->json(['erro' => 'Não foi encontrar os produtos ou a banca está vazia'], 400);
         }
+
         return response()->json(['produtos' => $produtos], 200);
     }
 
