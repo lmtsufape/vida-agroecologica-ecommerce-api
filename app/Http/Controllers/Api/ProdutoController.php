@@ -23,9 +23,9 @@ class ProdutoController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $banca_id = 1;//$user->papel->banca->id;
+        $banca = $user->papel->banca->id;
         $produtos = DB::table('produtos')
-                        ->where('banca_id', $banca_id)
+                        ->where('banca_id', $banca)
                         ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
                         ->select('produtos_tabelados.nome', 'produtos.*')
                         ->get();
