@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
     //produtor
     Route::middleware('check_produtor')->group(function () {
-        Route::apiResource('/produtores', ProdutorController::class)->except('store');
+        Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
         Route::controller(ApiBancasController::class)->group(function () {
             Route::post('bancas', 'store')->middleware('check_bancas');
@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
-        Route::apiResource('/consumidores', ConsumidorController::class)->except('store');
+        Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
 
         Route::apiResource('/sacolas', SacolaController::class)->only('index', 'destroy');
         Route::controller(SacolaController::class)->group(function () {
@@ -68,7 +68,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
     Route::controller(ProdutoController::class)->group(function () {
         Route::post('/busca', 'buscar');
-        Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
+        Route::get('/categorias/{categoria}/produtos', 'buscarCategoria')->name('categoria.produtos');
     });
 });
 
