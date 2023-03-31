@@ -8,6 +8,7 @@ use App\Models\Banca;
 use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\Produtor;
+use App\Models\ProdutoTabelado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,13 +23,18 @@ class ProdutoController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $banca = $user->papel->banca;
+        $banca = $user->papel->banca->id;
+        $produtos = DB::table('produtos')
+                        ->where('banca_id', $banca)
+                        ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
+                        ->select('produtos_tabelados.nome', 'produtos.*')
+                        ->get();
 
-        $produtos = $banca->produtos;
-        if(!$produtos ||  sizeof($produtos) == 0 ){
-            return response()->json(['erro' =>'Não foi encontrar os produtos ou a banca está vazia'],400);
+        if (!$produtos ||  sizeof($produtos) == 0) {
+            return response()->json(['erro' => 'Não foi encontrar os produtos ou a banca está vazia'], 400);
         }
-        return response()->json(['produtos' => $produtos],200);
+
+        return response()->json(['produtos' => $produtos], 200);
     }
 
     /**
@@ -39,20 +45,24 @@ class ProdutoController extends Controller
      */
     public function store(StoreProdutoRequest $request)
     {
-        $user = Auth::user();
-        $banca = $user->papel->banca;
-        $categoria = DB::table('categorias')->where('nome','=',$request->categoria)->first();
-        DB::beginTransaction();
-        $produto = $banca->produtos()->create($request->all());
-
-        if(!$produto){
-            return response()->json(['erro' =>'Não foi possível criar o produto'],400);
+        $produtoTabelado = ProdutoTabelado::find($request->produto_id); // id do produto tabelado que se quer referenciar
+        if ($produtoTabelado) {
+            $user = Auth::user();
+            $banca = $user->papel->banca;
+            DB::beginTransaction();
+            $produto = $banca->produtos()->make($request->all());
+            $produto->produtoTabelado()->associate($produtoTabelado);
+            $produto->save();
+            if (!$produto) {
+                return response()->json(['erro' => 'Não foi possível criar o produto'], 400);
+            }
+            $banca->save();
+            $produto->banca;
+            DB::commit();
+        } else {
+            return response()->json(['erro' => 'Nenhum produto tabelado corresponde ao id fornecido.'], 400);
         }
-        $banca->save();
-        $produto->banca;
-        $produto->categorias()->attach(Categoria::find($categoria->id));
-        DB::commit();
-        return response()->json(['produto' => $produto],201);
+        return response()->json(['produto' => $produto], 201);
     }
 
     /**
@@ -64,10 +74,10 @@ class ProdutoController extends Controller
     public function show($id)
     {
         $produto = Produto::find($id);
-        if(!$produto){
-            return response()->json(['erro' =>'Não foi encontrar o produto'],400);
+        if (!$produto) {
+            return response()->json(['erro' => 'Não foi encontrar o produto'], 400);
         }
-        return response()->json(['produto' => $produto],200);
+        return response()->json(['produto' => $produto], 200);
     }
 
     /**
@@ -82,14 +92,16 @@ class ProdutoController extends Controller
         DB::beginTransaction();
 
         $produto = Produto::find($id);
-        if(!$produto){
-            return response()->json(['erro'=>'Não foi encontrar o produto'],404);
+        $produtoTabelado = ProdutoTabelado::find($request->produto_id);
+        if (!$produto || !$produtoTabelado) {
+            return response()->json(['erro' => 'Não foi encontrar o produto'], 404);
         }
         $produto->fill($request->all());
+        $produto->produtoTabelado()->associate($produtoTabelado);
         $produto->save();
         $produto->banca;
         DB::commit();
-        return response()->json(['produto'=>$produto],200);
+        return response()->json(['produto' => $produto], 200);
     }
 
     /**
@@ -117,14 +129,17 @@ class ProdutoController extends Controller
 
         $tabelas = array();
 
-        $tabelas['produtos'] = Produto::where('nome', 'like', "%$busca%")->get();
+        $tabelas['produtos'] = ProdutoTabelado::where('nome', 'like', "%$busca%")
+                                        ->join('produtos', 'produtos_tabelados.id', '=', 'produtos.produto_tabelado_id')
+                                        ->select('produtos_tabelados.nome', 'produtos.*')
+                                        ->get();
         $tabelas['bancas'] = Banca::where('nome', 'like', "%$busca%")->get();
         $tabelas['categorias'] = Categoria::where('nome', 'like', "%$busca%")->get();
         $tabelas['produtores'] = Produtor::whereHas('user', function ($query) use ($busca) {
             $query->where('name', 'like', "%$busca%");
         })->get();
 
-        $tabelas = array_filter($tabelas, function($valor) {
+        $tabelas = array_filter($tabelas, function ($valor) {
             return !$valor->isEmpty();
         });
         if (empty($tabelas)) {
@@ -135,7 +150,7 @@ class ProdutoController extends Controller
 
     public function buscarCategoria(String $nomeCategoria)
     {
-        if (empty($nomeCategoria)){
+        if (empty($nomeCategoria)) {
             return response()->json(['erro' => 'Nenhum critério de busca fornecido.'], 400);
         }
 

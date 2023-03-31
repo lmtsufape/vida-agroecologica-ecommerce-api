@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Banca;
 use App\Models\Categoria;
 use App\Models\Produto;
+use App\Models\ProdutoTabelado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,12 +18,12 @@ class ProdutoSeeder extends Seeder
      */
     public function run()
     {
-        $produtos = ['Cenoura','Tomate','Ervilha','Espinafre'];
         $banca = Banca::find(1);
-        for ($i=0; $i < sizeof($produtos); $i++) {
-            $produto = Produto::factory()->create(['nome'=> $produtos[$i],'banca_id'=>$banca->id]);
+        for ($i = 0; $i < 10; $i++) {
+            $produto = Produto::factory()->make(['banca_id' => $banca->id]);
+            $produto->produtoTabelado()->associate(ProdutoTabelado::inRandomOrder()->first());
             $banca->produtos()->save($produto);
-            $produto->categorias()->save( Categoria::find(1));
+            $produto->save();
         }
         //$banca->save();
 

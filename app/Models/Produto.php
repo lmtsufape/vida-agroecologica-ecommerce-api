@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Produto extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nome',
         'descricao',
         'estoque',
         'preco',
@@ -23,8 +23,8 @@ class Produto extends Model
         return $this->belongsTo(Banca::class);
     }
 
-    public function categorias()
+    public function produtoTabelado(): BelongsTo
     {
-        return $this->belongsToMany(Categoria::class,'produto_categorias', 'produto_id', 'categoria_id');
+        return $this->belongsTo(ProdutoTabelado::class, 'produto_tabelado_id');
     }
 }

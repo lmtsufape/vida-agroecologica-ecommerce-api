@@ -72,6 +72,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/produtos/{nomeCategoria}', 'buscarCategoria');
     });
 
+    Route::get('/produtos', function() {
+        $produtos = App\Models\ProdutoTabelado::all();
+        return response()->json(['produtos' => $produtos]);
+    })->name('produtos.index');
 });
 
 Route::post('/produtor', [ProdutorController::class, 'store']);

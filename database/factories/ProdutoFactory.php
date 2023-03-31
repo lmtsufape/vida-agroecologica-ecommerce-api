@@ -17,13 +17,11 @@ class ProdutoFactory extends Factory
     public function definition()
     {
         return [
-            'nome' => fake()->name(),
             'descricao' => fake()->realText(50),
             'tipo_unidade' => false,
             'estoque' => fake()->numberBetween(1,20),
             'preco' => fake()->randomFloat(4,1,20),
-            'custo' => fake()->randomFloat(4,1,20),
-
+            'custo' => fake()->randomFloat(4,1,20)
         ];
     }
 }
