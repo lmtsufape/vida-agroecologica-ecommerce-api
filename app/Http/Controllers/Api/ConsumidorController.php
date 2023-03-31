@@ -14,7 +14,7 @@ class ConsumidorController extends Controller
 {
     public function index()
     {
-        $consumidores = User::where("users.papel_type", "=", "Consumidor")->join("consumidors", "consumidors.id", "=", "users.papel_id")
+        $consumidores = User::where("users.papel_type", "=", "Consumidor")->join("consumidores", "consumidores.id", "=", "users.papel_id")
             ->orderBy('name')
             ->get();
         if (!$consumidores) {
