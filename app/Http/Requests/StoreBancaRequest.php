@@ -15,10 +15,15 @@ class StoreBancaRequest extends FormRequest
     {
         $rules = [
             'nome' => [
-                'required', 'string', 'max:50', 'min:3'
+                'required',
+                'string',
+                'max:50',
+                'min:3'
             ],
             'descricao' => [
-                'required', 'string', 'max:250'
+                'required',
+                'string',
+                'max:250'
             ],
             'horario_funcionamento' => [
                 'required',
