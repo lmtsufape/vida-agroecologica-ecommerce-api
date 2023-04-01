@@ -9,6 +9,8 @@ class Consumidor extends Model
 {
     use HasFactory;
 
+    protected $table = 'consumidores';
+
     public function user()
     {
         return $this->morphOne(User::class, "papel");
