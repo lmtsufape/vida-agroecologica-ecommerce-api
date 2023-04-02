@@ -65,7 +65,7 @@ class StoreUserRequest extends FormRequest
             'numero' => [
                 'required',
                 'integer',
-                'max:5'
+                'digits_between:1,4'
             ],
             'complemento' => [
                 'nullable',
@@ -86,6 +86,7 @@ class StoreUserRequest extends FormRequest
             'required' => 'O campo :attribute é obrigatório.',
             'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
             'min' => 'O campo :attribute deve ter no mínimo :min caracteres.',
+            'digits_between' => 'O campo :attribute deve ter entre :min e :max dígitos.',
             'string' => 'O campo :attribute deve ser uma string.',
             'integer' => 'O campo :attribute deve ser numérico.',
             'unique' => 'O campo :attribute está sendo utilizado.',

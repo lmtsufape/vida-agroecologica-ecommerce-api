@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('consumidors', function (Blueprint $table) {
+        Schema::create('produtos_tabelados', function (Blueprint $table) {
             $table->id();
+            $table->string('nome')->nullable(false)->unique();
             $table->timestamps();
-            $table->foreignId('carrinho_id')->nullable(true)->constrained('carrinhos');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('consumidors');
+        Schema::dropIfExists('produtos_tabelados');
     }
 };
