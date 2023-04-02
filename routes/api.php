@@ -68,12 +68,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
     Route::controller(ProdutoController::class)->group(function () {
         Route::post('/busca', 'buscar');
-        Route::get('/categorias/{categoria}/produtos', 'buscarCategoria')->name('categoria.produtos');
+        Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
     });
     Route::get('/produtos', function() {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
-    })->name('produtos.index');
+    });
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
