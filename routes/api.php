@@ -43,9 +43,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::controller(ApiBancasController::class)->group(function () {
             Route::post('bancas', 'store')->middleware('check_bancas');
             Route::get('bancas', 'index');
-            Route::get('bancas/{id}', 'show');
-            Route::put('bancas/{id}', 'update');
-            Route::delete('bancas/{id}', 'destroy')->middleware('check_valid_banca');
+            Route::get('bancas/{banca}', 'show');
+            Route::put('bancas/{banca}', 'update');
+            Route::delete('bancas/{banca}', 'destroy')->middleware('check_valid_banca');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
