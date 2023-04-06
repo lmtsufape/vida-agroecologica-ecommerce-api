@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Bairro;
-use App\Models\Categoria;
-use App\Models\ProdutoTabelado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
