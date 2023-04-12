@@ -11,6 +11,7 @@ class BairroSeeder extends Seeder
     public function run()
     {
         $dir = __DIR__;
+        Bairro::create(['nome' => 'Teste','taxa' =>5.00]);
         try {
             $handle = fopen("{$dir}\..\..\public\storagse\bairros.csv", "r");
             while ($line = fgetcsv($handle, 1000, ",")) {

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Models\Produtor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,7 +38,6 @@ class ProdutorController extends Controller
 
             $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento', 'bairro_id']);
             $endereco = $produtor->endereco()->create($data_endereco);
-
             DB::commit();
             return response()->json([
                 'produtor' => $produtor,
@@ -60,19 +60,20 @@ class ProdutorController extends Controller
         return response()->json(['usuário' => $produtor], 200);
     }
 
-    public function update(StoreUserRequest $request)
+    public function update(Request $request)
     {
-
+        $produtor = Auth::user();
         DB::beginTransaction();
-
-        $produtor = Produtor::find($request->produtor);
         if (!$produtor) {
 
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-        $produtor->fill($request->all());
-        $produtor->save();
-        $produtor->user;
+        $produtor = User::find($produtor->id);
+        $keys = ['name','apelido','telefone','cpf','password','email'];
+        $dados = $request->only($keys);
+        
+        $produtor->fill($dados);
+        $produtor->papel;
         DB::commit();
         return response()->json([$produtor], 200);
     }
