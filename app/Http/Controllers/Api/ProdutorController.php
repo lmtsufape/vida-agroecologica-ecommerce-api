@@ -69,10 +69,10 @@ class ProdutorController extends Controller
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
         $produtor = User::find($produtor->id);
-        $keys = ['name','apelido','telefone','cpf','password','email'];
+        $keys = ['name','apelido','telefone','email'];
         $dados = $request->only($keys);
-        
-        $produtor->fill($dados);
+        $dados['password'] = Hash::make($request->only('password'));
+        $produtor->update($dados);
         $produtor->papel;
         DB::commit();
         return response()->json([$produtor], 200);
