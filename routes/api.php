@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\SacolaController;
 use App\Http\Controllers\BancasController;
+use App\Http\Controllers\Api\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -82,3 +83,5 @@ Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
+
+Route::get('/imagens/produtos/{nome}', [ImageController::class, 'show']);
