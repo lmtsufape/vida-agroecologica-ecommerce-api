@@ -25,6 +25,7 @@ class BancasController extends Controller
         DB::beginTransaction();
 
         try {
+            
             $banca = $user->papel->banca()->create($request->all());
 
             DB::commit();
