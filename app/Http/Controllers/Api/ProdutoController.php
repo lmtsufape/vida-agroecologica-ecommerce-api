@@ -12,6 +12,9 @@ use App\Models\ProdutoTabelado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\File;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -25,10 +28,10 @@ class ProdutoController extends Controller
         $user = Auth::user();
         $banca = $user->papel->banca->id;
         $produtos = DB::table('produtos')
-                        ->where('banca_id', $banca)
-                        ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
-                        ->select('produtos_tabelados.nome', 'produtos.*')
-                        ->get();
+            ->where('banca_id', $banca)
+            ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
+            ->select('produtos_tabelados.nome', 'produtos.*')
+            ->get();
 
         if (!$produtos ||  sizeof($produtos) == 0) {
             return response()->json(['erro' => 'Não foi encontrar os produtos ou a banca está vazia'], 400);
@@ -130,9 +133,9 @@ class ProdutoController extends Controller
         $tabelas = array();
 
         $tabelas['produtos'] = ProdutoTabelado::where('nome', 'like', "%$busca%")
-                                        ->join('produtos', 'produtos_tabelados.id', '=', 'produtos.produto_tabelado_id')
-                                        ->select('produtos_tabelados.nome', 'produtos.*')
-                                        ->get();
+            ->join('produtos', 'produtos_tabelados.id', '=', 'produtos.produto_tabelado_id')
+            ->select('produtos_tabelados.nome', 'produtos.*')
+            ->get();
         $tabelas['bancas'] = Banca::where('nome', 'like', "%$busca%")->get();
         $tabelas['categorias'] = Categoria::where('nome', 'like', "%$busca%")->get();
         $tabelas['produtores'] = Produtor::whereHas('user', function ($query) use ($busca) {
@@ -166,5 +169,22 @@ class ProdutoController extends Controller
         }
 
         return response()->json(['produtos' => $produtos], 200);
+    }
+
+    public function getImagem($id)
+    {
+        $imagem = ProdutoTabelado::find($id)->imagem;
+
+        if (!$imagem || !file_exists(base_path($imagem->caminho))) {
+            abort(404);
+        }
+
+        $file = new File(base_path($imagem->caminho));
+        $type = Storage::mimeType(str_replace('storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR, '', $imagem->caminho)); // remove o "storage\app\" do caminho para que a função funcione corretamente
+
+        $response = new Response(file_get_contents($file), 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 }
