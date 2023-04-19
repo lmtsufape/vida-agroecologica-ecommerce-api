@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class BancasController extends Controller
+class BancaController extends Controller
 {
 
     public function index()
@@ -25,6 +25,7 @@ class BancasController extends Controller
         DB::beginTransaction();
 
         try {
+            
             $banca = $user->papel->banca()->create($request->all());
 
             DB::commit();

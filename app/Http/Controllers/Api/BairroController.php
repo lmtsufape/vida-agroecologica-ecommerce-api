@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bairro;
 use Illuminate\Http\Request;
 
-class BairrosController extends Controller
+class BairroController extends Controller
 {
     public function index()
     {
