@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
             FeiraSeeder::class,
             ProdutorSeeder::class,
             ConsumidorSeeder::class,
-            CategoriaSeeder::class,
             ProdutoTabeladoSeeder::class,
             ProdutoSeeder::class,
             BairroSeeder::class

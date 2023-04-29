@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Categoria;
 use App\Models\ProdutoTabelado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,8 +24,10 @@ class ProdutoTabeladoSeeder extends Seeder
             foreach ($dados_csv as $linha) {
                 $produto = new ProdutoTabelado;
                 $produto->nome = $linha[0];
+                if (array_key_exists(1, $linha)) {
+                    $produto->categoria = $linha[1];
+                }         
                 $produto->save();
-                $produto->categorias()->attach(Categoria::inRandomOrder()->first());
             }
         }
     }

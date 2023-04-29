@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Banca;
-use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\ProdutoTabelado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
