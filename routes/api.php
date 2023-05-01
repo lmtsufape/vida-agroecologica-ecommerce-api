@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProdutorController;
-use App\Http\Controllers\Api\SacolaController;
 use App\Http\Controllers\BancaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,13 +52,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
-
-        Route::apiResource('/sacolas', SacolaController::class)->only('index', 'destroy');
-        Route::controller(SacolaController::class)->group(function () {
-            Route::post('/sacolas', 'store')->middleware('check_estoque');
-            Route::patch('/sacolas/{itemId}', 'update')->middleware('check_estoque');
-            Route::delete('/sacolas/carrinho', 'limparCarrinho');
-        });
     });
     //fora dos middlewares
     Route::get('/categorias', function (Request $request) {
