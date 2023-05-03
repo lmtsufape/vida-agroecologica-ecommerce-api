@@ -26,8 +26,6 @@ class ConsumidorSeeder extends Seeder
             'remember_token' => Str::random(10),
             'telefone' => fake()->numerify('##-#####-####')
         ]);
-        $consumidor->carrinho()->create();
-        $consumidor->carrinho_id = $consumidor->carrinho->id;
         $consumidor->save();
         //Consumidor::factory()->count(10)->create();
     }
