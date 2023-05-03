@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('produtos_tabelados', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->nullable(false)->unique();
+            $table->string('categoria')->nullable(true);
             $table->timestamps();
         });
     }

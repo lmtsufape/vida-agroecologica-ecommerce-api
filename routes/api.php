@@ -55,8 +55,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
     //fora dos middlewares
     Route::get('/categorias', function (Request $request) {
-
-        return response()->json(['categorias' => \App\Models\Categoria::all()]);
+        return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });
     Route::controller(ProdutoController::class)->group(function () {
         Route::post('/busca', 'buscar');
