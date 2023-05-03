@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('itens_venda', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->integer('quantidade');
             $table->decimal('preco');
             $table->foreignId('produto_id')->nullable(false)->constrained('produtos')->onDelete('cascade');
+            $table->foreignId('venda_id')->constrained();
+            $table->timestamps();
         });
     }
 
