@@ -1,14 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\BairroController;
-use App\Http\Controllers\Api\BancaController as ApiBancaController;
+use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProdutorController;
-use App\Http\Controllers\BancaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,7 +37,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::middleware('check_produtor')->group(function () {
         Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
-        Route::controller(ApiBancaController::class)->group(function () {
+        Route::controller(BancaController::class)->group(function () {
             Route::post('bancas', 'store')->middleware('check_bancas');
             Route::get('bancas', 'index');
             Route::get('bancas/{banca}', 'show');

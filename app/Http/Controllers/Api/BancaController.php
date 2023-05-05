@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
@@ -25,7 +25,7 @@ class BancaController extends Controller
         DB::beginTransaction();
 
         try {
-            
+
             $banca = $user->papel->banca()->create($request->all());
 
             DB::commit();
