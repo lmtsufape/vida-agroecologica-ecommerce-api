@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
             'User' => 'App\Models\User',
             'Produtor' => 'App\\Models\\Produtor',
             'Consumidor' => 'App\Models\Consumidor',
+            'produto_tabelado' => 'App\Models\ProdutoTabelado',
         ]);
 
     }

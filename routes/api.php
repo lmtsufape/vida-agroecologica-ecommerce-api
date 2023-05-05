@@ -73,3 +73,5 @@ Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
+
+Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
