@@ -25,7 +25,7 @@ class BancaController extends Controller
         DB::beginTransaction();
 
         try {
-            
+
             $banca = $user->papel->banca()->create($request->all());
 
             DB::commit();
@@ -64,5 +64,21 @@ class BancaController extends Controller
         Auth::user()->papel->banca()->delete();
 
         return response()->json(true);
+    }
+
+    public function uploadImagem(Request $request)
+    {
+        $imagem = $request->file('imagem');
+        $banca = Auth::user()->papel->banca;
+        $nomeImagem = $banca->id . '.' . $imagem->getClientOriginalExtension();
+        $caminho = $imagem->storeAs('public/uploads/imagens/banca', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
+        
+        if (!$caminho) {
+            return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
+        }
+
+        $banca->imagem()->updateOrCreate(['caminho' => 'app/' . $caminho]);
+
+        return response()->json(['caminho' => $caminho], 200);
     }
 }

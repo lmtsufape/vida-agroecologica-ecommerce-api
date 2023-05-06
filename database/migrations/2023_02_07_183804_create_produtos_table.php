@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('estoque');
             $table->decimal('preco');
             $table->decimal('custo');
-            $table->boolean('à venda');
+            $table->boolean('à venda')->default(true);
             $table->foreignId('banca_id')->nullable(false)->constrained('bancas')->onDelete('cascade');
             $table->foreignId('produto_tabelado_id')->nullable(false)->constrained('produtos_tabelados')->onDelete('restrict');
             $table->unique(['banca_id', 'produto_tabelado_id']);

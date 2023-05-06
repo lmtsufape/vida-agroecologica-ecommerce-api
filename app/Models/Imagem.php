@@ -12,6 +12,8 @@ class Imagem extends Model
 
     protected $table = 'imagens';
 
+    protected $fillable = ['caminho'];
+
     public function imageable(): MorphTo
     {
         return $this->morphTo();
