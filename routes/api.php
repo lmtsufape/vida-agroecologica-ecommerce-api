@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::put('bancas/{banca}', 'update');
             Route::delete('bancas/{banca}', 'destroy')->middleware('check_valid_banca');
             
-            Route::post('bancas/imagem', 'uploadImagem');
+            Route::post('bancas/imagens', 'uploadImagem');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
@@ -67,6 +67,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
+    Route::get('/imagens/bancas/{banca}', [ApiBancaController::class, 'getImagem']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);

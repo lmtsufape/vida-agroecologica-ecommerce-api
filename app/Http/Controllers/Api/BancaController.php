@@ -9,6 +9,7 @@ use App\Models\Banca;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class BancaController extends Controller
 {
@@ -80,7 +81,9 @@ class BancaController extends Controller
             return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
         }
 
-        $banca->imagem()->updateOrCreate(['caminho' => $caminho]);
+        $imagemBanco = $banca->imagem()->FirstOrNew();
+        $imagemBanco->caminho = $caminho;
+        $imagemBanco->save();
 
         foreach ($imagensAntigas as $arquivo) {
             if (basename($arquivo) != $nomeImagem) {
@@ -89,5 +92,18 @@ class BancaController extends Controller
         }
 
         return response()->json(['caminho' => $caminho], 200);
+    }
+
+    public function getImagem($id) {
+        $imagem = Banca::findOrFail($id)->imagem;
+
+        if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
+            abort(404);
+        }
+
+        $file = Storage::get($imagem->caminho);
+        $mimeType = Storage::mimeType($imagem->caminho);
+
+        return response($file)->header('Content-Type', $mimeType);
     }
 }

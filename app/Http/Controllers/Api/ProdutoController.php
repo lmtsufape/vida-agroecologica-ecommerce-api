@@ -163,7 +163,7 @@ class ProdutoController extends Controller
 
     public function getImagem($id)
     {
-        $imagem = ProdutoTabelado::find($id)->imagem;
+        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
 
         if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
             abort(404);
