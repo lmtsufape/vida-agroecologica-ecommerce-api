@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UploadImagemBancaRequest;
 use App\Models\Banca;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class BancaController extends Controller
 {
@@ -72,6 +72,8 @@ class BancaController extends Controller
         $imagem = $request->file('imagem');
         $banca = Auth::user()->papel->banca;
         $nomeImagem = $banca->id . '.' . $imagem->getClientOriginalExtension();
+        $imagensAntigas = glob(storage_path("app/public/uploads/imagens/banca/{$banca->id}.*"));
+
         $caminho = $imagem->storeAs('public/uploads/imagens/banca', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
         
         if (!$caminho) {
@@ -79,6 +81,12 @@ class BancaController extends Controller
         }
 
         $banca->imagem()->updateOrCreate(['caminho' => $caminho]);
+
+        foreach ($imagensAntigas as $arquivo) {
+            if (basename($arquivo) != $nomeImagem) {
+                File::delete($arquivo);
+            }
+        }
 
         return response()->json(['caminho' => $caminho], 200);
     }
