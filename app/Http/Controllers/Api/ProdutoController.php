@@ -165,16 +165,13 @@ class ProdutoController extends Controller
     {
         $imagem = ProdutoTabelado::find($id)->imagem;
 
-        if (!$imagem || !file_exists(storage_path($imagem->caminho))) {
+        if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
             abort(404);
         }
 
-        $file = new File(storage_path($imagem->caminho));
-        $type = Storage::mimeType(str_replace('app/', '', $imagem->caminho));
+        $file = Storage::get($imagem->caminho);
+        $mimeType = Storage::mimeType($imagem->caminho);
 
-        $response = new Response(file_get_contents($file), 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
+        return response($file)->header('Content-Type', $mimeType);
     }
 }

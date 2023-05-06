@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
+use App\Http\Requests\UploadImagemBancaRequest;
 use App\Models\Banca;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,7 +67,7 @@ class BancaController extends Controller
         return response()->json(true);
     }
 
-    public function uploadImagem(Request $request)
+    public function uploadImagem(UploadImagemBancaRequest $request)
     {
         $imagem = $request->file('imagem');
         $banca = Auth::user()->papel->banca;
@@ -77,7 +78,7 @@ class BancaController extends Controller
             return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
         }
 
-        $banca->imagem()->updateOrCreate(['caminho' => 'app/' . $caminho]);
+        $banca->imagem()->updateOrCreate(['caminho' => $caminho]);
 
         return response()->json(['caminho' => $caminho], 200);
     }
