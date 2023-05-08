@@ -37,7 +37,7 @@ class UploadImagemBancaRequest extends FormRequest
         return [
             'imagem.required' => 'É necessário enviar uma imagem',
             'imagem.image' => 'O arquivo enviado não é uma imagem',
-            'imagem.max' => 'A imagem enviada é muito grande (máximo de :max Bytes)'
+            'imagem.max' => 'A imagem enviada é muito grande (máximo de :max KB)'
         ];
     }
 }

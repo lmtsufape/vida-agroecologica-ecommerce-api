@@ -40,13 +40,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
         Route::controller(ApiBancaController::class)->group(function () {
-            Route::post('bancas', 'store')->middleware('check_bancas');
-            Route::get('bancas', 'index');
-            Route::get('bancas/{banca}', 'show');
-            Route::put('bancas/{banca}', 'update');
-            Route::delete('bancas/{banca}', 'destroy')->middleware('check_valid_banca');
+            Route::post('/bancas/imagens', 'uploadImagem');
+            Route::delete('/bancas/imagens', 'deleteImagem');
             
-            Route::post('bancas/imagens', 'uploadImagem');
+            Route::post('/bancas', 'store')->middleware('check_bancas');
+            Route::get('/bancas', 'index');
+            Route::get('/bancas/{banca}', 'show');
+            Route::put('/bancas/{banca}', 'update');
+            Route::delete('/bancas/{banca}', 'destroy')->middleware('check_valid_banca');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);

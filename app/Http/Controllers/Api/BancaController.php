@@ -76,7 +76,7 @@ class BancaController extends Controller
         $imagensAntigas = glob(storage_path("app/public/uploads/imagens/banca/{$banca->id}.*"));
 
         $caminho = $imagem->storeAs('public/uploads/imagens/banca', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
-        
+
         if (!$caminho) {
             return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
         }
@@ -94,7 +94,8 @@ class BancaController extends Controller
         return response()->json(['caminho' => $caminho], 200);
     }
 
-    public function getImagem($id) {
+    public function getImagem($id)
+    {
         $imagem = Banca::findOrFail($id)->imagem;
 
         if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
@@ -105,5 +106,24 @@ class BancaController extends Controller
         $mimeType = Storage::mimeType($imagem->caminho);
 
         return response($file)->header('Content-Type', $mimeType);
+    }
+
+    public function deleteImagem()
+    {
+        $imagem = Auth::user()->papel->banca->imagem;
+
+        if (!$imagem) {
+            return response()->json(['erro' => 'Imagem não encontrada.']);
+        }
+
+        $imagens = glob(storage_path('app/') . $imagem->caminho);
+
+        foreach ($imagens as $arquivo) {
+            File::delete($arquivo);
+        }
+        
+        $imagem->delete();
+
+        return response()->json(['sucesso' => 'Imagem deletada.'], 200);
     }
 }
