@@ -19,12 +19,9 @@ class ProdutoSeeder extends Seeder
     {
         $banca = Banca::find(1);
         for ($i = 0; $i < 10; $i++) {
-            $produto = Produto::factory()->make(['banca_id' => $banca->id]);
-            $produto->produtoTabelado()->associate(ProdutoTabelado::inRandomOrder()->first());
+            $produto = Produto::factory()->make();
+            $produto->produtoTabelado()->associate(ProdutoTabelado::find($i +1));
             $banca->produtos()->save($produto);
-            $produto->save();
         }
-        //$banca->save();
-
     }
 }
