@@ -26,8 +26,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
             'User' => 'App\Models\User',
-            'Produtor' => 'App\\Models\\Produtor',
+            'Produtor' => 'App\Models\Produtor',
             'Consumidor' => 'App\Models\Consumidor',
+            'Produto_tabelado' => 'App\Models\ProdutoTabelado',
+            'Banca' => 'App\Models\Banca',
         ]);
 
     }

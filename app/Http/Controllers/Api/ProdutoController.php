@@ -11,6 +11,9 @@ use App\Models\ProdutoTabelado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\File;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -156,5 +159,19 @@ class ProdutoController extends Controller
         }
 
         return response()->json(['produtos' => $produtos], 200);
+    }
+
+    public function getImagem($id)
+    {
+        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
+
+        if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
+            abort(404);
+        }
+
+        $file = Storage::get($imagem->caminho);
+        $mimeType = Storage::mimeType($imagem->caminho);
+
+        return response($file)->header('Content-Type', $mimeType);
     }
 }

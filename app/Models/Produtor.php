@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Produtor extends Model
 {
@@ -20,5 +21,10 @@ class Produtor extends Model
     public function banca()
     {
         return $this->hasOne(Banca::class);
+    }
+
+    public function vendas(): HasMany
+    {
+        return $this->hasMany(Venda::class);
     }
 }

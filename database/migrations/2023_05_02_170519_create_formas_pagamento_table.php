@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('itens_venda', function (Blueprint $table) {
+        Schema::create('formas_pagamento', function (Blueprint $table) {
             $table->id();
+            $table->string('tipo')->nullable(false);
             $table->timestamps();
-            $table->integer('quantidade');
-            $table->decimal('preco');
-            $table->foreignId('produto_id')->nullable(false)->constrained('produtos')->onDelete('cascade');
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itens_venda');
+        Schema::dropIfExists('formas_pagamento');
     }
 };
