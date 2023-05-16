@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('produtores', function (Blueprint $table) {
             $table->id();
+            $table->string('bairro');
             $table->timestamps();
             //$table->foreignId('banco_id')->nullable(false)->constrained('bancos');
         });

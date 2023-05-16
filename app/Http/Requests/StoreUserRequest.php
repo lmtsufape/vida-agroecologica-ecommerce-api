@@ -13,7 +13,7 @@ class StoreUserRequest extends FormRequest
 
     public function rules()
     {
-        return [
+        $rules = [
             'name' => [
                 'required',
                 'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // regex para validar apenas letras do alfabeto (maiúsculas e minúsculas, com acento ou não) e espaços em branco.
@@ -78,6 +78,13 @@ class StoreUserRequest extends FormRequest
                 'max:5'
             ]
         ];
+
+        if ($this->segment(2) === 'produtores') {
+            $rules['bairro_id'] = ['nullable', 'integer', 'max:5'];
+            $rules['bairro'] = ['required', 'regex:/^[a-zA-ZÀ-ÿ\s]+$/', 'min:3', 'max:40'];
+        }
+
+        return $rules;
     }
 
     public function messages()

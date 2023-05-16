@@ -11,7 +11,7 @@ class Produtor extends Model
     use HasFactory;
 
     protected $table = 'produtores';
-    protected $fillable = ['name'];
+    protected $fillable = ['bairro'];
 
     public function user()
     {
