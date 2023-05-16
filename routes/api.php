@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BairroController;
-use App\Http\Controllers\Api\BancaController as ApiBancaController;
+use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
@@ -37,9 +37,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::middleware('check_produtor')->group(function () {
         Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
-        Route::controller(ApiBancaController::class)->group(function () {
+        Route::controller(BancaController::class)->group(function () {
             Route::delete('/bancas/imagens', 'deleteImagem');
-            
+
             Route::post('/bancas', 'store')->middleware('check_bancas');
             Route::get('/bancas', 'index');
             Route::get('/bancas/{banca}', 'show');
@@ -65,7 +65,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
-    Route::get('/imagens/bancas/{banca}', [ApiBancaController::class, 'getImagem']);
+    Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
