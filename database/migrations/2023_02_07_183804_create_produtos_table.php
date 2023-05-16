@@ -17,12 +17,14 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('descricao');
-            $table->boolean('tipo_unidade');
+            $table->string('tipo_unidade');
             $table->integer('estoque');
             $table->decimal('preco');
             $table->decimal('custo');
+            $table->boolean('à venda')->default(true);
             $table->foreignId('banca_id')->nullable(false)->constrained('bancas')->onDelete('cascade');
             $table->foreignId('produto_tabelado_id')->nullable(false)->constrained('produtos_tabelados')->onDelete('restrict');
+            $table->unique(['banca_id', 'produto_tabelado_id']);
         });
     }
 

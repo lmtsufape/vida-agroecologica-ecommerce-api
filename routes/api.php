@@ -38,11 +38,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
         Route::controller(BancaController::class)->group(function () {
-            Route::post('bancas', 'store')->middleware('check_bancas');
-            Route::get('bancas', 'index');
-            Route::get('bancas/{banca}', 'show');
-            Route::put('bancas/{banca}', 'update');
-            Route::delete('bancas/{banca}', 'destroy')->middleware('check_valid_banca');
+            Route::delete('/bancas/imagens', 'deleteImagem');
+
+            Route::post('/bancas', 'store')->middleware('check_bancas');
+            Route::get('/bancas', 'index');
+            Route::get('/bancas/{banca}', 'show');
+            Route::put('/bancas', 'update');
+            Route::delete('/bancas/{banca}', 'destroy')->middleware('check_valid_banca');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
@@ -63,6 +65,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
+    Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
@@ -71,3 +74,5 @@ Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
+
+Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);

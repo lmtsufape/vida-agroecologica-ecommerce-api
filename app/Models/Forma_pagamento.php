@@ -6,18 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Consumidor extends Model
+class Forma_pagamento extends Model
 {
     use HasFactory;
 
-    protected $table = 'consumidores';
+    protected $table = 'formas_pagamento';
 
-    public function user()
-    {
-        return $this->morphOne(User::class, "papel");
-    }
-
-    public function compras(): HasMany
+    public function vendas(): HasMany
     {
         return $this->hasMany(Venda::class);
     }

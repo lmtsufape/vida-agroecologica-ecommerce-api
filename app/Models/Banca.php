@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Banca extends Model
@@ -35,5 +36,10 @@ class Banca extends Model
     public function produtos()
     {
         return $this->hasMany(Produto::class);
+    }
+
+    public function imagem(): MorphOne
+    {
+        return $this->morphOne(Imagem::class, 'imageable');
     }
 }

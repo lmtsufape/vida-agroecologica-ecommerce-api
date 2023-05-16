@@ -10,7 +10,6 @@ use Illuminate\Contracts\Validation\Validator;
 
 class StoreBancaRequest extends FormRequest
 {
-
     public function rules()
     {
         $rules = [
@@ -41,6 +40,11 @@ class StoreBancaRequest extends FormRequest
             'tipo_entrega' => [
                 'required',
                 'in:ENTREGA,RETIRADA'
+            ],
+            'imagem' => [
+                'nullable',
+                'image',
+                'max:5120'
             ]
         ];
 
@@ -57,7 +61,9 @@ class StoreBancaRequest extends FormRequest
             'date_format' => ':attribute deve estar no formato: hora:minuto:segundo.',
             'horario_funcionamento.before' => 'Horário de funcionamento deve ser antes do fechamento.',
             'horario_fechamento.after' => 'Horário de fechamento deve ser depois da abertura.',
-            'tipo_entrega.in' => 'Tipo de entrega de ser entrega ou retirada'
+            'tipo_entrega.in' => 'Tipo de entrega de ser entrega ou retirada',
+            'imagem.image' => 'O arquivo enviado não é uma imagem',
+            'imagem.max' => 'A imagem enviada é muito grande (máximo de :max KB)'
         ];
     }
 }
