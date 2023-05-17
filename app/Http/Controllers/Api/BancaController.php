@@ -93,7 +93,7 @@ class BancaController extends Controller
     {
         Auth::user()->papel->banca()->delete();
 
-        return response()->json(true);
+        return response()->noContent();
     }
 
     public function getImagem($id)
