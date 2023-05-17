@@ -17,8 +17,7 @@ class CheckBancaValida
      */
     public function handle(Request $request, Closure $next)
     {
-
-        if (!Auth::user()->papel->banca || Auth::user()->papel->banca->id != $request->id) {
+        if (!Auth::user()->papel->banca || Auth::user()->papel->banca->id != $request->banca) {
             return response()->json([
                 'error' => [
                     'message' => 'Operação não autorizada.'

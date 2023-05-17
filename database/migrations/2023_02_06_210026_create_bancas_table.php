@@ -16,15 +16,15 @@ return new class extends Migration
         Schema::create('bancas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('nome')->nullable(false);
-            $table->string('descricao')->nullable(false);
-            $table->time('horario_funcionamento')->nullable(false);
-            $table->time('horario_fechamento')->nullable(false);
+            $table->string('nome');
+            $table->string('descricao');
+            $table->time('horario_funcionamento');
+            $table->time('horario_fechamento');
             $table->boolean('funcionamento')->default(false);
-            $table->float('preco_minimo')->nullable(false);
-            $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA'])->nullable(false);
+            $table->float('preco_minimo');
+            $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA']);
             $table->foreignId('feira_id')->default(1)->constrained('feiras');
-            $table->foreignId('produtor_id')->nullable(false)->constrained('produtores')->onDelete('cascade');
+            $table->foreignId('produtor_id')->constrained('produtores')->onDelete('cascade');
             $table->softDeletes();
         });
     }
