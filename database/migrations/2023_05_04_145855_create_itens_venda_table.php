@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('itens_venda', function (Blueprint $table) {
             $table->id();
 
+            $table->string('tipo_unidade');
             $table->integer('quantidade')->nullable(false);
             $table->decimal('preco')->nullable(false);
 
