@@ -80,8 +80,9 @@ class ProdutorController extends Controller
 
     public function destroy($id)
     {
+        $produtor = Produtor::findOrFail($id);
         DB::beginTransaction();
-        $produtor = Produtor::find($id);
+        $produtor->user()->delete();
         $produtor->delete();
         DB::commit();
         return response()->noContent();
