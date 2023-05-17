@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bairros', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->unique();
-            $table->float('taxa')->nullable(false);
+            $table->float('taxa');
             $table->timestamps();
         });
     }
