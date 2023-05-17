@@ -24,7 +24,7 @@ return new class extends Migration
             $table->float('preco_minimo');
             $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA']);
             $table->foreignId('feira_id')->default(1)->constrained('feiras');
-            $table->foreignId('produtor_id')->constrained('produtores');
+            $table->foreignId('produtor_id')->constrained('produtores')->onDelete('cascade');
             $table->softDeletes();
         });
     }
