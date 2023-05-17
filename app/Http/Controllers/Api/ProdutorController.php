@@ -30,13 +30,14 @@ class ProdutorController extends Controller
     {
         DB::beginTransaction();
         try {
-            $produtor = Produtor::create();
+            $produtor = Produtor::create(['bairro' => $request->bairro]);
 
             $data_user = $request->only(['name', 'email', 'apelido', 'telefone', 'cpf', 'cnpj']);
             $data_user['password'] = Hash::make($request->password);
             $produtor = $produtor->user()->create($data_user);
 
-            $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento', 'bairro_id']);
+            $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento']);
+            $data_endereco['bairro_id'] = 1; // bairro_id de produtores deverá corresponder a "outros" na tabela de bairros
             $endereco = $produtor->endereco()->create($data_endereco);
             DB::commit();
             return response()->json([
@@ -62,20 +63,20 @@ class ProdutorController extends Controller
 
     public function update(Request $request)
     {
-        $produtor = Auth::user();
+        $user = Auth::user();
         DB::beginTransaction();
-        if (!$produtor) {
-
+        if (!$user) {
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-        $produtor = User::find($produtor->id);
+        $user = User::find($user->id);
         $keys = ['name','apelido','telefone','email'];
         $dados = $request->only($keys);
-        $dados['password'] = Hash::make($request->only('password'));
-        $produtor->update($dados);
-        $produtor->papel;
+        $dados['password'] = Hash::make($request->password);
+        $user->update($dados);
+        $user->papel->update(['bairro' => $request->bairro]);
+        $user->papel;
         DB::commit();
-        return response()->json([$produtor], 200);
+        return response()->json([$user], 200);
     }
 
     public function destroy($id)

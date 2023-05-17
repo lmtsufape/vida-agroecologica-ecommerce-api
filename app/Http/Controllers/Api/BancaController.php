@@ -38,10 +38,10 @@ class BancaController extends Controller
                 return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
             }
 
-            $banca->imagem()->create(["caminho" => $caminho]);
+            $banca->imagem()->create(['caminho' => $caminho]);
         }
         DB::commit();
-        return response()->json(["banca" => $banca], 201);
+        return response()->json(['banca' => $banca], 201);
     }
 
     public function show($id)
