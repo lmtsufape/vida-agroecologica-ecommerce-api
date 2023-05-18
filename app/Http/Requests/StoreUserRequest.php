@@ -81,7 +81,7 @@ class StoreUserRequest extends FormRequest
 
         if ($this->segment(2) === 'produtores') {
             $rules['bairro_id'] = ['nullable', 'integer', 'max:5'];
-            $rules['bairro'] = ['required', 'regex:/^[a-zA-ZÀ-ÿ\s]+$/', 'min:3', 'max:40'];
+            $rules['bairro'] = ['required', 'regex:/^[a-zA-ZÀ-ÿ\s0-9]+$/', 'min:3', 'max:40'];
         }
 
         return $rules;
