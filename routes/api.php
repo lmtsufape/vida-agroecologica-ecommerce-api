@@ -66,6 +66,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return response()->json(['produtos' => $produtos]);
     });
     Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
+    Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);

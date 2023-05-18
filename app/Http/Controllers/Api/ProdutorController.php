@@ -88,4 +88,11 @@ class ProdutorController extends Controller
         DB::commit();
         return response()->noContent();
     }
+
+    public function getBanca($produtorId)
+    {
+        $produtor = Produtor::findOrFail($produtorId);
+
+        return response()->json(['Banca' => $produtor->banca]);
+    }
 }
