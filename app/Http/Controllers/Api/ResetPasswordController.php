@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
@@ -13,7 +15,7 @@ class ResetPasswordController extends Controller
     public function sendResetEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email'
         ]);
 
         $response = Password::sendResetLink($request->only('email'));
@@ -38,18 +40,21 @@ class ResetPasswordController extends Controller
         $request->validate([
             'email' => 'required|email',
             'token' => 'required|string',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $response = Password::reset($request->only(
             'email', 'password', 'password_confirmation', 'token'
-        ), function ($user, $password) {
+        ), function (User $user, String $password) {
             $user->forceFill([
                 'password' => Hash::make($password)
-            ])->setRememberToken(Hash::make(Str::random(60)));
+            ])->setRememberToken(Str::random(60));
 
             $user->save();
+
+            event(new PasswordReset($user));
         });
+
 
         if ($response === Password::PASSWORD_RESET) {
             return response()->json(['message' => 'Senha redefinida com sucesso']);
