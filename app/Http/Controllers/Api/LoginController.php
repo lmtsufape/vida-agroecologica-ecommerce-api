@@ -19,7 +19,7 @@ class LoginController extends Controller{
         $user = Auth::user();
         $token =  $user->createToken('verified');
         $usuario = ['id' => $user->id, 'token' => $token->plainTextToken, 'nome' => $user->name,
-        'email' => $user->email, 'papel' => $user->papel_type];
+        'email' => $user->email, 'papel' => $user->papel_type, 'papel_id' => $user->papel_id];
 
         return response()->json(['user' => $usuario], 200);
     }
