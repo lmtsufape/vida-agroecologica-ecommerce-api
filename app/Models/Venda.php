@@ -13,9 +13,9 @@ class Venda extends Model
 
     protected $fillable = ['status', 'data_pedido', 'total', 'comprovante_pagamento'];
 
-    public function forma_pagamento(): BelongsTo
+    public function formaPagamento(): BelongsTo
     {
-        return $this->belongsTo(Forma_pagamento::class);
+        return $this->belongsTo(FormaPagamento::class);
     }
 
     public function produtor(): BelongsTo
