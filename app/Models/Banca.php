@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -41,5 +42,10 @@ class Banca extends Model
     public function imagem(): MorphOne
     {
         return $this->morphOne(Imagem::class, 'imageable');
+    }
+
+    public function formasPagamento(): BelongsToMany
+    {
+        return $this->belongsToMany(FormaPagamento::class, 'banca_forma_pagamento', 'banca_id', 'forma_pagamento_id');
     }
 }

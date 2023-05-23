@@ -45,6 +45,9 @@ class StoreBancaRequest extends FormRequest
                 'nullable',
                 'image',
                 'max:5120'
+            ],
+            'formas_pagamento' => [
+                'required'
             ]
         ];
 
