@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\Produtor;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,7 @@ class ProdutorController extends Controller
             $data_user = $request->only(['name', 'email', 'apelido', 'telefone', 'cpf', 'cnpj']);
             $data_user['password'] = Hash::make($request->password);
             $produtor = $produtor->user()->create($data_user);
+            event(new Registered($produtor->user));
 
             $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento']);
             $data_endereco['bairro_id'] = 1; // bairro_id de produtores deverá corresponder a "outros" na tabela de bairros
