@@ -25,7 +25,8 @@ class VendaController extends Controller
         $venda->produtor()->associate(Produtor::find($request->produtor));
         $venda->formaPagamento()->associate(FormaPagamento::find($request->forma_pagamento));
         $venda->save();
-        $total = 0;
+        $subtotal = 0;
+        $taxaEntrega = Auth::user()->endereco->bairro->taxa;
 
         foreach ($request->produtos as $produto) {
             $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
@@ -36,10 +37,12 @@ class VendaController extends Controller
             $item->venda()->associate($venda);
             $item->produto()->associate($prod);
             $item->save();
-            $total += $prod->preco * $produto[1];
+            $subtotal += $prod->preco * $produto[1];
         }
 
-        $venda->total = $total;
+        $venda->subtotal = $subtotal;
+        $venda->taxa_entrega = $taxaEntrega;
+        $venda->total = $subtotal + $taxaEntrega;
         $venda->save();
 
         DB::commit();
