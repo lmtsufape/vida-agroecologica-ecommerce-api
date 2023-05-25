@@ -33,6 +33,13 @@ class ConsumidorController extends Controller
             return response()->json(['erro' => 'Não foi possível criar o usuário'], 400);
         }
         $consumidor->password = Hash::make($request->password);
+        $consumidor->endereco()->create($request->only(
+            'rua',
+            'numero',
+            'cep',
+            'complemento',
+            'bairro_id'
+        ));
         $consumidor->save();
         DB::commit();
         return response()->json(['usuário' => $consumidor], 201);
@@ -46,16 +53,22 @@ class ConsumidorController extends Controller
         }
         return response()->json(['usuário' => $consumidor], 200);
     }
-    public function update(StoreUserRequest $request)
+    public function update(Request $request, $id)
     {
         DB::beginTransaction();
 
-        $consumidor = Consumidor::find($request->consumidor);
+        $consumidor = Consumidor::find($id);
         if (!$consumidor) {
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-        $consumidor->fill($request->all());
-        $consumidor->save();
+        $consumidor->user()->update($request->only('nome', 'apelido', 'telefone'));
+        $consumidor->user->endereco()->update($request->only(
+            'rua',
+            'numero',
+            'cep',
+            'complemento',
+            'bairro_id'
+        ));
         $consumidor->user;
         DB::commit();
         return response()->json([$consumidor], 200);
