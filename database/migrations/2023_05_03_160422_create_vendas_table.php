@@ -18,6 +18,8 @@ return new class extends Migration
 
             $table->string('status');
             $table->dateTime('data_pedido');
+            $table->decimal('subtotal');
+            $table->decimal('taxa de entrega');
             $table->decimal('total')->default(0);
             $table->binary('comprovante_pagamento')->nullable();
 
