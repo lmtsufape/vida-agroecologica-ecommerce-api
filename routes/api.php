@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\VendaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
+
+        Route::post('/vendas', [VendaController::class, 'store']);
     });
     //fora dos middlewares
     Route::get('/categorias', function (Request $request) {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -37,6 +38,11 @@ class Banca extends Model
     public function produtos()
     {
         return $this->hasMany(Produto::class);
+    }
+
+    public function produtor(): BelongsTo
+    {
+        return $this->belongsTo(Produtor::class);
     }
 
     public function imagem(): MorphOne

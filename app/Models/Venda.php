@@ -30,6 +30,6 @@ class Venda extends Model
 
     public function itens(): HasMany
     {
-        return $this->hasMany(Item_venda::class);
+        return $this->hasMany(ItemVenda::class);
     }
 }
