@@ -23,7 +23,8 @@ class VendaController extends Controller
         $venda->data_pedido = Carbon::now();
         $venda->consumidor()->associate(Auth::user()->papel);
         $venda->produtor()->associate(Produtor::find($request->produtor));
-        $venda->formaPagamento()->associate(FormaPagamento::find($request->forma_pagamento));
+        $formaPagamento = FormaPagamento::find($request->forma_pagamento);
+        $venda->formaPagamento()->associate($formaPagamento);
         $venda->save();
         $subtotal = 0;
         $taxaEntrega = Auth::user()->endereco->bairro->taxa;
