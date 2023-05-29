@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
@@ -18,48 +17,40 @@ class ResetPasswordController extends Controller
             'email' => 'required|email'
         ]);
 
-        $response = Password::sendResetLink($request->only('email'));
-
-        if ($response === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => 'Email de redefinição de senha enviado com sucesso']);
-        } else {
-            return response()->json(['message' => 'Falha ao enviar o email de redefinição de senha'], 500);
-        }
+        $status = Password::sendResetLink($request->only('email'));
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Email de redefinição de senha enviado com sucesso'], 200)
+            : response()->json(['message' => 'Falha ao enviar o email de redefinição de senha'], 500);
     }
 
-    public function showResetForm(Request $request)
+    public function showResetForm($token)
     {
-        $email = $request->email;
-        $token = $request->token;
-
-        return view('auth.passwords.reset', compact('email', 'token'));
+        return view('auth.reset-password', ['token' => $token]);
     }
 
     public function resetPassword(Request $request)
     {
         $request->validate([
+            'token' => 'required',
             'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        $response = Password::reset($request->only(
-            'email', 'password', 'password_confirmation', 'token'
-        ), function (User $user, String $password) {
-            $user->forceFill([
-                'password' => Hash::make($password)
-            ])->setRememberToken(Str::random(60));
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
 
-            $user->save();
+                $user->save();
 
-            event(new PasswordReset($user));
-        });
+                event(new PasswordReset($user));
+            }
+        );
 
-
-        if ($response === Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'Senha redefinida com sucesso']);
-        } else {
-            return response()->json(['message' => 'Falha ao redefinir a senha'], 500);
-        }
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Senha redefinida com sucesso'], 200)
+            : response()->json(['message' => 'Falha ao redefinir a senha'], 500);
     }
 }
