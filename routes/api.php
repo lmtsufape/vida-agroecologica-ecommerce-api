@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -77,3 +78,6 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
+
+// Rota para solicitar o email de redefinição de senha
+Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;
