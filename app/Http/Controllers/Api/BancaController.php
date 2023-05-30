@@ -101,7 +101,7 @@ class BancaController extends Controller
         $imagem = Banca::findOrFail($id)->imagem;
 
         if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
-            return response()->json(["erro" => "imagem não encontrada"]);
+            return response()->json(["erro" => "imagem não encontrada"],404);
         }
 
         $file = Storage::get($imagem->caminho);
