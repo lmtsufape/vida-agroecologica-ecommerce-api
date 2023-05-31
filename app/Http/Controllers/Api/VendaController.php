@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\ItemVenda;
 use App\Models\Produtor;
+use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,24 +27,24 @@ class VendaController extends Controller
         $formaPagamento = FormaPagamento::find($request->forma_pagamento);
         $venda->formaPagamento()->associate($formaPagamento);
         $venda->save();
-        $subtotal = 0;
-        $taxaEntrega = Auth::user()->endereco->bairro->taxa;
+        $subtotal = BigDecimal::of('0.00');
+        $taxaEntrega = BigDecimal::of(Auth::user()->endereco->bairro->taxa);
 
         foreach ($request->produtos as $produto) {
             $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
             $item = new ItemVenda();
             $item->tipo_unidade = $prod->tipo_unidade;
             $item->quantidade = $produto[1];
-            $item->preco = $prod->preco;
+            $item->preco = BigDecimal::of($prod->preco);
             $item->venda()->associate($venda);
             $item->produto()->associate($prod);
             $item->save();
-            $subtotal += $prod->preco * $produto[1];
+            $subtotal = $subtotal->plus(BigDecimal::of($prod->preco)->multipliedBy($produto[1])); // preço x quantidade
         }
 
         $venda->subtotal = $subtotal;
         $venda->taxa_entrega = $taxaEntrega;
-        $venda->total = $subtotal + $taxaEntrega;
+        $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
 
         DB::commit();
