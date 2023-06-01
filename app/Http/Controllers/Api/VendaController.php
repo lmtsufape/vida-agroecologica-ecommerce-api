@@ -62,6 +62,20 @@ class VendaController extends Controller
 
     public function show($id)
     {
-        return response()->json(['venda' => Venda::findOrFail($id)]);
+        $venda = Venda::findOrFail($id);
+        $comprovante = $venda->comprovante_pagamento != null;
+        return response()->json(['venda' => $venda->makeHidden('comprovante_pagamento'), 'comprovante' => $comprovante]);
+    }
+
+    public function anexarComprovante(Request $request, $id)
+    {
+        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
+
+        $venda = Venda::findOrFail($id);
+        $conteudo = $request->file('comprovante');
+        $venda->comprovante_pagamento = $conteudo;
+        $venda->save();
+
+        return response()->json(['comprovante' => $conteudo]);
     }
 }
