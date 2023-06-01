@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\DB;
 
 class VendaController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        dd($user->papel->compras());
+        $transacoes = Venda::find(1);
+
+        return response()->json(['transações' => $transacoes], 200);
+    }
+
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -49,5 +58,10 @@ class VendaController extends Controller
 
         DB::commit();
         return response()->json(['venda' => $venda], 200);
+    }
+
+    public function show($id)
+    {
+        return response()->json(['venda' => Venda::findOrFail($id)]);
     }
 }

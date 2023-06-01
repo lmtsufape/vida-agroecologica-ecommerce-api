@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/vendas', [VendaController::class, 'store']);
     });
     //fora dos middlewares
+    Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
     Route::get('/categorias', function (Request $request) {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });
