@@ -19,9 +19,9 @@ class VendaController extends Controller
     public function index()
     {
         $user = Auth::user();
-        dd($user->papel->compras());
-        $transacoes = Venda::find(1);
-
+        $transacoes = $user->papel_type == 'Produtor'
+            ? $user->papel->vendas
+            : $user->papel->compras;
         return response()->json(['transações' => $transacoes], 200);
     }
 
