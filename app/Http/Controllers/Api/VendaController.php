@@ -6,6 +6,7 @@ use App\Models\ItemVenda;
 use App\Models\Produtor;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
+use finfo;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\FormaPagamento;
@@ -73,9 +74,23 @@ class VendaController extends Controller
 
         $venda = Venda::findOrFail($id);
         $conteudo = $request->file('comprovante');
-        $venda->comprovante_pagamento = $conteudo;
+        $venda->comprovante_pagamento = base64_encode(file_get_contents($conteudo));
         $venda->save();
 
         return response()->json(['comprovante' => $conteudo]);
+    }
+
+    public function verComprovante($id)
+    {
+        $venda = Venda::findOrFail($id);
+        $file = $venda->comprovante_pagamento;
+
+        if ($file == null) {
+            return response()->json(['error' => 'A venda não possui comprovante de pagamento'], 404);
+        }
+
+        $file = base64_decode($file);
+
+        return response($file)->header('Content-Type', $file->mime_type);
     }
 }

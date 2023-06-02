@@ -56,6 +56,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::post('/vendas', [VendaController::class, 'store']);
         Route::post('/vendas/{id}/comprovantes', [VendaController::class, 'anexarComprovante']);
+        Route::get('/vendas/{id}/comprovantes', [VendaController::class, 'verComprovante']);
     });
     //fora dos middlewares
     Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
