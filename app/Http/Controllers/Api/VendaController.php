@@ -71,26 +71,26 @@ class VendaController extends Controller
     public function anexarComprovante(Request $request, $id)
     {
         $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
-
         $venda = Venda::findOrFail($id);
-        $conteudo = $request->file('comprovante');
-        $venda->comprovante_pagamento = base64_encode(file_get_contents($conteudo));
+        $conteudo = base64_encode(file_get_contents($request->file('comprovante')->path()));
+        $venda->comprovante_pagamento = $conteudo;
         $venda->save();
 
-        return response()->json(['comprovante' => $conteudo]);
-    }
+        return response(base64_decode($venda->comprovante_pagamento))->header('Content-Type', $request->file('comprovante')->getMimeType());
+    }   
 
     public function verComprovante($id)
     {
         $venda = Venda::findOrFail($id);
-        $file = $venda->comprovante_pagamento;
+        $file = base64_decode($venda->comprovante_pagamento);
 
-        if ($file == null) {
+        if (!$file) {
             return response()->json(['error' => 'A venda não possui comprovante de pagamento'], 404);
         }
-
-        $file = base64_decode($file);
-
-        return response($file)->header('Content-Type', $file->mime_type);
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_buffer($finfo, $file);
+        finfo_close($finfo);
+        return response($file)->header('Content-Type', $mimeType);
     }
 }
