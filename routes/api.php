@@ -74,6 +74,7 @@ Route::post('/produtores', [ProdutorController::class, 'store']);
 
 Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
+Route::get('/login',fn () => response()->json(['error' => 'Não autorizado'],401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
@@ -81,13 +82,11 @@ Route::get('/email/verify', function () {
     return response()->json(['message' => 'rota de verificação chamada!']);
 })->middleware('auth')->name('verification.notice');
 
- 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
- 
-    return redirect('/home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
- 
+Route::get('/email/verify/{id}/{hash}',fn (Request $request) =>  
+    response()->json(['message' => 'email  verificado!',
+    'value'=> User::find($request->route('id'))->markEmailAsVerified()]))->
+    name('verification.verify');
+
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
  

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-use function PHPSTORM_META\map;
 
 class ProdutorController extends Controller
 {
@@ -36,7 +35,7 @@ class ProdutorController extends Controller
             $data_user = $request->only(['name', 'email', 'apelido', 'telefone', 'cpf', 'cnpj']);
             $data_user['password'] = Hash::make($request->password);
             $produtor = $produtor->user()->create($data_user);
-            event(new Registered($produtor->user));
+            event(new Registered($produtor));
 
             $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento']);
             $data_endereco['bairro_id'] = 1; // bairro_id de produtores deverá corresponder a "outros" na tabela de bairros
@@ -48,7 +47,7 @@ class ProdutorController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e]);
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 
