@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Models\Banca;
+use App\Models\FormaPagamento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -24,7 +25,9 @@ class BancaController extends Controller
     {
         $user = Auth::user();
         DB::beginTransaction();
-        $banca = $user->papel->banca()->create($request->all());
+        $banca = $user->papel->banca()->create($request->except('formas_pagamento'));
+        $formasPagamento = explode(',', $request->formas_pagamento);
+        $banca->formasPagamento()->sync($formasPagamento);
 
         // Imagem
         if ($request->hasFile('imagem')) {
@@ -38,10 +41,10 @@ class BancaController extends Controller
                 return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
             }
 
-            $banca->imagem()->create(["caminho" => $caminho]);
+            $banca->imagem()->create(['caminho' => $caminho]);
         }
         DB::commit();
-        return response()->json(["banca" => $banca], 201);
+        return response()->json(['banca' => $banca], 201);
     }
 
     public function show($id)
@@ -60,7 +63,9 @@ class BancaController extends Controller
         $user = Auth::user();
         $banca = $user->papel->banca;
         DB::beginTransaction();
-        $banca->update($request->all());
+        $banca->update($request->except('formas_pagamento'));
+        $formasPagamento = explode(',', $request->formas_pagamento);
+        $banca->formasPagamento()->sync($formasPagamento);
 
         // Imagem
         if ($request->hasFile('imagem')) {
@@ -93,7 +98,7 @@ class BancaController extends Controller
     {
         Auth::user()->papel->banca()->delete();
 
-        return response()->json(true);
+        return response()->noContent();
     }
 
     public function getImagem($id)

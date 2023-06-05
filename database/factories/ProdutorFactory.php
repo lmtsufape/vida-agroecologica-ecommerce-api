@@ -27,6 +27,7 @@ class ProdutorFactory extends Factory
     {
 
         return $this->afterMaking(function (Produtor $produtor) {
+            $produtor->bairro = 'boa vista';
             $produtor->save();
             $produtor->user()->create([
                 'name' => fake()->name(),

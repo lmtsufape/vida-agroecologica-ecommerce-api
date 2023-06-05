@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +67,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return response()->json(['produtos' => $produtos]);
     });
     Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
+    Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
@@ -76,3 +78,6 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
+
+// Rota para solicitar o email de redefinição de senha
+Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;

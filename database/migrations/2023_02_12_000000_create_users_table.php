@@ -20,11 +20,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('apelido')->nullable(true);
+            $table->string('apelido')->nullable();
             $table->string('telefone');
-            $table->string('cpf')->unique()->nullable(true);
-            $table->string('cnpj')->unique()->nullable(true);
-            $table->foreignId('endereco_id')->nullable(true)->constrained('enderecos');
+            $table->string('cpf')->unique()->nullable();
+            $table->string('cnpj')->unique()->nullable();
             $table->morphs("papel");
             $table->timestamps();
         });
