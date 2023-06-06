@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,3 +82,6 @@ Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail
 Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
+
+// Rota para solicitar o email de redefinição de senha
+Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;
