@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
-use App\Http\Requests\ApiEmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -78,20 +77,7 @@ Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 4
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
-Route::get('/email/verify', function () {
-    return response()->json(['message' => 'rota de verificação chamada!']);
-})->middleware('auth:sanctum')->name('verification.notice');
-
-Route::get('/email/verify/{id}/{hash}', function (ApiEmailVerificationRequest $request) {
-    $request->fulfill();
- 
-    return redirect('/home');
-})->middleware('signed')->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return response()->json(['message' => 'Verification link sent!']);
-})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail'])->middleware('signed')->name('verification.verify');
+Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
