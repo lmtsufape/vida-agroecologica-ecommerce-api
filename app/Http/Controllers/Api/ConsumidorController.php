@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\Consumidor;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -34,6 +35,7 @@ class ConsumidorController extends Controller
         }
         $consumidor->password = Hash::make($request->password);
         $consumidor->save();
+        event(new Registered($consumidor));
         DB::commit();
         return response()->json(['usuário' => $consumidor], 201);
     }

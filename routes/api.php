@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/busca', 'buscar');
         Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
     });
-    Route::get('/produtos', function() {
+    Route::get('/produtos', function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
@@ -74,23 +74,24 @@ Route::post('/produtores', [ProdutorController::class, 'store']);
 
 Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
-Route::get('/login',fn () => response()->json(['error' => 'Não autorizado'],401))->name('login'); //desnecessário, apenas para teste
+Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
 Route::get('/email/verify', function () {
     return response()->json(['message' => 'rota de verificação chamada!']);
-})->middleware('auth')->name('verification.notice');
+})->middleware('auth:sanctum')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}',fn (Request $request) =>  
-    response()->json(['message' => 'email  verificado!',
-    'value'=> User::find($request->route('id'))->markEmailAsVerified()]))->
-    name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', fn (Request $request) =>
+response()->json([
+    'message' => 'email  verificado!',
+    'value' => App\Models\User::find($request->route('id'))->markEmailAsVerified()
+]))->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
- 
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+    return response()->json(['message' => 'Verification link sent!']);
+})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
