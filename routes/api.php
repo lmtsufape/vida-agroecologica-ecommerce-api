@@ -7,9 +7,9 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Requests\ApiEmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,11 +82,11 @@ Route::get('/email/verify', function () {
     return response()->json(['message' => 'rota de verificação chamada!']);
 })->middleware('auth:sanctum')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', fn (Request $request) =>
-response()->json([
-    'message' => 'email  verificado!',
-    'value' => App\Models\User::find($request->route('id'))->markEmailAsVerified()
-]))->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', function (ApiEmailVerificationRequest $request) {
+    $request->fulfill();
+ 
+    return redirect('/home');
+})->middleware('signed')->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
