@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/busca', 'buscar');
         Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
     });
-    Route::get('/produtos', function() {
+    Route::get('/produtos', function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
@@ -74,8 +74,12 @@ Route::post('/produtores', [ProdutorController::class, 'store']);
 
 Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
+Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
+
+Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail'])->middleware('signed')->name('verification.verify');
+Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
