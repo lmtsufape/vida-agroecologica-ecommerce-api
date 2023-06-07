@@ -6,12 +6,12 @@ use App\Models\ItemVenda;
 use App\Models\Produtor;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
-use finfo;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\FormaPagamento;
 use App\Models\Produto;
 use App\Models\Venda;
+use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -28,11 +28,13 @@ class VendaController extends Controller
 
     public function store(Request $request)
     {
+        $consumidor = Auth::user()->papel;
+
         DB::beginTransaction();
         $venda = new Venda();
         $venda->status = 'pendente';
         $venda->data_pedido = Carbon::now();
-        $venda->consumidor()->associate(Auth::user()->papel);
+        $venda->consumidor()->associate($consumidor);
         $venda->produtor()->associate(Produtor::find($request->produtor));
         $formaPagamento = FormaPagamento::find($request->forma_pagamento);
         $venda->formaPagamento()->associate($formaPagamento);
@@ -58,6 +60,7 @@ class VendaController extends Controller
         $venda->save();
 
         DB::commit();
+        $consumidor->user->notify(new EnviarEmailCompra($venda));
         return response()->json(['venda' => $venda], 200);
     }
 
