@@ -8,6 +8,7 @@ use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreVendaRequest;
 use App\Models\FormaPagamento;
 use App\Models\Produto;
 use App\Models\Venda;
@@ -26,7 +27,7 @@ class VendaController extends Controller
         return response()->json(['transações' => $transacoes], 200);
     }
 
-    public function store(Request $request)
+    public function store(StoreVendaRequest $request)
     {
         $consumidor = Auth::user()->papel;
 
@@ -44,10 +45,15 @@ class VendaController extends Controller
 
         foreach ($request->produtos as $produto) {
             $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
+
             if ($produto[1] > $prod->estoque || !$prod->disponivel) {
                 DB::rollBack();
                 return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.'], 400);
+            } elseif ($request->produtor != $prod->banca->produtor->id) {
+                DB::rollBack();
+                return response()->json(['error' => 'O produto não pertence à banca do produtor especificado'], 400);
             }
+
             $item = new ItemVenda();
             $item->tipo_unidade = $prod->tipo_unidade;
             $item->quantidade = $produto[1];
@@ -89,7 +95,7 @@ class VendaController extends Controller
         $venda->save();
 
         return response(base64_decode($venda->comprovante_pagamento))->header('Content-Type', $request->file('comprovante')->getMimeType());
-    }   
+    }
 
     public function verComprovante($id)
     {
@@ -99,7 +105,7 @@ class VendaController extends Controller
         if (!$file) {
             return response()->json(['error' => 'A venda não possui comprovante de pagamento'], 404);
         }
-        
+
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_buffer($finfo, $file);
         finfo_close($finfo);
