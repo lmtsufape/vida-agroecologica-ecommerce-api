@@ -21,8 +21,8 @@ class VendaController extends Controller
     {
         $user = Auth::user();
         $transacoes = $user->papel_type == 'Produtor'
-            ? $user->papel->vendas
-            : $user->papel->compras;
+            ? $user->papel->vendas->load('itens') //carrega os itens de cada venda
+            : $user->papel->compras->load('itens');
         return response()->json(['transações' => $transacoes], 200);
     }
 
