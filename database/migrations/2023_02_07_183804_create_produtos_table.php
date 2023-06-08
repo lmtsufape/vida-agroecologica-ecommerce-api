@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('banca_id')->constrained('bancas')->onDelete('cascade');
             $table->foreignId('produto_tabelado_id')->constrained('produtos_tabelados')->onDelete('restrict');
             $table->unique(['banca_id', 'produto_tabelado_id']);
+            $table->softDeletes();
         });
     }
 
