@@ -44,6 +44,10 @@ class VendaController extends Controller
 
         foreach ($request->produtos as $produto) {
             $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
+            if ($produto[1] > $prod->estoque || !$prod->disponivel) {
+                DB::rollBack();
+                return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.'], 400);
+            }
             $item = new ItemVenda();
             $item->tipo_unidade = $prod->tipo_unidade;
             $item->quantidade = $produto[1];
@@ -70,6 +74,11 @@ class VendaController extends Controller
         $comprovante = $venda->comprovante_pagamento != null;
         return response()->json(['venda' => $venda->makeHidden('comprovante_pagamento'), 'comprovante' => $comprovante]);
     }
+
+    // public function confirmarVenda($id) {
+    //     $venda = Venda::findOrFail($id);
+
+    // }
 
     public function anexarComprovante(Request $request, $id)
     {
