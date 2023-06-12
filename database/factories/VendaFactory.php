@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\ItemVenda;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,10 +27,5 @@ class VendaFactory extends Factory
             'consumidor_id' => 1,
             'produtor_id' => 1,
         ];
-    }
-
-    public function withItens()
-    {
-        return $this->has(ItemVenda::factory()->count(3), 'itens');
     }
 }

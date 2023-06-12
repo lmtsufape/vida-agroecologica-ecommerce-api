@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\ItemVenda;
-use App\Models\Venda;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,12 +22,5 @@ class ItemVendaFactory extends Factory
             'preco' => fake()->randomFloat(4,1,20),
             'produto_id' => fake()->numberBetween(1, 10),
         ];
-    }
-    public function configure()
-    {
-        return $this->afterCreating(function (ItemVenda $itemVenda) {
-            $itemVenda->venda_id = $itemVenda->venda->id;
-            $itemVenda->save();
-        });
     }
 }

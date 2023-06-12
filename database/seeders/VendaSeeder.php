@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\ItemVenda;
 use App\Models\Venda;
-use Database\Factories\VendaFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 
 class VendaSeeder extends Seeder
@@ -17,7 +17,14 @@ class VendaSeeder extends Seeder
      */
     public function run()
     {
-        Venda::factory()->count(5)->hasItens(2)->create();
-        
+        $quantidadeItens = 3;
+        Venda::factory()->count(5)
+            ->has(
+                ItemVenda::factory()
+                    ->count($quantidadeItens)
+                    ->sequence(fn (Sequence $sequence) => ['produto_id' => $sequence->index % $quantidadeItens + 1])
+                    ->state(fn (array $attributes, Venda $venda) => ['venda_id' => $venda->id]),
+                'itens'
+            )->create();
     }
 }
