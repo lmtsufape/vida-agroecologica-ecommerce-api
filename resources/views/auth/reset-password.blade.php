@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Redefinir senha</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -19,8 +19,8 @@
                 <input type="hidden" name="token" value="{{ $token }}">
 
                 <div class="mb-4">
-                    <label for="email" class="block text-gray-700 font-bold mb-2">Email:</label>
-                    <input id="email" type="text" name="email" required
+                    <label for="email" class="block text-gray-700 font-bold mb-2">E-mail:</label>
+                    <input id="email" type="text" name="email" required value="{{ old('email') }}"
                         class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
@@ -31,15 +31,25 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="password_confirmation" class="block text-gray-700 font-bold mb-2">Confirmação de
-                        senha:</label>
+                    <label for="password_confirmation" 
+                        class="block text-gray-700 font-bold mb-2">Confirmação de senha:</label>
                     <input id="password_confirmation" type="password" name="password_confirmation" required
                         class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
+                @if ($errors->any())
+                    <div class="mb-4">
+                        <ul class="text-red-500">
+                            @foreach ($errors->all() as $error)
+                                <li>* {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="flex items-center justify-between">
                     <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
                         Redefinir senha
                     </button>
                 </div>
