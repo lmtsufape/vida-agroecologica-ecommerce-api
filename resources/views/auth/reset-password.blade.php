@@ -19,8 +19,8 @@
                 <input type="hidden" name="token" value="{{ $token }}">
 
                 <div class="mb-4">
-                    <label for="email" class="block text-gray-700 font-bold mb-2">Email:</label>
-                    <input id="email" type="text" name="email" required
+                    <label for="email" class="block text-gray-700 font-bold mb-2">E-mail:</label>
+                    <input id="email" type="text" name="email" required value="{{ old('email') }}"
                         class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
@@ -37,9 +37,19 @@
                         class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
+                @if ($errors->any())
+                    <div class="mb-4">
+                        <ul class="text-red-500">
+                            @foreach ($errors->all() as $error)
+                                <li>* {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="flex items-center justify-between">
                     <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
                         Redefinir senha
                     </button>
                 </div>
