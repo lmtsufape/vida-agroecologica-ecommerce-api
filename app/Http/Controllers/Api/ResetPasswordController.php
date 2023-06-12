@@ -44,8 +44,6 @@ class ResetPasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Senha redefinida com sucesso'], 200)
-            : response()->json(['message' => 'Falha ao redefinir a senha'], 500);
+        return view('auth.reset-password-result', ['sucesso' => $status === Password::PASSWORD_RESET]);
     }
 }

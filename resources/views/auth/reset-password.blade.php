@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Redefinir senha</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -31,8 +31,8 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="password_confirmation" class="block text-gray-700 font-bold mb-2">Confirmação de
-                        senha:</label>
+                    <label for="password_confirmation" 
+                        class="block text-gray-700 font-bold mb-2">Confirmação de senha:</label>
                     <input id="password_confirmation" type="password" name="password_confirmation" required
                         class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
