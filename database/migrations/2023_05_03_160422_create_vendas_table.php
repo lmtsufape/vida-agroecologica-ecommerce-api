@@ -18,8 +18,10 @@ return new class extends Migration
 
             $table->string('status');
             $table->dateTime('data_pedido');
-            $table->decimal('total');
-            $table->binary('comprovante_pagamento');
+            $table->decimal('subtotal')->default(0);
+            $table->decimal('taxa_entrega')->default(0);
+            $table->decimal('total')->default(0);
+            $table->binary('comprovante_pagamento')->nullable();
 
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento');
             $table->foreignId('consumidor_id')->constrained('consumidores');

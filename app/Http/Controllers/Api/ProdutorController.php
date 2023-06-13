@@ -74,7 +74,7 @@ class ProdutorController extends Controller
         $dados = $request->only($keys);
         $dados['password'] = Hash::make($request->password);
         $user->update($dados);
-        $user->papel->update(['bairro' => $request->bairro]);
+        $user->papel()->update(['bairro' => $request->bairro]);
         $user->papel;
         DB::commit();
         return response()->json([$user], 200);

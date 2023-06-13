@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,9 +54,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
+
+        Route::post('/vendas', [VendaController::class, 'store']);
+        Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
     });
     //fora dos middlewares
-    Route::get('/categorias', function (Request $request) {
+    Route::get('/vendas/{id}/comprovante', [VendaController::class, 'verComprovante']);
+    Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
+    Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });
     Route::controller(ProdutoController::class)->group(function () {

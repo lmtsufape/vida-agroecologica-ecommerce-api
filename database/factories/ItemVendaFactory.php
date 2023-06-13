@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Produto>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ItemVenda>
  */
-class ProdutoFactory extends Factory
+class ItemVendaFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,11 +17,10 @@ class ProdutoFactory extends Factory
     public function definition()
     {
         return [
-            'descricao' => fake()->realText(50),
             'tipo_unidade' => 'unidade',
-            'estoque' => fake()->numberBetween(1,20),
+            'quantidade' => fake()->numberBetween(1, 10),
             'preco' => fake()->randomFloat(4,1,20),
-            'custo' => fake()->randomFloat(4,1,20)
+            'produto_id' => fake()->numberBetween(1, 10),
         ];
     }
 }
