@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ApiEmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,17 @@ class LoginController extends Controller{
         return response()->json($token, 200);
     }
 
+    public function verificarEmail(ApiEmailVerificationRequest $request)
+    {
+        $request->fulfill();
+ 
+        return view('auth.emailVerified');
+    }
 
+    public function reenviarEmail(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
 
+        return response()->json(['message' => 'Verification link sent!']);
+    }
 }
