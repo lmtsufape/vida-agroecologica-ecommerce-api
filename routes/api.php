@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(EnderecoController::class)->group(function () {
         Route::get('/enderecos', 'show');
         Route::put('/enderecos', 'update');
@@ -84,6 +85,9 @@ Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 4
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
 
+Route::get('/email/verify', function () {
+    return response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403);
+})->middleware('auth:sanctum')->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail'])->middleware('signed')->name('verification.verify');
 Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 

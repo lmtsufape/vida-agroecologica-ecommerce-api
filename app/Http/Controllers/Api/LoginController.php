@@ -18,7 +18,7 @@ class LoginController extends Controller{
         }
 
         $user = Auth::user();
-        $token =  $user->createToken('verified');
+        $token =  $user->createToken('autenticar');
         $usuario = ['id' => $user->id, 'token' => $token->plainTextToken, 'nome' => $user->name,
         'email' => $user->email, 'papel' => $user->papel_type, 'papel_id' => $user->papel_id];
 
@@ -33,7 +33,7 @@ class LoginController extends Controller{
             return response()->json(['erro' => 'E-mail ou senha inválidos'], 406);
         }
         $user = Auth::user();
-        $token =  $user->createToken('verified')->plainTextToken;
+        $token =  $user->createToken('autenticar')->plainTextToken;
 
         return response()->json($token, 200);
     }
