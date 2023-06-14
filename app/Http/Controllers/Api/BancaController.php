@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Models\Banca;
 use App\Models\FormaPagamento;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -58,10 +59,14 @@ class BancaController extends Controller
         return response()->json(['banca' => $banca]);
     }
 
-    public function update(StoreBancaRequest $request)
+    public function update(StoreBancaRequest $request, $id)
     {
-        $user = Auth::user();
-        $banca = $user->papel->banca;
+        $user = $request->user();
+        $banca = Banca::findOrFail($id);
+        if ($user->cannot('update', $banca)) {
+            abort(403);
+        }
+
         DB::beginTransaction();
         $banca->update($request->except('formas_pagamento'));
         $formasPagamento = explode(',', $request->formas_pagamento);
@@ -96,7 +101,14 @@ class BancaController extends Controller
 
     public function destroy($id)
     {
-        Auth::user()->papel->banca()->delete();
+        $user = User::findOrFail(Auth::user()->id);
+        $banca = Banca::findOrFail($id);
+
+        if ($user->cannot('delete', $banca)) {
+            abort(403);
+        }
+
+        $user->papel->banca()->delete();
 
         return response()->noContent();
     }

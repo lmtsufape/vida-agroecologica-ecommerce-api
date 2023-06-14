@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/bancas', 'store')->middleware('check_bancas');
             Route::get('/bancas', 'index');
             Route::get('/bancas/{banca}', 'show');
-            Route::put('/bancas', 'update');
+            Route::put('/bancas/{banca}', 'update');
             Route::delete('/bancas/{banca}', 'destroy')->middleware('check_valid_banca');
         });
 
