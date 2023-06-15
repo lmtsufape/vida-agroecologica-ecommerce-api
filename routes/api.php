@@ -7,9 +7,11 @@ use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(EnderecoController::class)->group(function () {
         Route::get('/enderecos', 'show');
         Route::put('/enderecos', 'update');
@@ -53,16 +55,21 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
+
+        Route::post('/vendas', [VendaController::class, 'store']);
+        Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
     });
     //fora dos middlewares
-    Route::get('/categorias', function (Request $request) {
+    Route::get('/vendas/{id}/comprovante', [VendaController::class, 'verComprovante']);
+    Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
+    Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });
     Route::controller(ProdutoController::class)->group(function () {
         Route::post('/busca', 'buscar');
         Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
     });
-    Route::get('/produtos', function() {
+    Route::get('/produtos', function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos]);
     });
@@ -74,8 +81,15 @@ Route::post('/produtores', [ProdutorController::class, 'store']);
 
 Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
+Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
+
+Route::get('/email/verify', function () {
+    return response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403);
+})->middleware('auth:sanctum')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail'])->middleware('signed')->name('verification.verify');
+Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 

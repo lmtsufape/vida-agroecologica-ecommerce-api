@@ -27,7 +27,7 @@ class StoreProdutoRequest extends FormRequest
     {
         return [
             'descricao' =>  'required|max:250|string',
-            'tipo_unidade' => 'required',
+            'tipo_unidade' => 'required|in:unidade,fracionario,peso',
             'estoque' => 'required|integer',
             'preco' => 'required|decimal:1,3',
             'custo' => 'required|decimal:1,3'
@@ -42,6 +42,7 @@ class StoreProdutoRequest extends FormRequest
             'string' => ':attribute deve ser uma string.',
             'integer' =>':attribute deve ser inteiro.',
             'decimal' =>':attribute deve ser decimal.',
+            'in' => ':attribute deve está entre :values'
         ];
     }
 }
