@@ -62,14 +62,19 @@ class ProdutorController extends Controller
         return response()->json(['usuário' => $produtor], 200);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = $request->user();
+        $produtor = Produtor::findOrFail($id);
+        if ($user->cannot('update', $produtor)) {
+            abort(403);
+        }
+        $user = $produtor->user;
+
         DB::beginTransaction();
         if (!$user) {
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
-        $user = User::find($user->id);
         $keys = ['name','apelido','telefone','email'];
         $dados = $request->only($keys);
         $dados['password'] = Hash::make($request->password);
@@ -82,7 +87,12 @@ class ProdutorController extends Controller
 
     public function destroy($id)
     {
+        $user = User::find(Auth::user()->id);
         $produtor = Produtor::findOrFail($id);
+        if ($user->cannot('delete', $produtor)) {
+            abort(403);
+        }
+
         DB::beginTransaction();
         $produtor->user()->delete();
         $produtor->delete();

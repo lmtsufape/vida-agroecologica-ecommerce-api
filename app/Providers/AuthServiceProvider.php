@@ -4,7 +4,9 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Consumidor;
 use App\Policies\BancaPolicy;
+use App\Policies\ProdutorPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -16,7 +18,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        Banca::class => BancaPolicy::class
+        Banca::class => BancaPolicy::class,
+        Produtor::class => ProdutorPolicy::class,
+        Consumidor::class => ConsumidorPolicy::class
     ];
 
     /**
