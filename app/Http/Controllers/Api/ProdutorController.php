@@ -37,7 +37,7 @@ class ProdutorController extends Controller
             $produtor = $produtor->user()->create($data_user);
             event(new Registered($produtor));
 
-            $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento']);
+            $data_endereco = $request->only(['rua', 'cep', 'numero', 'complemento', 'cidade', 'estado', 'país']);
             $data_endereco['bairro_id'] = 1; // bairro_id de produtores deverá corresponder a "outros" na tabela de bairros
             $endereco = $produtor->endereco()->create($data_endereco);
             DB::commit();
@@ -75,6 +75,7 @@ class ProdutorController extends Controller
         $dados['password'] = Hash::make($request->password);
         $user->update($dados);
         $user->papel()->update(['bairro' => $request->bairro]);
+        $user->endereco()->update($request->only(['rua', 'cep', 'numero', 'complemento', 'cidade', 'estado', 'país']));
         $user->papel;
         DB::commit();
         return response()->json([$user], 200);

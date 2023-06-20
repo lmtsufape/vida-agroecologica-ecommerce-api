@@ -42,6 +42,7 @@ class VendaController extends Controller
         $venda->save();
         $subtotal = BigDecimal::of('0.00');
         $taxaEntrega = BigDecimal::of(Auth::user()->endereco->bairro->taxa);
+        $itens = [];
 
         foreach ($request->produtos as $produto) {
             $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
@@ -61,6 +62,7 @@ class VendaController extends Controller
             $item->venda()->associate($venda);
             $item->produto()->associate($prod);
             $item->save();
+            array_push($itens, $item->makeHidden('venda'));
             $subtotal = $subtotal->plus(BigDecimal::of($prod->preco)->multipliedBy($produto[1])); // preço x quantidade
         }
 
@@ -71,7 +73,7 @@ class VendaController extends Controller
 
         DB::commit();
         $consumidor->user->notify(new EnviarEmailCompra($venda));
-        return response()->json(['venda' => $venda], 200);
+        return response()->json(['venda' => $venda->makeHidden('consumidor'), 'consumidor' => $consumidor->user->makeHidden('endereco'), 'endereço' => $consumidor->user->endereco, 'itens' => $itens], 200);
     }
 
     public function show($id)
