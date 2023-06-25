@@ -15,6 +15,7 @@ use App\Models\Venda;
 use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class VendaController extends Controller
 {
@@ -90,8 +91,12 @@ class VendaController extends Controller
 
     public function anexarComprovante(Request $request, $id)
     {
-        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
         $venda = Venda::findOrFail($id);
+        if (! Gate::allows('anexar_comprovante', $venda)) {
+            abort(403);
+        }
+
+        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
         $conteudo = base64_encode(file_get_contents($request->file('comprovante')->path()));
         $venda->comprovante_pagamento = $conteudo;
         $venda->save();
