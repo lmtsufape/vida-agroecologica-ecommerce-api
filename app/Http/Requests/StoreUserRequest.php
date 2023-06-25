@@ -72,6 +72,21 @@ class StoreUserRequest extends FormRequest
                 'string',
                 'max:50'
             ],
+            'cidade' => [
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
+                'max:50'
+            ],
+            'estado' => [
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
+                'max:50'
+            ],
+            'país' => [
+                'required',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
+                'max:50'
+            ],
             'bairro_id' => [
                 'required',
                 'integer',

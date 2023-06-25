@@ -39,6 +39,9 @@ class ConsumidorController extends Controller
             'numero',
             'cep',
             'complemento',
+            'cidade',
+            'estado',
+            'país',
             'bairro_id'
         ));
         $consumidor->save();
