@@ -17,9 +17,12 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('rua');
-            $table->string('cep');
             $table->integer('numero');
+            $table->string('cep');
             $table->string('complemento')->nullable();
+            $table->string('cidade');
+            $table->string('estado');
+            $table->string('país');
             $table->morphs('origem');
             $table->foreignId('bairro_id')->constrained('bairros');
         });

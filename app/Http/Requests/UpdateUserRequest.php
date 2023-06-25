@@ -4,13 +4,23 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
     public function authorize()
     {
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, mixed>
+     */
     public function rules()
     {
         $rules = [
@@ -19,18 +29,6 @@ class StoreUserRequest extends FormRequest
                 'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // regex para validar apenas letras do alfabeto (maiúsculas e minúsculas, com acento ou não) e espaços em branco.
                 'min:3',
                 'max:50'
-            ],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'unique:users'
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'max:30'
             ],
             'apelido' => [
                 'nullable',
@@ -41,17 +39,6 @@ class StoreUserRequest extends FormRequest
             'telefone' => [
                 'required',
                 'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
-                'unique:users'
-            ],
-            'cpf' => [
-                'nullable',
-                'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"
-                'unique:users'
-            ],
-            'cnpj' => [
-                'nullable',
-                'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/', // considerando cnpj no formato "99.999.999/9999-99"
-                'unique:users'
             ],
             'rua' => [
                 'required',
