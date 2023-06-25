@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Produtor;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -62,7 +62,7 @@ class ProdutorController extends Controller
         return response()->json(['usuário' => $produtor], 200);
     }
 
-    public function update(Request $request)
+    public function update(UpdateUserRequest $request)
     {
         $user = Auth::user();
         DB::beginTransaction();
@@ -70,11 +70,12 @@ class ProdutorController extends Controller
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
         $user = User::find($user->id);
-        $keys = ['name','apelido','telefone','email'];
+        $keys = ['name', 'apelido', 'telefone', 'email'];
         $dados = $request->only($keys);
         $dados['password'] = Hash::make($request->password);
         $user->update($dados);
         $user->papel()->update(['bairro' => $request->bairro]);
+        $user->endereco()->update($request->only(['cep', 'numero', 'bairro', 'cidade', 'estado', 'país', 'complemento']));
         $user->papel;
         DB::commit();
         return response()->json([$user], 200);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('tipo_unidade');
-            $table->integer('quantidade');
+            $table->double('quantidade', 6, 3);
             $table->decimal('preco');
 
             $table->foreignId('produto_id')->constrained()->onDelete('restrict');
