@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('descricao');
             $table->string('tipo_unidade');
-            $table->integer('estoque');
+            $table->double('estoque', 6, 3);
             $table->decimal('preco');
             $table->decimal('custo');
             $table->boolean('disponivel')->default(true);
