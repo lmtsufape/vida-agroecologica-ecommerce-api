@@ -17,17 +17,20 @@ return new class extends Migration
             $table->id();
 
             $table->string('status');
-            $table->dateTime('data_pedido');
             $table->decimal('subtotal')->default(0);
             $table->decimal('taxa_entrega')->default(0);
             $table->decimal('total')->default(0);
             $table->binary('comprovante_pagamento')->nullable();
+            $table->dateTime('data_pedido');
+            $table->dateTime('data_confirmacao')->nullable();
+            $table->dateTime('data_cancelamento')->nullable();
+            $table->dateTime('data_pagamento')->nullable();
+            $table->dateTime('data_envio')->nullable();
+            $table->dateTime('data_entrega')->nullable();
 
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento');
             $table->foreignId('consumidor_id')->constrained('consumidores');
             $table->foreignId('produtor_id')->constrained('produtores');
-
-            $table->timestamps();
         });
     }
 

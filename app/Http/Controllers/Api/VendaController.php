@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\PedidoConfirmado;
 use App\Models\ItemVenda;
 use App\Models\Produtor;
 use Brick\Math\BigDecimal;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVendaRequest;
@@ -34,8 +34,8 @@ class VendaController extends Controller
 
         DB::beginTransaction();
         $venda = new Venda();
-        $venda->status = 'pendente';
-        $venda->data_pedido = Carbon::now();
+        $venda->status = 'pedido realizado';
+        $venda->data_pedido = now();
         $venda->consumidor()->associate($consumidor);
         $venda->produtor()->associate(Produtor::find($request->produtor));
         $formaPagamento = FormaPagamento::find($request->forma_pagamento);
@@ -46,14 +46,14 @@ class VendaController extends Controller
         $itens = [];
 
         foreach ($request->produtos as $produto) {
-            $prod = Produto::find($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
+            $prod = Produto::findOrFail($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
 
             if ($produto[1] > $prod->estoque || !$prod->disponivel) {
                 DB::rollBack();
-                return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.'], 400);
+                return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.', 'produto' => $prod], 400);
             } elseif ($request->produtor != $prod->banca->produtor->id) {
                 DB::rollBack();
-                return response()->json(['error' => 'O produto não pertence à banca do produtor especificado'], 400);
+                return response()->json(['error' => 'O produto não pertence à banca do produtor especificado', 'produto' => $prod], 400);
             }
 
             $item = new ItemVenda();
@@ -65,6 +65,8 @@ class VendaController extends Controller
             $item->save();
             array_push($itens, $item->makeHidden('venda'));
             $subtotal = $subtotal->plus(BigDecimal::of($prod->preco)->multipliedBy($produto[1])); // preço x quantidade
+            $prod->estoque -= $produto[1];
+            $prod->save();
         }
 
         $venda->subtotal = $subtotal;
@@ -84,15 +86,57 @@ class VendaController extends Controller
         return response()->json(['venda' => $venda->makeHidden('comprovante_pagamento'), 'comprovante' => $comprovante]);
     }
 
-    // public function confirmarVenda($id) {
-    //     $venda = Venda::findOrFail($id);
+    public function confirmarVenda(Request $request, $id)
+    {
+        $request->validate(['confirmacao' => 'required']);
+        $venda = Venda::findOrFail($id);
+        if ($venda->status != 'pedido realizado') {
+            return response()->json(['erro' => 'Esta venda já foi confirmada ou recusada'], 400);
+        }
 
-    // }
+        DB::beginTransaction();
+        if ($request->confirmacao) {
+            $venda->status = 'pagamento pendente';
+            $venda->data_confirmacao = now();
+            $venda->save();
+            event(new PedidoConfirmado($venda));
+        } else {
+            $this->cancelarCompra('produtor', $venda->id);
+        }
+        DB::commit();
+    }
+
+    public function cancelarCompra($autor = 'consumidor', $id)
+    {
+        $venda = Venda::findOrFail($id);
+        if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente') {
+            return response()->json(['erro' => 'Esta venda não pode mais ser cancelada.'], 400);
+        }
+        DB::beginTransaction();
+        foreach ($venda->itens as $item) {
+            $produto = $item->produto;
+            $produto->estoque += $item->quantidade;
+            $produto->save();
+        }
+        $status = '';
+        switch ($autor) {
+            case 'consumidor':
+                $status = 'pedido cancelado';
+            case 'produtor':
+                $status = 'pedido recusado';
+            case 'sistema':
+                $status = 'pagamento expirado';
+        }
+        $venda->status = $status;
+        $venda->data_cancelamento = now();
+        $venda->save();
+        DB::commit();
+    }
 
     public function anexarComprovante(Request $request, $id)
     {
         $venda = Venda::findOrFail($id);
-        if (! Gate::allows('anexar_comprovante', $venda)) {
+        if (!Gate::allows('anexar_comprovante', $venda)) {
             abort(403);
         }
 
