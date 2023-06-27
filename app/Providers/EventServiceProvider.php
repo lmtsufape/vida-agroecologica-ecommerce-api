@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\PedidoConfirmado;
+use App\Jobs\VerifyPedido;
 use App\Listeners\CancelarPedido;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,7 +22,8 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         PedidoConfirmado::class => [
-            CancelarPedido::class,
+            //CancelarPedido::class,
+            VerifyPedido::class,
         ],
     ];
 

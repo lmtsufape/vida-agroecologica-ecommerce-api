@@ -2,8 +2,12 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\Api\VendaController;
+use App\Models\Venda;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -17,6 +21,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
+        $schedule->call(function () {
+            $vendas = DB::table('vendas')->where('status','!=','Concluído');
+            foreach ($vendas as $venda => $value) {
+                $diff = Carbon::diffAsMinutes($venda->created_at);
+                if($diff > 2) {
+                    $ven = VendaController::cancelarCompra($venda->id);
+                }
+
+            }
+        })->everyMinute();
     }
 
     /**
