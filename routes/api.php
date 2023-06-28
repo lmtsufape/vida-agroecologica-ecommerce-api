@@ -51,6 +51,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
+
+        Route::post('/vendas/{id}/confirmar', [VendaController::class, 'confirmarVenda']);
+        Route::post('/vendas/{id}/enviar', [VendaController::class, 'marcarEnviado']);
     });
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
@@ -58,10 +61,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/vendas', [VendaController::class, 'store']);
         Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
+        Route::post('/vendas/{id}/entrega', [VendaController::class, 'marcarEntregue']);
     });
     //fora dos middlewares
     Route::get('/vendas/{id}/comprovante', [VendaController::class, 'verComprovante']);
     Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
+    Route::post('/vendas/{id}/cancelar', [VendaController::class, 'cancelarCompra']);
     Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });

@@ -99,17 +99,17 @@ class VendaController extends Controller
             $venda->status = 'pagamento pendente';
             $venda->data_confirmacao = now();
             $venda->save();
-            event(new PedidoConfirmado($venda));
+            event(new PedidoConfirmado($venda, $this));
         } else {
-            $this->cancelarCompra('produtor', $venda->id);
+            $this->cancelarCompra($venda->id, 'produtor');
         }
         DB::commit();
     }
 
-    public function cancelarCompra($autor = 'consumidor', $id)
+    public function cancelarCompra($id, $autor = 'consumidor')
     {
         $venda = Venda::findOrFail($id);
-        if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente') {
+        if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
             return response()->json(['erro' => 'Esta venda não pode mais ser cancelada.'], 400);
         }
         DB::beginTransaction();
@@ -122,10 +122,17 @@ class VendaController extends Controller
         switch ($autor) {
             case 'consumidor':
                 $status = 'pedido cancelado';
+                break;
             case 'produtor':
-                $status = 'pedido recusado';
+                if ($venda->status == 'pedido realizado') {
+                    $status = 'pedido recusado';
+                } elseif ($venda->status == 'comprovante anexado') {
+                    $status = 'comprovante recusado';
+                }
+                break;
             case 'sistema':
                 $status = 'pagamento expirado';
+                break;
         }
         $venda->status = $status;
         $venda->data_cancelamento = now();
@@ -139,10 +146,15 @@ class VendaController extends Controller
         if (!Gate::allows('anexar_comprovante', $venda)) {
             abort(403);
         }
+        if ($venda->status != 'pagamento pendente') {
+            return response()->json(['erro' => 'Não é possível anexar comprovante a esta venda.'], 400);
+        }
 
         $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
         $conteudo = base64_encode(file_get_contents($request->file('comprovante')->path()));
         $venda->comprovante_pagamento = $conteudo;
+        $venda->status = 'comprovante anexado';
+        $venda->data_pagamento = now();
         $venda->save();
 
         return response(base64_decode($venda->comprovante_pagamento))->header('Content-Type', $request->file('comprovante')->getMimeType());
@@ -161,5 +173,31 @@ class VendaController extends Controller
         $mimeType = finfo_buffer($finfo, $file);
         finfo_close($finfo);
         return response($file)->header('Content-Type', $mimeType);
+    }
+
+    public function marcarEnviado($id)
+    {
+        $venda = Venda::findOrFail($id);
+        if ($venda->status != 'comprovante anexado') {
+            return response()->json(['erro' => 'Esta venda não pode ser marcada como "enviada".'], 400);
+        }
+        DB::beginTransaction();
+        $venda->status = 'enviado';
+        $venda->data_envio = now();
+        $venda->save();
+        DB::commit();
+    }
+
+    public function marcarEntregue($id)
+    {
+        $venda = Venda::findOrFail($id);
+        if ($venda->status != 'enviado') {
+            return response()->json(['erro' => 'Esta venda não pode ser marcada como "entregue".'], 400);
+        }
+        DB::beginTransaction();
+        $venda->status = 'entregue';
+        $venda->data_entrega = now();
+        $venda->save();
+        DB::commit();
     }
 }

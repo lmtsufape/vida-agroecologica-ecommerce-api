@@ -31,6 +31,8 @@ return new class extends Migration
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento');
             $table->foreignId('consumidor_id')->constrained('consumidores');
             $table->foreignId('produtor_id')->constrained('produtores');
+
+            $table->timestamps();
         });
     }
 

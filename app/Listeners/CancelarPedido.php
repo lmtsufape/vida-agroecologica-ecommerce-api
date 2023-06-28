@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\PedidoConfirmado;
-use App\Http\Controllers\Api\VendaController;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -25,10 +24,10 @@ class CancelarPedido
      * @param  \App\Events\PedidoConfirmado  $event
      * @return void
      */
-    public function handle(PedidoConfirmado $event, VendaController $vendaController)
+    public function handle(PedidoConfirmado $event)
     {
         if ($event->venda->status == 'pagamento pendente') {
-            $vendaController->cancelarCompra('sistema', $event->venda->id);
+            $event->controller->cancelarCompra($event->venda->id, 'sistema');
         }
     }
 }
