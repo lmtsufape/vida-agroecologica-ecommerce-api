@@ -73,7 +73,6 @@ class VendaController extends Controller
         $venda->taxa_entrega = $taxaEntrega;
         $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
-        event(new PedidoConfirmado($venda));
         DB::commit();
         $consumidor->user->notify(new EnviarEmailCompra($venda));
         return response()->json(['venda' => $venda->makeHidden('consumidor'), 'consumidor' => $consumidor->user->makeHidden('endereco'), 'endereço' => $consumidor->user->endereco, 'itens' => $itens], 200);
