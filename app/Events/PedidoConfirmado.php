@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Controllers\Api\VendaController;
 use App\Models\Venda;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -15,16 +16,17 @@ class PedidoConfirmado
 {
     use Dispatchable, SerializesModels;
 
-    public $venda;
+    public $venda, $controller;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Venda $venda)
+    public function __construct(Venda $venda, VendaController $controller)
     {
         $this->venda = $venda;
+        $this->controller = $controller;
     }
 
     /**
