@@ -73,7 +73,6 @@ class VendaController extends Controller
         $venda->taxa_entrega = $taxaEntrega;
         $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
-
         DB::commit();
         $consumidor->user->notify(new EnviarEmailCompra($venda));
         return response()->json(['venda' => $venda->makeHidden('consumidor'), 'consumidor' => $consumidor->user->makeHidden('endereco'), 'endereço' => $consumidor->user->endereco, 'itens' => $itens], 200);
@@ -106,8 +105,9 @@ class VendaController extends Controller
         DB::commit();
     }
 
-    public function cancelarCompra($id, $autor = 'consumidor')
+    public static function cancelarCompra($id)
     {
+        $user = Auth::user();
         $venda = Venda::findOrFail($id);
         if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
             return response()->json(['erro' => 'Esta venda não pode mais ser cancelada.'], 400);
@@ -119,18 +119,18 @@ class VendaController extends Controller
             $produto->save();
         }
         $status = '';
-        switch ($autor) {
+        switch ($user->papel) {
             case 'consumidor':
                 $status = 'pedido cancelado';
                 break;
             case 'produtor':
-                if ($venda->status == 'pedido realizado') {
+                 if ($venda->status == 'pedido realizado') {
                     $status = 'pedido recusado';
                 } elseif ($venda->status == 'comprovante anexado') {
                     $status = 'comprovante recusado';
                 }
                 break;
-            case 'sistema':
+            default:
                 $status = 'pagamento expirado';
                 break;
         }
@@ -138,6 +138,7 @@ class VendaController extends Controller
         $venda->data_cancelamento = now();
         $venda->save();
         DB::commit();
+        return response()->json(['sucess' => 'Pedido cancelado'], 200);
     }
 
     public function anexarComprovante(Request $request, $id)

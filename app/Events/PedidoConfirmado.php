@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 
 class PedidoConfirmado
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, SerializesModels;
 
     public $venda, $controller;
 
