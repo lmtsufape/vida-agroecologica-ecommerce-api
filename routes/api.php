@@ -80,8 +80,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
     Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
-
-    Route::post('/teste/{id}', [VendaController::class,'cancelarCompra']);
 });
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
@@ -102,5 +100,3 @@ Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
 // Rota para solicitar o email de redefinição de senha
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
-
-

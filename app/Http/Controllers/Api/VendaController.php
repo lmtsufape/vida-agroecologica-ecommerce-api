@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\PedidoConfirmado;
+use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
 use App\Models\Produtor;
 use Brick\Math\BigDecimal;
@@ -93,16 +93,17 @@ class VendaController extends Controller
             return response()->json(['erro' => 'Esta venda já foi confirmada ou recusada'], 400);
         }
 
-        DB::beginTransaction();
         if ($request->confirmacao) {
+            DB::beginTransaction();
             $venda->status = 'pagamento pendente';
             $venda->data_confirmacao = now();
             $venda->save();
-            event(new PedidoConfirmado($venda));
+            event(new PedidoConfirmadoEvent($venda));
+            DB::commit();
+            return response()->json(['sucesso' => 'O pedido foi confirmado.']);
         } else {
             $this->cancelarCompra($venda->id);
         }
-        DB::commit();
     }
 
     public static function cancelarCompra($id)

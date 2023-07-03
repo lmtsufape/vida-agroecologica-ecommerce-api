@@ -2,10 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Events\PedidoConfirmado;
 use App\Http\Controllers\Api\VendaController;
 use App\Models\Venda;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,18 +13,20 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class VerifyPedido implements ShouldQueue
+class VerifyPedidoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $venda;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Venda $venda)
     {
-        //
+        $this->venda = $venda;
     }
 
     public $tries = 2;
@@ -37,12 +37,8 @@ class VerifyPedido implements ShouldQueue
      */
     public function handle()
     {
-        $vendas = DB::table('vendas')->where('status', '=', 'pagamento pendente')->get();
-        foreach ($vendas as $venda) {
-            $diff = Carbon::now()->diffInMinutes($venda->data_confirmacao);
-            if ($diff >= 20) {
-                VendaController::cancelarCompra($venda->id);
-            }
+        if ($this->venda->status == 'pagamento pendente') {
+            VendaController::cancelarCompra($this->venda->id);
         }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Http\Controllers\Api\VendaController;
 use App\Models\Venda;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PedidoConfirmado
+class PedidoConfirmadoEvent
 {
     use Dispatchable, SerializesModels;
 
