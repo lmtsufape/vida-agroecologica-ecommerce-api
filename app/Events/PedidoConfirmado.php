@@ -16,17 +16,16 @@ class PedidoConfirmado
 {
     use Dispatchable, SerializesModels;
 
-    public $venda, $controller;
+    public $venda;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Venda $venda, VendaController $controller)
+    public function __construct(Venda $venda)
     {
         $this->venda = $venda;
-        $this->controller = $controller;
     }
 
     /**

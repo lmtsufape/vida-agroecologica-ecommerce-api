@@ -37,14 +37,12 @@ class VerifyPedido implements ShouldQueue
      */
     public function handle()
     {
-        $vendas = DB::table('vendas')->where('status','=','pedido realizado')->get();
-        foreach ($vendas as $venda => $value) {
-            $diff = Carbon::now()->diffInMinutes($value->created_at);
-            if($diff >= 20) {
-                $pedido = Venda::find($value->id);
-                $pedido->cancel();
+        $vendas = DB::table('vendas')->where('status', '=', 'pagamento pendente')->get();
+        foreach ($vendas as $venda) {
+            $diff = Carbon::now()->diffInMinutes($venda->data_confirmacao);
+            if ($diff >= 20) {
+                VendaController::cancelarCompra($venda->id);
             }
-
         }
     }
 }

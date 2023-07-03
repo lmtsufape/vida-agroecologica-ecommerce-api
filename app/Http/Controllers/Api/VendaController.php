@@ -98,9 +98,9 @@ class VendaController extends Controller
             $venda->status = 'pagamento pendente';
             $venda->data_confirmacao = now();
             $venda->save();
-            event(new PedidoConfirmado($venda, $this));
+            event(new PedidoConfirmado($venda));
         } else {
-            $this->cancelarCompra($venda->id, 'produtor');
+            $this->cancelarCompra($venda->id);
         }
         DB::commit();
     }
@@ -119,20 +119,21 @@ class VendaController extends Controller
             $produto->save();
         }
         $status = '';
-        switch ($user->papel) {
-            case 'consumidor':
-                $status = 'pedido cancelado';
-                break;
-            case 'produtor':
-                 if ($venda->status == 'pedido realizado') {
-                    $status = 'pedido recusado';
-                } elseif ($venda->status == 'comprovante anexado') {
-                    $status = 'comprovante recusado';
-                }
-                break;
-            default:
-                $status = 'pagamento expirado';
-                break;
+        if ($user) {
+            switch ($user->papel_type) {
+                case 'Consumidor':
+                    $status = 'pedido cancelado';
+                    break;
+                case 'Produtor':
+                    if ($venda->status == 'pedido realizado') {
+                        $status = 'pedido recusado';
+                    } elseif ($venda->status == 'comprovante anexado') {
+                        $status = 'comprovante recusado';
+                    }
+                    break;
+            }
+        } else {
+            $status = 'pagamento expirado';
         }
         $venda->status = $status;
         $venda->data_cancelamento = now();

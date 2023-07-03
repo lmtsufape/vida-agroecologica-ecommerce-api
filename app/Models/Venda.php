@@ -32,10 +32,4 @@ class Venda extends Model
     {
         return $this->hasMany(ItemVenda::class);
     }
-
-    public function cancel()
-    {
-        $this->status = 'pagamento expirado';
-        $this->save();
-    }
 }
