@@ -10,8 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VerifyPedidoJob implements ShouldQueue
 {
@@ -38,7 +36,7 @@ class VerifyPedidoJob implements ShouldQueue
     public function handle()
     {
         if ($this->venda->status == 'pagamento pendente') {
-            VendaController::cancelarCompra($this->venda->id);
+            app(VendaController::class)->cancelarCompra($this->venda->id);
         }
     }
 }

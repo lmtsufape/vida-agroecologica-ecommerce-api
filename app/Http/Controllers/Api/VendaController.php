@@ -106,7 +106,7 @@ class VendaController extends Controller
         }
     }
 
-    public static function cancelarCompra($id)
+    public function cancelarCompra($id)
     {
         $user = Auth::user();
         $venda = Venda::findOrFail($id);
@@ -131,7 +131,6 @@ class VendaController extends Controller
                     } elseif ($venda->status == 'comprovante anexado') {
                         $status = 'comprovante recusado';
                     }
-                    break;
             }
         } else {
             $status = 'pagamento expirado';
