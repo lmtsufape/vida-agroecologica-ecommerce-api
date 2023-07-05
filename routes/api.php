@@ -59,14 +59,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
 
-        Route::post('/vendas', [VendaController::class, 'store']);
         Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
-        Route::post('/vendas/{id}/entrega', [VendaController::class, 'marcarEntregue']);
+        Route::post('/vendas/{id}/entregar', [VendaController::class, 'marcarEntregue']);
+        Route::post('/vendas', [VendaController::class, 'store']);
     });
     //fora dos middlewares
     Route::get('/vendas/{id}/comprovante', [VendaController::class, 'verComprovante']);
-    Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
     Route::post('/vendas/{id}/cancelar', [VendaController::class, 'cancelarCompra']);
+    Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
     Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
     });
