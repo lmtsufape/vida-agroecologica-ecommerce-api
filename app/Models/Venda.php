@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Venda extends Model
 {
@@ -31,5 +32,10 @@ class Venda extends Model
     public function itens(): HasMany
     {
         return $this->hasMany(ItemVenda::class);
+    }
+
+    public function comprovante(): MorphOne
+    {
+        return $this->morphOne(Imagem::class, 'imageable');
     }
 }
