@@ -56,6 +56,13 @@ class EnviarEmailCompra extends Notification implements ShouldQueue
         $email->line('subtotal: R$' . $this->compra->subtotal);
         $email->line('taxa de entrega: R$' . $this->compra->taxa_entrega);
         $email->line('total: R$' . $this->compra->total);
+        $email->line('');
+        $email->line('nome do produtor: ' . $this->compra->produtor->user->name);
+        $email->line('banca: ' . $this->compra->produtor->banca->nome);
+        $email->line('telefone para contato: ' . $this->compra->produtor->user->telefone);
+        $email->line('email: ' . $this->compra->produtor->user->email);
+
+
         return $email;
     }
 
