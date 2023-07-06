@@ -207,6 +207,6 @@ class VendaController extends Controller
         $venda->data_entrega = now();
         $venda->save();
         DB::commit();
-        return response()->json(['success' => 'A compra foi marcada como enviada.'], 200);
+        return response()->json(['success' => 'A compra foi marcada como entregue.'], 200);
     }
 }
