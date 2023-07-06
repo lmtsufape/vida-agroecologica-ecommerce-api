@@ -74,7 +74,6 @@ class VendaController extends Controller
         $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
         DB::commit();
-        $consumidor->user->notify(new EnviarEmailCompra($venda));
         return response()->json(['venda' => $venda->makeHidden('consumidor'), 'consumidor' => $consumidor->user->makeHidden('endereco'), 'endereço' => $consumidor->user->endereco, 'itens' => $itens], 200);
     }
 
@@ -192,6 +191,8 @@ class VendaController extends Controller
         $venda->data_envio = now();
         $venda->save();
         DB::commit();
+        $venda->consumidor->user->notify(new EnviarEmailCompra($venda));
+        return response()->json(['success' => 'A compra foi marcada como enviada.'], 200);
     }
 
     public function marcarEntregue($id)
@@ -206,5 +207,6 @@ class VendaController extends Controller
         $venda->data_entrega = now();
         $venda->save();
         DB::commit();
+        return response()->json(['success' => 'A compra foi marcada como enviada.'], 200);
     }
 }
