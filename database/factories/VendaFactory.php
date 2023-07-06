@@ -22,7 +22,6 @@ class VendaFactory extends Factory
             'subtotal' => fake()->randomFloat(2, 0, 100),
             'taxa_entrega' => fake()->randomFloat(2, 0, 10),
             'total' => fake()->randomFloat(2, 0, 100),
-            'comprovante_pagamento' => null,
             'forma_pagamento_id' => '1',
             'consumidor_id' => 1,
             'produtor_id' => 1,

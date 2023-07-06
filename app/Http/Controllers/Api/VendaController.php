@@ -16,6 +16,8 @@ use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class VendaController extends Controller
 {
@@ -147,35 +149,49 @@ class VendaController extends Controller
     {
         $venda = Venda::findOrFail($id);
         $this->authorize('anexarComprovante', $venda);
-        if ($venda->status != 'pagamento pendente') {
+        if ($venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
             return response()->json(['error' => 'Não é possível anexar comprovante a esta venda.'], 400);
         }
 
         $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
-        $conteudo = base64_encode(file_get_contents($request->file('comprovante')->path()));
+        $imagem = $request->file('comprovante');
+        $nomeImagem = $venda->id . '.' . $imagem->getClientOriginalExtension();
+        $comprovanteAntigo = glob(storage_path("app/public/uploads/imagens/comprovante/{$venda->id}.*"));
+
+        $caminho = $imagem->storeAs('public/uploads/imagens/comprovante', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
+
+        if (!$caminho) {
+            return response()->json(['erro' => 'Não foi possível fazer upload do comprovante'], 500);
+        }
+
         DB::beginTransaction();
-        $venda->comprovante_pagamento = $conteudo;
+        $venda->comprovante()->updateOrCreate(['imageable_id' => $venda->id, 'imageable_type' => 'Venda'],['caminho' => $caminho]);
         $venda->status = 'comprovante anexado';
         $venda->data_pagamento = now();
         $venda->save();
         DB::commit();
 
-        return response(base64_decode($venda->comprovante_pagamento))->header('Content-Type', $request->file('comprovante')->getMimeType());
+        foreach ($comprovanteAntigo as $arquivo) {
+            if (basename($arquivo) != $nomeImagem) {
+                File::delete($arquivo);
+            }
+        }
+
+        return response()->json(['success' => 'Comprovante enviado.']);
     }
 
     public function verComprovante($id)
     {
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
-        $file = base64_decode($venda->comprovante_pagamento);
+        $comprovante = $venda->comprovante;
 
-        if (!$file) {
+        if (!$comprovante || !Storage::exists($comprovante->caminho)) {
             return response()->json(['error' => 'A venda não possui comprovante de pagamento'], 404);
         }
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_buffer($finfo, $file);
-        finfo_close($finfo);
+        $file = Storage::get($comprovante->caminho);
+        $mimeType = Storage::mimeType($comprovante->caminho);
         return response($file)->header('Content-Type', $mimeType);
     }
 

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->decimal('subtotal')->default(0);
             $table->decimal('taxa_entrega')->default(0);
             $table->decimal('total')->default(0);
-            $table->binary('comprovante_pagamento')->nullable();
             $table->dateTime('data_pedido');
             $table->dateTime('data_confirmacao')->nullable();
             $table->dateTime('data_cancelamento')->nullable();

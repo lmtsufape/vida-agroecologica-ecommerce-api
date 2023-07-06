@@ -85,9 +85,7 @@ class BancaController extends Controller
                 return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
             }
 
-            $imagemBanco = $banca->imagem()->FirstOrNew();
-            $imagemBanco->caminho = $caminho;
-            $imagemBanco->save();
+            $imagemBanco = $banca->imagem()->updateOrCreate(['imageable_id' => $banca->id, 'imageable_type' => 'Banca'], ['caminho' => $caminho]);
 
             foreach ($imagensAntigas as $arquivo) {
                 if (basename($arquivo) != $nomeImagem) {
@@ -117,7 +115,7 @@ class BancaController extends Controller
     {
         $imagem = Banca::findOrFail($id)->imagem;
 
-        if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
+        if (!$imagem || !Storage::exists($imagem->caminho)) {
             return response()->json(["erro" => "imagem não encontrada"],404);
         }
 
