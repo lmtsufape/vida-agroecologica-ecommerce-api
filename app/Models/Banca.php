@@ -17,7 +17,7 @@ class Banca extends Model
     protected $fillable = [
         'nome',
         'descricao',
-        'horario_funcionamento',
+        'horario_abertura',
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
@@ -28,7 +28,7 @@ class Banca extends Model
         'id',
         'nome',
         'descricao',
-        'horario_funcionamento',
+        'horario_abertura',
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
