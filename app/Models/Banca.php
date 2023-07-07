@@ -17,18 +17,18 @@ class Banca extends Model
     protected $fillable = [
         'nome',
         'descricao',
-        'horario_funcionamento',
+        'horario_abertura',
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
-        'tipo_entrega'
+        'faz_entrega'
     ];
 
     protected $visible = [
         'id',
         'nome',
         'descricao',
-        'horario_funcionamento',
+        'horario_abertura',
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',

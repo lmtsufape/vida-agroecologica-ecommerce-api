@@ -15,7 +15,6 @@ use App\Models\Venda;
 use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,18 +32,29 @@ class VendaController extends Controller
     public function store(StoreVendaRequest $request)
     {
         $consumidor = Auth::user()->papel;
+        $produtor = Produtor::findOrFail($request->produtor);
+        if (!now()->isBetween($produtor->banca->horario_abertura, $produtor->banca->horario_fechamento, true)) {
+            return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
+        }
+        if ($request->tipo_entrega == 'entrega' && !$produtor->banca->faz_entrega) {
+            return response()->json(['error' => 'Esta banca não faz entregas.'], 400);
+        }
 
         DB::beginTransaction();
         $venda = new Venda();
         $venda->status = 'pedido realizado';
+        $venda->tipo_entrega = $request->tipo_entrega;
         $venda->data_pedido = now();
         $venda->consumidor()->associate($consumidor);
-        $venda->produtor()->associate(Produtor::find($request->produtor));
+        $venda->produtor()->associate($produtor);
         $formaPagamento = FormaPagamento::find($request->forma_pagamento);
         $venda->formaPagamento()->associate($formaPagamento);
         $venda->save();
         $subtotal = BigDecimal::of('0.00');
-        $taxaEntrega = BigDecimal::of(Auth::user()->endereco->bairro->taxa);
+        $taxaEntrega = BigDecimal::of('0.00');
+        if ($request->tipo_entrega == 'entrega') {
+            $taxaEntrega = BigDecimal::of(Auth::user()->endereco->bairro->taxa);
+        }
         $itens = [];
 
         foreach ($request->produtos as $produto) {
@@ -69,6 +79,10 @@ class VendaController extends Controller
             $subtotal = $subtotal->plus(BigDecimal::of($prod->preco)->multipliedBy($produto[1])); // preço x quantidade
             $prod->estoque -= $produto[1];
             $prod->save();
+        }
+        if ($subtotal->isLessThan($produtor->banca->preco_minimo) && $request->tipo_entrega == 'entrega') {
+            DB::rollBack();
+            return response()->json(['error' => 'O valor da compra é inferior ao valor mínimo para entrega.']);
         }
 
         $venda->subtotal = $subtotal;
@@ -223,6 +237,6 @@ class VendaController extends Controller
         $venda->data_entrega = now();
         $venda->save();
         DB::commit();
-        return response()->json(['success' => 'A compra foi marcada como enviada.'], 200);
+        return response()->json(['success' => 'A compra foi marcada como entregue.'], 200);
     }
 }
