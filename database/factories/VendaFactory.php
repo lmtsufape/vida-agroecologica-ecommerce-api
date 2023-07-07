@@ -18,6 +18,7 @@ class VendaFactory extends Factory
     {
         return [
             'status' => 'Concluído',
+            'tipo_entrega' => 'retirada',
             'data_pedido' => fake()->dateTime('now'),
             'subtotal' => fake()->randomFloat(2, 0, 100),
             'taxa_entrega' => fake()->randomFloat(2, 0, 10),

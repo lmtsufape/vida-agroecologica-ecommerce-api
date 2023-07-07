@@ -21,7 +21,7 @@ class Banca extends Model
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
-        'tipo_entrega'
+        'faz_entrega'
     ];
 
     protected $visible = [

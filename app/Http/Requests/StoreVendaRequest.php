@@ -25,6 +25,7 @@ class StoreVendaRequest extends FormRequest
     {
         return [
             'produtor' => 'required|exists:produtores,id',
+            'tipo_entrega' => 'required|in:retirada,entrega',
             'forma_pagamento' => 'required|exists:formas_pagamento,id',
             'produtos' => 'required|array|min:1',
             'produtos.*' => 'array|size:2',
