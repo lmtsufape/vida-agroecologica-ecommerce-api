@@ -2,10 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use App\Models\User;
-use App\Models\Venda;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -18,7 +15,8 @@ class AuthServiceProvider extends ServiceProvider
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         Banca::class => BancaPolicy::class,
         Produtor::class => ProdutorPolicy::class,
-        Consumidor::class => ConsumidorPolicy::class
+        Consumidor::class => ConsumidorPolicy::class,
+        Venda::class => VendaPolicy::class
     ];
 
     /**
@@ -29,10 +27,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        Gate::define('anexar_comprovante', function (User $user, Venda $venda) {
-            return $user->papel_type == 'Consumidor' && $user->papel->id === $venda->consumidor->id;
-        });
-        //
     }
 }

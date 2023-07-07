@@ -18,11 +18,11 @@ class VendaFactory extends Factory
     {
         return [
             'status' => 'Concluído',
+            'tipo_entrega' => 'retirada',
             'data_pedido' => fake()->dateTime('now'),
             'subtotal' => fake()->randomFloat(2, 0, 100),
             'taxa_entrega' => fake()->randomFloat(2, 0, 10),
             'total' => fake()->randomFloat(2, 0, 100),
-            'comprovante_pagamento' => null,
             'forma_pagamento_id' => '1',
             'consumidor_id' => 1,
             'produtor_id' => 1,
