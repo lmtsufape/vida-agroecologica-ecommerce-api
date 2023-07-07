@@ -37,9 +37,9 @@ class StoreBancaRequest extends FormRequest
             'preco_minimo' => [
                 'required'
             ],
-            'tipo_entrega' => [
+            'faz_entrega' => [
                 'required',
-                'in:ENTREGA,RETIRADA'
+                'boolean'
             ],
             'imagem' => [
                 'nullable',

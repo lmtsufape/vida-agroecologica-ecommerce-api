@@ -11,7 +11,7 @@ class Venda extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['status', 'data_pedido', 'total', 'comprovante_pagamento'];
+    protected $fillable = ['status', 'tipo_entrega', 'data_pedido', 'total', 'comprovante_pagamento'];
 
     public function formaPagamento(): BelongsTo
     {

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('horario_fechamento');
             $table->boolean('funcionamento')->default(false);
             $table->float('preco_minimo');
-            $table->enum('tipo_entrega', ['ENTREGA', 'RETIRADA']);
+            $table->boolean('faz_entrega');
             $table->foreignId('feira_id')->default(1)->constrained('feiras');
             $table->foreignId('produtor_id')->constrained('produtores')->onDelete('cascade');
             $table->softDeletes();
