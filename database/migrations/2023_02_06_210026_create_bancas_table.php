@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('nome');
             $table->string('descricao');
-            $table->time('horario_funcionamento');
+            $table->time('horario_abertura');
             $table->time('horario_fechamento');
             $table->boolean('funcionamento')->default(false);
             $table->float('preco_minimo');

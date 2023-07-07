@@ -31,6 +31,9 @@ class VendaController extends Controller
     {
         $consumidor = Auth::user()->papel;
         $produtor = Produtor::findOrFail($request->produtor);
+        if (!now()->isBetween($produtor->banca->horario_abertura, $produtor->banca->horario_fechamento, true)) {
+            return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
+        }
         if ($request->tipo_entrega == 'entrega' && !$produtor->banca->faz_entrega) {
             return response()->json(['error' => 'Esta banca não faz entregas.'], 400);
         }

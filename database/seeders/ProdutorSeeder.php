@@ -29,8 +29,8 @@ class ProdutorSeeder extends Seeder
         $produtor->banca()->create([
             "nome" => "Feira bicho",
             "descricao" => "Loja de frutas",
-            "horario_funcionamento" => "08:00:00",
-            "horario_fechamento" => "18:00:00",
+            "horario_abertura" => "00:00:00",
+            "horario_fechamento" => "23:59:00",
             "funcionamento" => true,
             "preco_minimo" => 1.00,
             "faz_entrega" => true,
