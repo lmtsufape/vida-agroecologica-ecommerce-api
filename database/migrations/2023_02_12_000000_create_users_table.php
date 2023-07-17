@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('apelido')->nullable();
-            $table->string('telefone');
             $table->string('cpf')->unique()->nullable();
             $table->string('cnpj')->unique()->nullable();
-            $table->morphs("papel");
+
+            $table->foreignId('endereco_id')->constrained();
+            $table->foreignId('contato_id')->constrained();
             $table->timestamps();
         });
     }
