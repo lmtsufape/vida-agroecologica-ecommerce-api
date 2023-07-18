@@ -24,7 +24,6 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         'email',
         'password',
         'apelido',
-        'telefone',
         'cpf'
     ];
 
@@ -47,13 +46,33 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         'email_verified_at' => 'datetime',
     ];
 
-    public function papel()
-    {
-        return $this->morphTo();
-    }
-
     public function endereco()
     {
-        return $this->morphOne(Endereco::class, "origem");
+        return $this->belongsTo(Endereco::class);
+    }
+
+    public function contato()
+    {
+        return $this->belongsTo(Contato::class);
+    }
+
+    public function propriedades()
+    {
+        return $this->hasMany(Propriedade::class);
+    }
+
+    public function associacaoes()
+    {
+        return $this->hasMany(Associacao::class);
+    }
+
+    public function organizacao()
+    {
+        return $this->belongsTo(OrganizacaoControleSocial::class, "organizacao_controle_social_id");
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
     }
 }
