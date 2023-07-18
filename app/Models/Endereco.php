@@ -20,4 +20,7 @@ class Endereco extends Model
     {
         return $this->belongsTo(Bairro::class);
     }
+    public function user(){
+        return $this->belongsTO(User::class);//concluir ligacao
+    }
 }

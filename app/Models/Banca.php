@@ -21,7 +21,8 @@ class Banca extends Model
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
-        'tipo_entrega'
+        'tipo_entrega',
+        'feira_id'
     ];
 
     protected $visible = [
@@ -32,9 +33,13 @@ class Banca extends Model
         'horario_fechamento',
         'funcionamento',
         'preco_minimo',
-        'tipo_entrega'
+        'tipo_entrega',
+        'feira_id'//apagar depois
     ];
 
+    public function feira(){
+        return $this->belongsTo(Feira::class);
+    }
     public function produtos()
     {
         return $this->hasMany(Produto::class);

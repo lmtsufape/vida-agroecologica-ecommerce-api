@@ -16,11 +16,10 @@ return new class extends Migration
         Schema::create('feiras', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->double('latitude');
-            $table->double('longitude');
             $table->json('funcionamento');
             $table->date('horario_abertura');
             $table->date('horario_fechamento');
+            $table->foreignId('bairro_id')->constrained('bairros');
         });
     }
 
