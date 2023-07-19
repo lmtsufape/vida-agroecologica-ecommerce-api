@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('feiras', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->json('funcionamento');
-            $table->date('horario_abertura');
-            $table->date('horario_fechamento');
-            $table->foreignId('bairro_id')->constrained();
+            $table->time('horario_abertura');
+            $table->time('horario_fechamento');
+            $table->foreignId('bairro_id')->unique()->constrained();//Colocar um aviso no controller
+            $table->timestamps();
         });
     }
 

@@ -17,8 +17,8 @@ class FeiraSeeder extends Seeder
     {
         Feira::create([
             'funcionamento' => ['sexta', 'sabado', 'domingo'],
-            'horario_abertura' => '2023-02-03',
-            'horario_fechamento' => '2023-02-05',
+            'horario_abertura' => '20:10',
+            'horario_fechamento' => '22:10',
             'bairro_id' => '1',
         ]);
     }

@@ -98,7 +98,9 @@ Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 // Rota para solicitar o email de redefinição de senha
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;
 
+Route::get('/cidades/index', [CidadeController::class, 'index']);
 Route::post('/cidades', [CidadeController::class, 'store']);
-Route::post('/bairros', [BairroController::class, 'store']);
 Route::get('/indexbairro', [BairroController::class, 'index']);
+Route::post('/bairros', [BairroController::class, 'store']);
+Route::get('/feirasindex', [FeiraController::class, 'index']);
 Route::post('/feiras', [FeiraController::class, 'store']);
