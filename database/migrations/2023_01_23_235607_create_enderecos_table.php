@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('numero');
             $table->string('complemento')->nullable();
             $table->morphs('origem');
-            $table->foreignId('bairro_id')->constrained('bairros');
+            $table->foreignId('bairro_id')->constrained();
         });
     }
 

@@ -16,10 +16,12 @@ class Feira extends Model
         'funcionamento' => 'array'
     ];
 
-    public function bairro(){
+    public function bairro()
+    {
         return $this->belongsTo(Bairro::class);
     }
-    public function banca(){
-        return hasMany(Banca::class);
+    public function bancas()
+    {
+        return $this->hasMany(Banca::class);
     }
 }

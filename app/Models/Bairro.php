@@ -11,7 +11,7 @@ class Bairro extends Model
 
     protected $fillable = ['nome', 'taxa', 'cidade_id'];
 
-    public function endereco()
+    public function enderecos()
     {
         return $this->hasMany(Endereco::class);
     }

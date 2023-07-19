@@ -34,7 +34,7 @@ class Banca extends Model
         'funcionamento',
         'preco_minimo',
         'tipo_entrega',
-        'feira_id'//apagar depois
+        'feira_id'
     ];
 
     public function feira(){

@@ -14,7 +14,8 @@ class Cidade extends Model
         'longitude',
         'latitude'
     ];
-    public function bairro(){
+    public function bairros()
+    {
         return this->hasMany(Bairro::class);
     }
 }

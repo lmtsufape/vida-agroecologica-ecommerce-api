@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('funcionamento');
             $table->date('horario_abertura');
             $table->date('horario_fechamento');
-            $table->foreignId('bairro_id')->constrained('bairros');
+            $table->foreignId('bairro_id')->constrained();
         });
     }
 

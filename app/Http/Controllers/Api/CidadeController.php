@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class CidadeController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         Cidade::create($request->all());
-        return response()->json(['banca' => $request->all()]);
+        return response()->json(['cidade' => $request->all()]);
     }
 
 }
