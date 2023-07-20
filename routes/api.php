@@ -44,12 +44,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::controller(BancaController::class)->group(function () {
             Route::delete('/bancas/imagens', 'deleteImagem');
-
-            Route::post('/bancas', 'store')->middleware('check_bancas');
-            Route::get('/bancas', 'index');
-            Route::get('/bancas/{banca}', 'show');
             Route::put('/bancas', 'update');
-            Route::delete('/bancas/{banca}', 'destroy')->middleware('check_valid_banca');
+
+        });//Concluir transi;cao para o prefix
+        Route::prefix('bancas')->group(function(){
+            Route::get('/', [BancaController::class, 'index']);
+            Route::get('/{banca}', [BancaController::class, 'show']);
+            Route::post('/store', [BancaController::class, 'store'])->middleware('check_bancas');
+            Route::delete('/{banca}', [BancaController::class, 'destroy'])->middleware('check_valid_banca');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
@@ -79,9 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
-Route::post('/produtores', [ProdutorController::class, 'store']);
 
-Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
 Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
@@ -98,9 +98,28 @@ Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 // Rota para solicitar o email de redefinição de senha
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;
 
-Route::get('/cidades/index', [CidadeController::class, 'index']);
-Route::post('/cidades', [CidadeController::class, 'store']);
-Route::get('/indexbairro', [BairroController::class, 'index']);
-Route::post('/bairros', [BairroController::class, 'store']);
-Route::get('/feirasindex', [FeiraController::class, 'index']);
-Route::post('/feiras', [FeiraController::class, 'store']);
+
+
+Route::prefix('cidades')->group(function(){
+    Route::get('/', [CidadeController::class, 'index']);
+    Route::post('/store', [CidadeController::class, 'store']);
+});
+
+Route::prefix('bairros')->group(function(){
+    Route::get('/', [BairroController::class, 'index']);
+    Route::post('/store', [BairroController::class, 'store']);
+});
+
+Route::prefix('feiras')->group(function(){
+    Route::get('/', [FeiraController::class, 'index']);
+    Route::post('/store', [FeiraController::class, 'store']);
+});
+
+Route::prefix('produtores')->group(function(){
+    Route::post('/store', [ProdutorController::class, 'store']);
+});
+
+Route::prefix('consumidores')->group(function(){
+    Route::post('/store', [ConsumidorController::class, 'store']);
+});
+

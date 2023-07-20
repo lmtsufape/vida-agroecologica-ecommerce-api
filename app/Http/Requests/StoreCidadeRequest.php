@@ -27,6 +27,7 @@ class StoreCidadeRequest extends FormRequest
             'nome' => [
                 'required',
                 'string',
+                'unique:cidades',
                 'max:30',
                 'min:3'
             ]

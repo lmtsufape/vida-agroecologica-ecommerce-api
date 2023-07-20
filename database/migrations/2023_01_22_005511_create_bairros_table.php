@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nome');
             $table->float('taxa');
             $table->foreignId('cidade_id')->constrained();
+            $table->unique(['nome', 'cidade_id']);
             $table->timestamps();
         });
     }

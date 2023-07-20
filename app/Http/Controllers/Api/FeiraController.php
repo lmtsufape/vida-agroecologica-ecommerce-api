@@ -7,7 +7,6 @@ use App\Models\Bairro;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-
 class FeiraController extends Controller
 {
 
@@ -15,22 +14,17 @@ class FeiraController extends Controller
     {
         $feiras = Feira::All();
 
-        return response()->json(['feira' => $feiras]);
+        return response()->json(['feiras' => $feiras]);
     }
 
 
     public function store(Request $request)
     {
-        if(!Feira::where('bairro_id', $request->bairro_id)->first())
-        {
-            $feira = Feira::create($request->all());
-            $bairro = Bairro::findOrFail($request->bairro_id);
-            $feira->bairro()->associate($bairro);
+        $feira = Feira::create($request->all());
+        $bairro = Bairro::findOrFail($request->bairro_id);
+        $feira->bairro()->associate($bairro);
 
-            return response()->json(['feira' => $feira]);
-        }else
-        {
-            return response()->json('Feira ja existente');
-        }
+        return response()->json(['feira' => $feira]);
+
     }
 }
