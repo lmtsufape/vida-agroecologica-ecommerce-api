@@ -9,10 +9,16 @@ class Bairro extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'taxa'];
+    protected $fillable = ['nome', 'taxa', 'cidade_id'];
 
-    public function cep()
+    public function enderecos()
     {
         return $this->hasMany(Endereco::class);
+    }
+    public function feira(){
+        return $this->hasOne(Feira::class);
+    }
+    public function cidade(){
+        return $this->belongsTo(Cidade::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bairro;
+use App\Models\Cidade;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreBairroRequest;
 
@@ -11,9 +12,9 @@ class BairroController extends Controller
 {
     public function index()
     {
-        $bairros = Bairro::all();
+        $todos = Bairro::all();
 
-        return response()->json(['bairros' => $bairros]);
+        return response()->json(['bairros' => $todos]);
     }
 
     public function store(StoreBairroRequest $request)
@@ -21,7 +22,6 @@ class BairroController extends Controller
         $bairro = Bairro::create($request->all());
         $cidade = Cidade::findOrFail($request->cidade_id);
         $bairro->cidade()->associate($cidade);
-
         return response()->json(['bairro' => $bairro]);
     }
 }

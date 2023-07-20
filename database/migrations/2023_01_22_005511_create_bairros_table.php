@@ -15,11 +15,10 @@ return new class extends Migration
     {
         Schema::create('bairros', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique();
+            $table->string('nome');
             $table->float('taxa');
             $table->foreignId('cidade_id')->constrained();
             $table->unique(['nome', 'cidade_id']);
-
             $table->timestamps();
         });
     }

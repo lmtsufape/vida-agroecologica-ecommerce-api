@@ -11,12 +11,13 @@ class DatabaseSeeder extends Seeder
     {
         DB::beginTransaction();
         $this->call([
+            CidadeSeeder::class,
+            BairroSeeder::class,
             FeiraSeeder::class,
             ProdutorSeeder::class,
             ConsumidorSeeder::class,
             ProdutoTabeladoSeeder::class,
             ProdutoSeeder::class,
-            BairroSeeder::class,
             FormaPagamentoSeeder::class,
             VendaSeeder::class,
         ]);

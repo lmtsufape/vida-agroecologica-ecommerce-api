@@ -16,11 +16,10 @@ class FeiraSeeder extends Seeder
     public function run()
     {
         Feira::create([
-            'latitude' => -121.2322321,
-            'longitude' => 23.3243,
             'funcionamento' => ['sexta', 'sabado', 'domingo'],
-            'horario_abertura' => '2023-02-03',
-            'horario_fechamento' => '2023-02-05',
+            'horario_abertura' => '20:10',
+            'horario_fechamento' => '22:10',
+            'bairro_id' => '1',
         ]);
     }
 }

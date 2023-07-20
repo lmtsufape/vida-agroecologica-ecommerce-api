@@ -4,10 +4,12 @@ use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\EnderecoController;
+use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\VendaController;
+use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -98,7 +100,6 @@ Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 // Rota para solicitar o email de redefinição de senha
 
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
-
 Route::prefix('cidades')->group(function(){
     Route::get('/', [CidadeController::class, 'index']);
     Route::post('/store', [CidadeController::class, 'store']);

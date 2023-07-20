@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBancaRequest;
 use App\Models\Banca;
 use App\Models\FormaPagamento;
 use App\Models\User;
+use App\Models\Feira;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -43,6 +44,10 @@ class BancaController extends Controller
             }
 
             $banca->imagem()->create(['caminho' => $caminho]);
+            $feira = Feira::findOrFail($request->feira_id);
+            $banca->feira()->associate($feira);
+
+
         }
         DB::commit();
         return response()->json(['banca' => $banca], 201);

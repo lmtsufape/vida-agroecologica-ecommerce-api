@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('funcionamento')->default(false);
             $table->float('preco_minimo');
             $table->boolean('faz_entrega');
-            $table->foreignId('feira_id')->default(1)->constrained('feiras');
+            $table->foreignId('feira_id')->constrained('feiras');
             $table->foreignId('produtor_id')->constrained('produtores')->onDelete('cascade');
             $table->softDeletes();
         });

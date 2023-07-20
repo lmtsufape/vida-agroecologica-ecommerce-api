@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('feiras', function (Blueprint $table) {
+        Schema::create('cidades', function (Blueprint $table) {
             $table->id();
-            $table->json('funcionamento');
-            $table->time('horario_abertura');
-            $table->time('horario_fechamento');
-            $table->foreignId('bairro_id')->constrained();
+            $table->string('nome')->unique();//fazer o aviso no controller quando ja houver uma cidade
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('feiras');
+        Schema::dropIfExists('cidades');
     }
 };

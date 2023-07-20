@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('estado');
             $table->string('país');
             $table->morphs('origem');
-            $table->foreignId('bairro_id')->constrained('bairros');
+            $table->foreignId('bairro_id')->constrained();
         });
     }
 

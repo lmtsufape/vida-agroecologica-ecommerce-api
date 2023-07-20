@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Bairro;
+use App\Models\Cidade;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class BairroSeeder extends Seeder
+class CidadeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,9 @@ class BairroSeeder extends Seeder
      */
     public function run()
     {
-        Bairro::create([
-            'nome' => 'Feira da UFAPE',
-            'taxa' => '0.1',
-            'cidade_id' => '1',
+        Cidade::create([
+            'nome' => 'Garanhuns',
+
         ]);
     }
 }
