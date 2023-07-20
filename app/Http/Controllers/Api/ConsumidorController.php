@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Consumidor;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -39,6 +40,9 @@ class ConsumidorController extends Controller
             'numero',
             'cep',
             'complemento',
+            'cidade',
+            'estado',
+            'país',
             'bairro_id'
         ));
         $consumidor->save();
@@ -55,20 +59,24 @@ class ConsumidorController extends Controller
         }
         return response()->json(['usuário' => $consumidor], 200);
     }
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        DB::beginTransaction();
-
-        $consumidor = Consumidor::find($id);
-        if (!$consumidor) {
-            return response()->json(['erro' => 'Usuário não encontrado'], 404);
+        $user = $request->user();
+        $consumidor = Consumidor::findOrFail($id);
+        if ($user->cannot('update', $consumidor)) {
+            abort(403);
         }
+
+        DB::beginTransaction();
         $consumidor->user()->update($request->only('nome', 'apelido', 'telefone'));
         $consumidor->user->endereco()->update($request->only(
             'rua',
             'numero',
             'cep',
             'complemento',
+            'cidade',
+            'estado',
+            'país',
             'bairro_id'
         ));
         $consumidor->user;
@@ -77,8 +85,14 @@ class ConsumidorController extends Controller
     }
     public function destroy($id)
     {
+        $user = User::find(Auth::user()->id);
+        $consumidor = Consumidor::findOrFail($id);
+        if($user->cannot('delete', $consumidor)) {
+            abort(403);
+        }
+
         DB::beginTransaction();
-        $consumidor = Consumidor::find($id);
+        $consumidor->user->delete();
         $consumidor->delete();
         DB::commit();
         return response()->noContent();

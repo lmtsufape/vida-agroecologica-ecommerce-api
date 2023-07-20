@@ -24,7 +24,7 @@ class StoreBancaRequest extends FormRequest
                 'string',
                 'max:250'
             ],
-            'horario_funcionamento' => [
+            'horario_abertura' => [
                 'required',
                 'date_format:H:i:s',
                 'before:horario_fechamento'
@@ -32,14 +32,14 @@ class StoreBancaRequest extends FormRequest
             'horario_fechamento' => [
                 'required',
                 'date_format:H:i:s',
-                'after:horario_funcionamento'
+                'after:horario_abertura'
             ],
             'preco_minimo' => [
                 'required'
             ],
-            'tipo_entrega' => [
+            'faz_entrega' => [
                 'required',
-                'in:ENTREGA,RETIRADA'
+                'boolean'
             ],
             'imagem' => [
                 'nullable',
@@ -62,7 +62,7 @@ class StoreBancaRequest extends FormRequest
             'min' => ':attribute deve ter no mínimo 3 caracteres.',
             'string' => ':attribute deve ser uma string.',
             'date_format' => ':attribute deve estar no formato: hora:minuto:segundo.',
-            'horario_funcionamento.before' => 'Horário de funcionamento deve ser antes do fechamento.',
+            'horario_abertura.before' => 'Horário de abertura deve ser antes do fechamento.',
             'horario_fechamento.after' => 'Horário de fechamento deve ser depois da abertura.',
             'tipo_entrega.in' => 'Tipo de entrega de ser entrega ou retirada',
             'imagem.image' => 'O arquivo enviado não é uma imagem',

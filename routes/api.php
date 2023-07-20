@@ -46,21 +46,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/bancas', 'store')->middleware('check_bancas');
             Route::get('/bancas', 'index');
             Route::get('/bancas/{banca}', 'show');
-            Route::put('/bancas', 'update');
+            Route::put('/bancas/{banca}', 'update');
             Route::delete('/bancas/{banca}', 'destroy')->middleware('check_valid_banca');
         });
 
         Route::apiResource('banca/produtos', ProdutoController::class);
+
+        Route::post('/vendas/{id}/confirmar', [VendaController::class, 'confirmarVenda']);
+        Route::post('/vendas/{id}/enviar', [VendaController::class, 'marcarEnviado']);
     });
     //consumidor
     Route::middleware('check_consumidor')->group(function () {
         Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
 
-        Route::post('/vendas', [VendaController::class, 'store']);
         Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
+        Route::post('/vendas/{id}/entregar', [VendaController::class, 'marcarEntregue']);
+        Route::post('/vendas', [VendaController::class, 'store']);
     });
     //fora dos middlewares
     Route::get('/vendas/{id}/comprovante', [VendaController::class, 'verComprovante']);
+    Route::post('/vendas/{id}/cancelar', [VendaController::class, 'cancelarCompra']);
     Route::apiResource('/vendas', VendaController::class)->except('store', 'destroy', 'update');
     Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
@@ -94,4 +99,4 @@ Route::post('/email/verification-notification', [LoginController::class, 'reenvi
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
 // Rota para solicitar o email de redefinição de senha
-Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');;
+Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
