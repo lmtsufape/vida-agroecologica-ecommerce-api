@@ -21,12 +21,12 @@ class Venda extends Model
 
     public function produtor(): BelongsTo
     {
-        return $this->belongsTo(Produtor::class);
+        return $this->belongsTo(User::class);
     }
 
     public function consumidor(): BelongsTo
     {
-        return $this->belongsTo(Consumidor::class);
+        return $this->belongsTo(User::class);
     }
 
     public function itens(): HasMany

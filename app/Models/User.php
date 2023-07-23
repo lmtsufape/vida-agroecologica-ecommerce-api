@@ -48,7 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
 
     public function endereco()
     {
-        return $this->belongsTo(Endereco::class);
+        return $this->morphMany(Endereco::class, 'addressable');
     }
 
     public function contato()
@@ -61,18 +61,28 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         return $this->hasMany(Propriedade::class);
     }
 
-    public function associacaoes()
+    public function associacoes()
     {
         return $this->hasMany(Associacao::class);
     }
 
     public function organizacao()
     {
-        return $this->belongsTo(OrganizacaoControleSocial::class, "organizacao_controle_social_id");
+        return $this->hasOne(OrganizacaoControleSocial::class);
     }
 
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function transacoes()
+    {
+        return $this->hasMany(Venda::class);
+    }
+
+    public function bancas()
+    {
+        return $this->hasMany(Banca::class);
     }
 }

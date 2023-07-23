@@ -18,10 +18,7 @@ return new class extends Migration
             $table->string('nome');
             $table->timestamps();
 
-            $table->unsignedInteger('endereco_id');
-            $table->foreign('endereco_id')->references('id')->on('enderecos');
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->constrained();
         });
     }
 
