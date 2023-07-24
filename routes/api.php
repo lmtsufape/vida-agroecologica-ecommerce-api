@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
-use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
@@ -29,10 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::controller(EnderecoController::class)->group(function () {
-        Route::get('/enderecos', 'show');
-        Route::put('/enderecos', 'update');
-    });
     Route::controller(BairroController::class)->group(function () {
         Route::get('bairros', 'index');
     });
