@@ -11,7 +11,6 @@ class DatabaseSeeder extends Seeder
     {
         DB::beginTransaction();
         $this->call([
-            EnderecoSeeder::class,
             ContatoSeeder::class,
             UserSeeder::class,
             AssociacaoSeeder::class,
