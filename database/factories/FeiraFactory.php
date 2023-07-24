@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contato>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Feira>
  */
-class ContatoFactory extends Factory
+class FeiraFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,9 @@ class ContatoFactory extends Factory
     public function definition()
     {
         return [
-            'email' => fake()->email(),
-            'telefone' => fake()->phoneNumber()
+            'funcionamento' => ['sexta', 'sabado', 'domingo'],
+            'horario_abertura' => '10:00',
+            'horario_fechamento' => '16:00',
         ];
     }
 }

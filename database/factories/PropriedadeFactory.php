@@ -19,7 +19,6 @@ class PropriedadeFactory extends Factory
         return [
             'nome' => fake()->company(),
             'user_id' => 3,
-            'endereco_id' => 1
         ];
     }
 }

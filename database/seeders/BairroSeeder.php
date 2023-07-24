@@ -20,11 +20,10 @@ class BairroSeeder extends Seeder
                 foreach ($dados_csv as $linha) {
                     $bairro = new Bairro;
                     $bairro->nome = $linha[0];
-                    $bairro->taxa = $linha[1];
                     $bairro->save();
                 }
             } else {
-                Bairro::create(['nome' => 'Teste', 'taxa' => 5.00]);
+                Bairro::create(['nome' => 'Teste']);
             }
         }
     }

@@ -22,8 +22,8 @@ class OrganizacaoControleSocialFactory extends Factory
             'cnpj' => '000.000.000-00',
             'associacao_id' => 1,
             'data_fundacao' => today(),
-            'endereco_id' => 1,
-            'contato_id' => 1
+            'contato_id' => 1,
+            'user_id' => 1
         ];
     }
 }
