@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('bairro')->nullable();
 
             $table->foreignId('bairro_id')->constrained();
+            $table->morphs('addressable');
             $table->timestamps();
         });
     }

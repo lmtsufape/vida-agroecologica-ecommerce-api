@@ -12,7 +12,7 @@ class ItemVenda extends Model
 
     protected $table = 'itens_venda';
 
-    protected $fillable = ['quantidade','preco','produto_id'];
+    protected $fillable = ['quantidade', 'preco', 'produto_id'];
 
     public function produto(): BelongsTo
     {

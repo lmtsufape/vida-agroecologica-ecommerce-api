@@ -29,8 +29,8 @@ return new class extends Migration
             $table->dateTime('data_entrega')->nullable();
 
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento');
-            $table->foreignId('consumidor_id')->constrained('consumidores');
-            $table->foreignId('produtor_id')->constrained('produtores');
+            $table->foreignId('consumidor_id')->constrained('users');
+            $table->foreignId('produtor_id')->constrained('users');
 
             $table->timestamps();
         });

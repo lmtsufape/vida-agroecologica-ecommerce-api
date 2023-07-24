@@ -11,8 +11,13 @@ class Bairro extends Model
 
     protected $fillable = ['nome', 'taxa'];
 
-    public function cep()
+    public function enderecos()
     {
         return $this->hasMany(Endereco::class);
+    }
+
+    public function bancas_info_entrega()
+    {
+        return $this->belongsToMany(Banca::class);
     }
 }

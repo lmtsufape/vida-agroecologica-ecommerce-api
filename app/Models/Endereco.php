@@ -16,18 +16,8 @@ class Endereco extends Model
         return $this->belongsTo(Bairro::class);
     }
 
-    public function user()
+    public function addressable()
     {
-        return $this->hasOne(User::class);
-    }
-
-    public function propriedade()
-    {
-        return $this->hasOne(Propriedade::class);
-    }
-
-    public function organizacaoControleSocial()
-    {
-        return $this->hasOne(OrganizacaoControleSocial::class);
+        return $this->morphTo();
     }
 }

@@ -9,6 +9,8 @@ class OrganizacaoControleSocial extends Model
 {
     use HasFactory;
 
+    protected $table = 'organizacoes_controle_social';
+
     protected $fillable = [
         'nome',
         'representante',
@@ -21,7 +23,7 @@ class OrganizacaoControleSocial extends Model
 
     public function endereco()
     {
-        return $this->belongsTo(Endereco::class);
+        return $this->morphOne(Endereco::class, 'addressable');
     }
 
     public function contato()
@@ -36,6 +38,6 @@ class OrganizacaoControleSocial extends Model
 
     public function agricultor()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 }

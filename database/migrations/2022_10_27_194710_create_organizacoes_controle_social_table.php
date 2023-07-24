@@ -13,16 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('associacaos', function (Blueprint $table) {
+        Schema::create('organizacoes_controle_social', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->string('codigo');
+            $table->string('representante');
+            $table->string('cnpj');
+            $table->date('data_fundacao');
             $table->timestamps();
 
-            $table->unsignedInteger('contato_id');
-            $table->foreign('contato_id')->references('id')->on('contatos');
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('contato_id')->constrained();
+            $table->foreignId('associacao_id')->constrained('associacoes');
+            $table->foreignId('user_id')->constrained();
         });
     }
 
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('associacaos');
+        Schema::dropIfExists('organizacao_controle_socials');
     }
 };

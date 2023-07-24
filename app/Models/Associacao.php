@@ -9,6 +9,8 @@ class Associacao extends Model
 {
     use HasFactory;
 
+    protected $table = 'associacoes';
+
     protected $fillable = [
         'nome',
         'codigo',
@@ -16,7 +18,7 @@ class Associacao extends Model
         'user_id'
     ];
 
-    public function organizacaoControleSocials()
+    public function organizacoesControleSocial()
     {
         return $this->hasMany(OrganizacaoControleSocial::class);
     }
