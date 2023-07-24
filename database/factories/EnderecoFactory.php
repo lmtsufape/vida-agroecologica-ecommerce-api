@@ -17,7 +17,7 @@ class EnderecoFactory extends Factory
     public function definition()
     {
         return [
-            'pais' => 'Brasi',
+            'pais' => 'Brasil',
             'cidade' => 'Garanhuns',
             'estado' => 'Pernambuco',
             'rua' => 'Rua das moreninhas',

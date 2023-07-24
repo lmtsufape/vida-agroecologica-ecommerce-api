@@ -25,7 +25,6 @@ class UserFactory extends Factory
             'password' => Hash::make('12345678'), // password
             'remember_token' => Str::random(10),
             'contato_id' => 1,
-            'endereco_id' => 1
         ];
     }
 
