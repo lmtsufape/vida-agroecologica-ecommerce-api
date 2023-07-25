@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -40,14 +41,14 @@ class Banca extends Model
     public function feira(){
         return $this->belongsTo(Feira::class);
     }
-    public function produtos()
+    public function produtos(): HasMany
     {
         return $this->hasMany(Produto::class);
     }
 
     public function produtor(): BelongsTo
     {
-        return $this->belongsTo(Produtor::class);
+        return $this->belongsTo(User::class);
     }
 
     public function imagem(): MorphOne
@@ -58,5 +59,10 @@ class Banca extends Model
     public function formasPagamento(): BelongsToMany
     {
         return $this->belongsToMany(FormaPagamento::class, 'banca_forma_pagamento', 'banca_id', 'forma_pagamento_id');
+    }
+
+    public function bairros_info_entrega()
+    {
+        return $this->belongsToMany(Bairro::class);
     }
 }

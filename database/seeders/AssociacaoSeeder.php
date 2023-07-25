@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Feira;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class FeiraSeeder extends Seeder
+class AssociacaoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +14,6 @@ class FeiraSeeder extends Seeder
      */
     public function run()
     {
-        Feira::factory(1)->create();
+        \App\Models\Associacao::factory(1)->create();
     }
 }

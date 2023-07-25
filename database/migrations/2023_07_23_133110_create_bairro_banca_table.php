@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bairros', function (Blueprint $table) {
+        Schema::create('bairro_banca', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->foreignId('cidade_id')->constrained();
-            $table->unique(['nome', 'cidade_id']);
+            $table->decimal('taxa')->nullable();
+            $table->boolean('faz_entrega');
             $table->timestamps();
+
+            $table->foreignId('bairro_id')->constrained();
+            $table->foreignId('banca_id')->constrained();
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bairros');
+        Schema::dropIfExists('bairro_banca');
     }
 };

@@ -15,6 +15,11 @@ class Bairro extends Model
     {
         return $this->hasMany(Endereco::class);
     }
+
+    public function bancas_info_entrega()
+    {
+        return $this->belongsToMany(Banca::class);
+    }
     public function feira(){
         return $this->hasOne(Feira::class);
     }

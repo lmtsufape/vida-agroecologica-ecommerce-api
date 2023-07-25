@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('produtores', function (Blueprint $table) {
+        Schema::create('contatos', function (Blueprint $table) {
             $table->id();
-            $table->string('bairro');
+            $table->string('email')->nullable();
+            $table->string('telefone');
             $table->timestamps();
-            //$table->foreignId('banco_id')->nullable(false)->constrained('bancos');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('produtores');
+        Schema::dropIfExists('contatos');
     }
 };
