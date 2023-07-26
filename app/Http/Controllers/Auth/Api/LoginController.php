@@ -3,37 +3,66 @@
 namespace App\Http\Controllers\Auth\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\ApiEmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Separação do necessario para a verificação das credenciais
-        $credentials = $request->only('email', 'password');
+        $dados = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-        // Verificação de credenciais
-        if (!auth()->attempt($credentials)) {
+        if (!Auth::attempt($dados)) {
             abort(401, 'Credenciais inválidas');
         }
 
-        // Criação do token de acesso
-        $token = auth()->user()->createToken('auth_token');
+        $user = $request->user();
+        $token =  $user->createToken('auth_token');
+        $usuario = [
+            'id' => $user->id, 'token' => $token->plainTextToken, 'nome' => $user->name,
+            'email' => $user->email, 'role' => $user->roles
+        ];
 
-
-        // Retorno do token
-        return response()->json([
-            'data' => [
-                'token' => $token->plainTextToken,
-                'nome' => auth()->user()->nome
-            ]
-        ]);
+        return response()->json(['user' => $usuario], 200);
     }
 
-    public function logout()
+    public function token(Request $request)
     {
-        Auth::user()->tokens()->delete();
-        return response()->json('Saimo, tamo fora');
+        $dados = $request->only(['email', 'password']);
+
+        if (!Auth::attempt($dados)) {
+            abort(401, 'Credenciais inválidas');
+        }
+
+        $user = $request->user();
+        $token =  $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json($token, 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response()->json(['message' => 'usuário deslogado'], 200);
+    }
+
+    public function verificarEmail(ApiEmailVerificationRequest $request)
+    {
+        $request->fulfill();
+
+        return view('auth.emailVerified');
+    }
+
+    public function reenviarEmail(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Verification link sent!'], 200);
     }
 }

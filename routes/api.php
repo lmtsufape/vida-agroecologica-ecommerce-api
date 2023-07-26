@@ -3,12 +3,11 @@
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
-use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
-use App\Http\Controllers\Auth\Api\LoginController as LoginControllerWeb;
+use App\Http\Controllers\Auth\Api\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-
-    Route::post('/logout', [LoginControllerWeb::class, 'logout']);
 
     Route::controller(BairroController::class)->group(function () {
         Route::get('bairros', 'index');
@@ -93,11 +90,11 @@ Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout']);
+});
 
 // Parte do gesão web
-
-
-//Route::post('login', [App\Http\Controllers\Auth\Api\LoginController::class, 'login']); //conflito
 
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
     // Usuario
