@@ -63,11 +63,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'check_produtor' => \App\Http\Middleware\CheckProdutor::class,
-        'check_bancas' => \App\Http\Middleware\ValidandoOutrasBancas::class,
-        'check_valid_banca' => \App\Http\Middleware\CheckBancaValida::class,
-        'check_consumidor' => \App\Http\Middleware\CheckConsumidor::class,
-        'check_estoque' => \App\Http\Middleware\CheckEstoque::class,
-
+        'check.produtor' => \App\Http\Middleware\CheckProdutor::class,
+        'check.consumidor' => \App\Http\Middleware\CheckConsumidor::class,
     ];
 }
