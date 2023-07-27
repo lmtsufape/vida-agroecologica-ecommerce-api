@@ -73,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
     public function transacoes()
