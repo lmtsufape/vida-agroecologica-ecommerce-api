@@ -58,6 +58,6 @@ class Banca extends Model
 
     public function bairros_info_entrega()
     {
-        return $this->belongsToMany(Bairro::class);
+        return $this->belongsToMany(Bairro::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();
     }
 }
