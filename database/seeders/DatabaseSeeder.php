@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             BairroSeeder::class,
             FormaPagamentoSeeder::class,
             VendaSeeder::class,
+            RoleSeeder::class,
         ]);
         DB::commit();
     }
