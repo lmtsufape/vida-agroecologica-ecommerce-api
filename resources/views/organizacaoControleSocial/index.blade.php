@@ -345,7 +345,7 @@
                                     <div class="row justify-content-center mt-2">
                                         <div class="col-sm-4">
                                             <label for="pais">Pais:</label>
-                                            <input class="form-control @error('pais') is-invalid @enderror" id="pais" type="text" name="pais" value="{{ $ocs->endereco->pais }}" required autocomplete="pais"
+                                            <input class="form-control @error('pais') is-invalid @enderror" id="pais" type="text" name="pais" value={{ $ocs->endereco->pais ?? ''}}  required autocomplete="pais"
                                                    autofocus>
                                             @error('pais')
                                                 <span class="invalid-feedback" role="alert">
@@ -356,7 +356,7 @@
 
                                         <div class="col-sm-4">
                                             <label for="uf">Estado:</label>
-                                            <input class="form-control @error('uf') is-invalid @enderror" id="uf" type="text" name="uf" value="{{ $ocs->endereco->uf }}" required
+                                            <input class="form-control @error('uf') is-invalid @enderror" id="uf" type="text" name="uf" value={{ $ocs->endereco->uf ?? ''}} required
                                                    autocomplete="uf"
                                                    autofocus>
                                             @error('uf')
@@ -368,7 +368,7 @@
 
                                         <div class="col-sm-4">
                                             <label for="cidade">Cidade:</label>
-                                            <input class="form-control @error('cidade') is-invalid @enderror" id="cidade" type="text" name="cidade" value="{{ $ocs->endereco->cidade }}" required
+                                            <input class="form-control @error('cidade') is-invalid @enderror" id="cidade" type="text" name="cidade" value={{ $ocs->endereco->cidade ?? '' }} required
                                                    autocomplete="cidade"
                                                    autofocus>
                                             @error('cidade')
@@ -382,7 +382,7 @@
                                     <div class="row justify-content-center mt-2">
                                         <div class="col-sm-6">
                                             <label for="cep">CEP:</label>
-                                            <input class="form-control @error('cep') is-invalid @enderror cep" id="cep" type="text" name="cep" value="{{ $ocs->endereco->cep }}" required autocomplete="cep"
+                                            <input class="form-control @error('cep') is-invalid @enderror cep" id="cep" type="text" name="cep" value={{ $ocs->endereco->cep ?? '' }} required autocomplete="cep"
                                                    autofocus>
                                             @error('cep')
                                                 <span class="invalid-feedback" role="alert">
@@ -393,7 +393,7 @@
 
                                         <div class="col-sm-6">
                                             <label for="bairro">Bairro:</label>
-                                            <input class="form-control @error('bairro') is-invalid @enderror" id="bairro" type="text" name="bairro" value="{{ $ocs->endereco->bairro }}" required
+                                            <input class="form-control @error('bairro') is-invalid @enderror" id="bairro" type="text" name="bairro" value={{ $ocs->endereco->bairro ?? ''}} required
                                                    autocomplete="bairro"
                                                    autofocus>
                                             @error('bairro')
@@ -407,7 +407,7 @@
                                     <div class="row justify-content-center mt-2">
                                         <div class="col-sm-6">
                                             <label for="rua">Rua:</label>
-                                            <input class="form-control @error('rua') is-invalid @enderror" id="rua" type="text" name="rua" value="{{ $ocs->endereco->rua }}" required autocomplete="rua"
+                                            <input class="form-control @error('rua') is-invalid @enderror" id="rua" type="text" name="rua" value={{ $ocs->endereco->rua ?? '' }} required autocomplete="rua"
                                                    autofocus>
                                             @error('rua')
                                                 <span class="invalid-feedback" role="alert">
@@ -418,7 +418,7 @@
 
                                         <div class="col-sm-6">
                                             <label for="numero">Número:</label>
-                                            <input class="form-control @error('numero') is-invalid @enderror" id="numero" type="text" name="numero" value="{{ $ocs->endereco->numero }}" required
+                                            <input class="form-control @error('numero') is-invalid @enderror" id="numero" type="text" name="numero" value={{ $ocs->endereco->numero ?? '' }} required
                                                    autocomplete="numero"
                                                    autofocus>
                                             @error('numero')

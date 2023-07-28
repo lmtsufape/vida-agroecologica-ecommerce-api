@@ -30,7 +30,7 @@ class AgricultorController extends Controller
         try {
             $dados = $request->validated();
             $this->agricultoService->vincularAgricultorOrganizacao($dados['agricultor_id'], $dados['organizacao_id']);
-            return redirect(route('agricultores.index'))->with('sucesso', 'Organização vincula com sucesso!');
+            return redirect(route('agricultores.index'))->with('sucesso', 'Organização vinculada com sucesso!');
         } catch(Exception $e) {
             Log::error($e->getMessage());
         }

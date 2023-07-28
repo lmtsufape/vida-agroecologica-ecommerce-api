@@ -25,7 +25,7 @@ class StoreOrganizacaoRequest extends FormRequest
     {
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
-            "cnpj"              => ['required', 'cnpj', 'unique:organizacao_controle_socials'],
+            "cnpj"              => ['required', 'cnpj', 'unique:organizacoes_controle_social'],
             "representante"     => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
             "associacao_id"     => ['required', 'numeric'],

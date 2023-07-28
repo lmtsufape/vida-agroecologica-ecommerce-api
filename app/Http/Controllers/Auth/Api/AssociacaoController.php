@@ -56,7 +56,9 @@ class AssociacaoController extends Controller
     public function index()
     {
         $associacoes = Associacao::all();
-        $presidentes = User::where('tipo_usuario_id', 2)->get();
+        $presidentes = User::whereHas('roles', function ($query) {
+            $query->where('nome', 'presidente');
+        })->get();
 
         return response()->json([
             'associacoes' => $associacoes,

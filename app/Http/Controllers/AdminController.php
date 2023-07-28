@@ -8,15 +8,22 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function usuarios_index(){
-        $users = User::all()->except(Auth::id());
+    public function usuarios_index()
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->whereIn('nome', ['presidente', 'administrador']);
+        })->with('contato')->get();
+
         return view('admin.usuarios_index', compact('users'));
     }
 
     public function associacoes_index()
     {
         $associacoes = Associacao::all();
-        $presidentes = User::where('tipo_usuario_id', 2)->get();
+        $presidentes = User::whereHas('roles', function ($query) {
+            $query->whereIn('nome', ['presidente', 'administrador']);
+        })->get();
+
         return view('admin.associacoes_index', compact('associacoes', 'presidentes'));
     }
 

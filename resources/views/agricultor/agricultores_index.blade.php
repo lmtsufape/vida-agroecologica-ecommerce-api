@@ -43,7 +43,7 @@
                 <tbody>
                 @foreach($agricultores as $agricultor)
                     <tr>
-                        <td class="text-center">{{$agricultor->nome}}</td>
+                        <td class="text-center">{{$agricultor->name}}</td>
                         <td class="text-center">{{$agricultor->email}}</td>
                         <td class="text-center">{{$agricultor->cpf}}</td>
                         <td class="text-center">{{$agricultor->organizacao->nome ?? "Nenhuma OCS vinculada"}}</td>
