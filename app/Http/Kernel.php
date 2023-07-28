@@ -54,6 +54,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'role' => \App\Http\Middleware\CheckRole::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -65,9 +66,5 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.produtor' => \App\Http\Middleware\CheckProdutor::class,
         'check.consumidor' => \App\Http\Middleware\CheckConsumidor::class,
-        'type.admin' => \App\Http\Middleware\Api\AdminMiddleware::class,
-        'type.admin.presidente' => \App\Http\Middleware\Api\AdminPresidenteMiddleware::class,
-        'type.presidente' => \App\Http\Middleware\Api\PresidenteMiddleware::class,
-        'type.agricultor' => \App\Http\Middleware\Api\AgricultorMiddleware::class
     ];
 }
