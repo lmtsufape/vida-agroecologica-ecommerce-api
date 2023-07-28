@@ -18,7 +18,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user()->roles->contains('nome', 'admin')) {
+        if ($request->user()->roles->contains('nome', 'administrador')) {
             return $next($request);
         }
 

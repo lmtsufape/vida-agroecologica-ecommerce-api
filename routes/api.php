@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Auth\Api\LoginController;
+use App\Http\Controllers\Auth\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
