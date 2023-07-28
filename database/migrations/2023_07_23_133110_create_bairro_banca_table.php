@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->decimal('taxa')->nullable();
             $table->boolean('faz_entrega');
-            $table->timestamps();
 
             $table->foreignId('bairro_id')->constrained();
             $table->foreignId('banca_id')->constrained();
+            $table->timestamps();
         });
     }
 

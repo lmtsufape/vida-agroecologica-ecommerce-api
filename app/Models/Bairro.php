@@ -18,6 +18,6 @@ class Bairro extends Model
 
     public function bancas_info_entrega()
     {
-        return $this->belongsToMany(Banca::class);
+        return $this->belongsToMany(Banca::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();
     }
 }
