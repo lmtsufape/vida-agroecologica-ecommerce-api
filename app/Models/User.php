@@ -53,7 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
 
     public function contato()
     {
-        return $this->belongsTo(Contato::class);
+        return $this->morphOne(Contato::class, 'contactable');
     }
 
     public function propriedades()
@@ -61,14 +61,19 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         return $this->hasMany(Propriedade::class);
     }
 
-    public function associacoes()
+    public function associacoesPresididas()
     {
-        return $this->hasMany(Associacao::class);
+        return $this->belongsToMany(Associacao::class, 'associacao_presidente', 'presidente_id', 'associacao_id')->withTimestamps();
+    }
+
+    public function associacao()
+    {
+        return $this->belongsTo(Associacao::class);
     }
 
     public function organizacao()
     {
-        return $this->hasOne(OrganizacaoControleSocial::class);
+        return $this->belongsTo(OrganizacaoControleSocial::class, 'organizacao_id');
     }
 
     public function roles()

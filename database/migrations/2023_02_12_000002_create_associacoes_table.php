@@ -18,9 +18,6 @@ return new class extends Migration
             $table->string('nome');
             $table->string('codigo');
             $table->timestamps();
-
-            $table->foreignId('contato_id')->constrained();
-            $table->foreignId('user_id')->constrained();
         });
     }
 

@@ -25,13 +25,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::enforceMorphMap([
-            'User' => 'App\Models\User',
-            'Produtor' => 'App\Models\Produtor',
-            'Consumidor' => 'App\Models\Consumidor',
-            'Produto_tabelado' => 'App\Models\ProdutoTabelado',
-            'Banca' => 'App\Models\Banca',
-            'Venda' => 'App\Models\Venda',
+            'user' => 'App\Models\User',
+            'produto_tabelado' => 'App\Models\ProdutoTabelado',
+            'banca' => 'App\Models\Banca',
+            'venda' => 'App\Models\Venda',
+            'associacao' => 'App\Models\Associacao',
+            'organizacao' => 'App\Models\OrganizacaoControleSocial',
+            'propriedade' => 'App\Models\Propriedade'
         ]);
-
     }
 }

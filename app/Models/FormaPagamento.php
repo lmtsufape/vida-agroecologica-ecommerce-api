@@ -22,6 +22,6 @@ class FormaPagamento extends Model
 
     public function bancas(): BelongsToMany
     {
-        return $this->belongsToMany(FormaPagamento::class, 'banca_forma_pagamento', 'forma_pagamento_id', 'banca_id');
+        return $this->belongsToMany(Banca::class)->withTimestamps();
     }
 }

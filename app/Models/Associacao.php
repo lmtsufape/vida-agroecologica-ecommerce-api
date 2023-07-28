@@ -25,11 +25,16 @@ class Associacao extends Model
 
     public function contato()
     {
-        return $this->belongsTo(Contato::class);
+        return $this->morphOne(Contato::class, 'contactable');
     }
 
-    public function user()
+    public function presidentes()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'associacao_presidente', 'associacao_id', 'presidente_id')->withTimestamps();
+    }
+
+    public function agricultores()
+    {
+        return $this->hasMany(User::class);
     }
 }

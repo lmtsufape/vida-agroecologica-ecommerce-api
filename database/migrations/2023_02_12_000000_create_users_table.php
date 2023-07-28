@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('cpf')->unique()->nullable();
             $table->string('cnpj')->unique()->nullable();
 
-            $table->foreignId('contato_id')->constrained();
+            $table->foreignId('associacao_id')->constrained('associacoes');
+            $table->foreignId('organizacao_id')->constrained('organizacoes_controle_social');
             $table->timestamps();
         });
     }

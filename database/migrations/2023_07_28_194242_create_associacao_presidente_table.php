@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contatos', function (Blueprint $table) {
+        Schema::create('associacao_presidente', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->nullable();
-            $table->string('telefone');
-
-            $table->morphs('contactable');
+            $table->foreignId('associacao_id')->constrained('associacoes');
+            $table->foreignId('presidente_id')->constrained('users');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contatos');
+        Schema::dropIfExists('associacao_presidente');
     }
 };
