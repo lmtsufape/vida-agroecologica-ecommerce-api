@@ -12,12 +12,12 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav me-auto">
                 @auth
-                    @if(Auth::user()->tipo_usuario_id == 1)
+                    @if(Auth::user()->hasAnyRoles(['presidente','administrador']))
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('usuarios.index')}}">{{ __('Usuarios') }}</a>
                         </li>
                     @endif
-                    @if (Auth::user()->tipo_usuario_id == 1 || Auth::user()->tipo_usuario_id == 2 )
+                    @if (Auth::user()->hasAnyRoles(['presidente','administrador']))
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('associacoes.index')}}">{{ __('Associações') }}</a>
                         </li>

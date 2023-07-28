@@ -26,7 +26,7 @@ class UpdateOrganizacaoRequest extends FormRequest
     {
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
-            "cnpj"              => ['required', 'cnpj', Rule::unique('organizacao_controle_socials')->ignore($this->ocs_id)],
+            "cnpj"              => ['required', 'cnpj', Rule::unique('organizacoes_controle_social')->ignore($this->ocs_id)],
             "representante"     => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
             "ocs_id"            => ['required', 'numeric'],

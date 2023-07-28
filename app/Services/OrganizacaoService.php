@@ -6,6 +6,8 @@ use App\Interfaces\IOrganizacaoService;
 use App\Models\Contato;
 use App\Models\Endereco;
 use App\Models\OrganizacaoControleSocial;
+use App\Models\Bairro;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class OrganizacaoService implements IOrganizacaoService {
@@ -14,13 +16,23 @@ class OrganizacaoService implements IOrganizacaoService {
 
         DB::transaction(function () use ($dadosOrganizacao) {
 
-            $contato = Contato::create($dadosOrganizacao);
-            $endereco = Endereco::create($dadosOrganizacao);
-        
-            $dadosOrganizacao["endereco_id"] = $endereco->id;
-            $dadosOrganizacao["contato_id"] = $contato->id;
+            $userId = auth()->user()->id;
 
-            OrganizacaoControleSocial::create($dadosOrganizacao);
+            $bairro = Bairro::firstOrCreate(['nome' => $dadosOrganizacao['bairro']]);
+            $dadosOrganizacao['bairro_id'] = $bairro->id;
+            //fix: padronizar nome
+            $dadosOrganizacao['estado'] = $dadosOrganizacao['uf'];
+
+            $contato = Contato::create($dadosOrganizacao);
+            $dadosOrganizacao['contato_id'] = $contato->id;
+            $dadosOrganizacao['user_id'] = $userId;
+
+            $organizacao = OrganizacaoControleSocial::create($dadosOrganizacao);
+
+            $endereco = new Endereco($dadosOrganizacao);
+            $organizacao->endereco()->save($endereco);
+
+            $organizacao->save();
         });
     }
 

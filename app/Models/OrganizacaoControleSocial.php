@@ -18,7 +18,8 @@ class OrganizacaoControleSocial extends Model
         "data_fundacao",
         "contato_id",
         "endereco_id",
-        "associacao_id"
+        "associacao_id",
+        "user_id"
     ];
 
     public function endereco()
@@ -38,6 +39,6 @@ class OrganizacaoControleSocial extends Model
 
     public function agricultor()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 }
