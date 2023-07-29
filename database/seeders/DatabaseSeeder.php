@@ -23,6 +23,6 @@ class DatabaseSeeder extends Seeder
             FormaPagamentoSeeder::class,
             VendaSeeder::class,
         ]);
-        Db::commit();
+        DB::commit();
     }
 }
