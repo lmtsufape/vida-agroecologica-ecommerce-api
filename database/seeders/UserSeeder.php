@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Banca;
+use App\Models\Contato;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -13,9 +17,8 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Contato::factory(4)->create();
-
-        $roles = \App\Models\Role::all();
+        $contatos = Contato::factory(4)->make();
+        $roles = Role::all();
         $emails = [
             'admin@admin.com',
             'presidente@presidente.com',
@@ -24,15 +27,15 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($roles as $indice => $role) {
-            $user = \App\Models\User::factory()->create([
+            $user = User::factory()->create([
                 'email' => $emails[$indice],
                 'cpf' => '999.999.999-9' . (9 - $indice),
-                'contato_id' => $indice + 1
             ]);
 
             $user->roles()->attach($role);
+            $user->contato()->save($contatos[$indice]);
         }
 
-        \App\Models\Banca::factory()->create();
+        Banca::factory()->create();
     }
 }

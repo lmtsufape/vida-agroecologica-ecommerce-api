@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Associacao;
+use App\Models\Contato;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,6 +16,8 @@ class AssociacaoSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Associacao::factory(1)->create();
+        $associacao = Associacao::factory()->createOne();
+        $contato = Contato::factory()->makeOne();
+        $associacao->contato()->save($contato);
     }
 }

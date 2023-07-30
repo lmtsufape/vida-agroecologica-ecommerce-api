@@ -21,11 +21,10 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('apelido')->nullable();
-            $table->string('cpf')->unique()->nullable();
-            $table->string('cnpj')->unique()->nullable();
+            $table->string('cpf')->unique();
 
-            $table->foreignId('associacao_id')->constrained('associacoes');
-            $table->foreignId('organizacao_id')->constrained('organizacoes_controle_social');
+            $table->foreignId('associacao_id')->nullable()->constrained('associacoes');
+            $table->foreignId('organizacao_id')->nullable()->constrained('organizacoes_controle_social');
             $table->timestamps();
         });
     }
