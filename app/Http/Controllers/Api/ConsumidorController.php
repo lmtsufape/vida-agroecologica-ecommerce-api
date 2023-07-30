@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Consumidor;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -24,32 +25,24 @@ class ConsumidorController extends Controller
         }
         return response()->json(['usuários' => $consumidores], 200);
     }
+
     public function store(StoreUserRequest $request)
     {
-        DB::beginTransaction();
-        $consumidor = new Consumidor();
-        $consumidor->save();
+        $consumidorRole = Role::where('nome', 'consumidor')->first();
 
-        $consumidor = $consumidor->user()->create($request->except('passowrd'));
-        if (!$consumidor) {
-            return response()->json(['erro' => 'Não foi possível criar o usuário'], 400);
-        }
+        DB::beginTransaction();
+        $consumidor = User::make($request->except('password'));
         $consumidor->password = Hash::make($request->password);
-        $consumidor->endereco()->create($request->only(
-            'rua',
-            'numero',
-            'cep',
-            'complemento',
-            'cidade',
-            'estado',
-            'país',
-            'bairro_id'
-        ));
         $consumidor->save();
-        event(new Registered($consumidor));
+        $consumidor->contato()->create($request->all());
+        $consumidor->roles()->attach($consumidorRole);
         DB::commit();
+
+        event(new Registered($consumidor));
+
         return response()->json(['usuário' => $consumidor], 201);
     }
+
     public function show($id)
     {
         $consumidor = Consumidor::find($id);
@@ -59,6 +52,7 @@ class ConsumidorController extends Controller
         }
         return response()->json(['usuário' => $consumidor], 200);
     }
+
     public function update(UpdateUserRequest $request, $id)
     {
         $user = $request->user();
@@ -83,11 +77,12 @@ class ConsumidorController extends Controller
         DB::commit();
         return response()->json([$consumidor], 200);
     }
+
     public function destroy($id)
     {
         $user = User::find(Auth::user()->id);
         $consumidor = Consumidor::findOrFail($id);
-        if($user->cannot('delete', $consumidor)) {
+        if ($user->cannot('delete', $consumidor)) {
             abort(403);
         }
 

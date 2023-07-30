@@ -41,16 +41,11 @@ class StoreUserRequest extends FormRequest
             'telefone' => [
                 'required',
                 'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
-                'unique:users'
+                'unique:contatos'
             ],
             'cpf' => [
                 'nullable',
                 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"
-                'unique:users'
-            ],
-            'cnpj' => [
-                'nullable',
-                'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/', // considerando cnpj no formato "99.999.999/9999-99"
                 'unique:users'
             ],
             'rua' => [
@@ -115,7 +110,6 @@ class StoreUserRequest extends FormRequest
             'email' => 'O email precisa ser válido.',
             'telefone.regex' => 'O campo telefone deve estar no formato (99) 99999-9999.',
             'cpf.regex' => 'O campo CPF deve estar no formato 999.999.999-99.',
-            'cnpj.regex' => 'O campo CNPJ deve estar no formato 99.999.999/9999-99.',
             'cep.regex' => 'O campo CEP deve estar no formato 99999-999.',
         ];
     }
