@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('propriedades', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->timestamps();
 
-            $table->foreignId('user_id')->constrained();
+            $table->string('nome', 60);
+
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            $table->timestamps();
         });
     }
 

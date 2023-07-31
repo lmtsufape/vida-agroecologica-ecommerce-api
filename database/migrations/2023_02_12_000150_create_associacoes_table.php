@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('associacoes', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->string('codigo');
+
+            $table->string('nome', 60);
+            $table->string('codigo')->unique();
+
             $table->timestamps();
         });
     }

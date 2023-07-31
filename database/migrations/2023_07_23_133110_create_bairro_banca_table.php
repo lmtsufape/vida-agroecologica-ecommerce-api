@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('bairro_banca', function (Blueprint $table) {
             $table->id();
+
             $table->decimal('taxa')->nullable();
             $table->boolean('faz_entrega');
 
-            $table->foreignId('bairro_id')->constrained();
-            $table->foreignId('banca_id')->constrained();
+            $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
+            $table->foreignId('banca_id')->constrained()->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

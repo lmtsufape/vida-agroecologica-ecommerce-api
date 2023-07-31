@@ -14,6 +14,11 @@ class Venda extends Model
 
     protected $fillable = ['status', 'tipo_entrega', 'data_pedido', 'total', 'comprovante_pagamento'];
 
+    public function banca(): BelongsTo
+    {
+        return $this->belongsTo(Banca::class);
+    }
+
     public function formaPagamento(): BelongsTo
     {
         return $this->belongsTo(FormaPagamento::class);

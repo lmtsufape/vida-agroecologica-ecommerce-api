@@ -15,16 +15,19 @@ return new class extends Migration
     {
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('descricao');
-            $table->string('tipo_unidade');
+
+            $table->string('descricao', 120);
+            $table->string('tipo_unidade', 30);
             $table->double('estoque', 6, 3);
             $table->decimal('preco');
-            $table->decimal('custo');
+            $table->decimal('custo')->nullable();
             $table->boolean('disponivel')->default(true);
-            $table->foreignId('banca_id')->constrained('bancas')->onDelete('cascade');
-            $table->foreignId('produto_tabelado_id')->constrained('produtos_tabelados')->onDelete('restrict');
+
+            $table->foreignId('banca_id')->constrained('bancas')->cascadeOnDelete();
+            $table->foreignId('produto_tabelado_id')->constrained('produtos_tabelados')->restrictOnDelete();
             $table->unique(['banca_id', 'produto_tabelado_id']);
+
+            $table->timestamps();
             $table->softDeletes();
         });
     }
