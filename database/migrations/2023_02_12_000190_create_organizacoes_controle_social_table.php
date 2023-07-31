@@ -15,12 +15,14 @@ return new class extends Migration
     {
         Schema::create('organizacoes_controle_social', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->string('cnpj');
-            $table->date('data_fundacao');
-            $table->timestamps();
 
-            $table->foreignId('associacao_id')->constrained('associacoes');
+            $table->string('nome', 60);
+            $table->string('cnpj', 18)->unique();
+            $table->date('data_fundacao');
+
+            $table->foreignId('associacao_id')->constrained('associacoes')->restrictOnDelete();
+
+            $table->timestamps();
         });
     }
 

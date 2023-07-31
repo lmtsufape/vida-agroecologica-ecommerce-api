@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('associacao_presidente', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('associacao_id')->constrained('associacoes');
-            $table->foreignId('presidente_id')->constrained('users');
+
+            $table->foreignId('associacao_id')->constrained('associacoes')->cascadeOnDelete();
+            $table->foreignId('presidente_id')->constrained('users')->restrictOnDelete();
+
             $table->timestamps();
         });
     }

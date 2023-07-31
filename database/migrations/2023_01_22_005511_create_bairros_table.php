@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('bairros', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique();
+
+            $table->string('nome', 60)->unique();
+
             $table->timestamps();
         });
     }
