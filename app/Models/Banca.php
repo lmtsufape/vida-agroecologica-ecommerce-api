@@ -55,6 +55,11 @@ class Banca extends Model
         return $this->belongsToMany(FormaPagamento::class)->withTimestamps();
     }
 
+    public function vendas(): HasMany
+    {
+        return $this->hasMany(Venda::class);
+    }
+
     public function bairros_info_entrega(): BelongsToMany
     {
         return $this->belongsToMany(Bairro::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();

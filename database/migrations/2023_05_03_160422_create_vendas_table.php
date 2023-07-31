@@ -31,6 +31,7 @@ return new class extends Migration
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->restrictOnDelete();
             $table->foreignId('consumidor_id')->constrained('users')->restrictOnDelete();
             $table->foreignId('produtor_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('banca_id')->constrained()->restrictOnDelete();
 
             $table->timestamps();
         });
