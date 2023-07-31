@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::controller(BancaController::class)->group(function () {
             Route::delete('/bancas/imagens', 'deleteImagem');
-            Route::post('/bancas', 'store')->middleware('check_bancas');
+
             Route::get('/bancas', 'index');
             Route::get('/bancas/{banca}', 'show');
             Route::put('/bancas/{banca}', 'update');
@@ -117,3 +117,4 @@ Route::prefix('produtores')->group(function(){
 Route::prefix('consumidores')->group(function(){
     Route::post('/store', [ConsumidorController::class, 'store']);
 });
+Route::post('/bancas/store', [BancaController::class, 'store'])->middleware('check_bancas');

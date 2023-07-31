@@ -31,10 +31,6 @@ class StoreBairroRequest extends FormRequest
                 'max:50',
                 'min:3'
             ],
-            'taxa' => [
-                'required',
-                'decimal:1,5'
-            ],
         ];
         return $rules;
     }

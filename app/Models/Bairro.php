@@ -9,7 +9,7 @@ class Bairro extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'taxa', 'cidade_id'];
+    protected $fillable = ['nome', 'cidade_id'];
 
     public function enderecos()
     {
