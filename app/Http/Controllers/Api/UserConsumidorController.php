@@ -9,11 +9,12 @@ use App\Models\Consumidor;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class ConsumidorController extends Controller
+class UserConsumidorController extends UserController
 {
     public function index()
     {
@@ -26,17 +27,12 @@ class ConsumidorController extends Controller
         return response()->json(['usuários' => $consumidores], 200);
     }
 
+
     public function store(StoreUserRequest $request)
     {
+        $consumidor = parent::store($request);
         $consumidorRole = Role::where('nome', 'consumidor')->first();
-
-        DB::beginTransaction();
-        $consumidor = User::make($request->except('password'));
-        $consumidor->password = Hash::make($request->password);
-        $consumidor->save();
-        $consumidor->contato()->create($request->all());
         $consumidor->roles()->attach($consumidorRole);
-        DB::commit();
 
         event(new Registered($consumidor));
 

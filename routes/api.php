@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
-use App\Http\Controllers\Api\ConsumidorController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
+use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Auth\Api\LoginController;
@@ -74,7 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
 
-Route::post('/consumidores', [ConsumidorController::class, 'store']);
+Route::post('/consumidores', [UserConsumidorController::class, 'store']);
 
 Route::get('/login', fn () => response()->json(['error' => 'Login necessário'], 401))->name('login');
 Route::post('/login', [LoginController::class, 'login']);

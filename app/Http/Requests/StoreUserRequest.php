@@ -77,7 +77,7 @@ class StoreUserRequest extends FormRequest
                 'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
                 'max:50'
             ],
-            'país' => [
+            'pais' => [
                 'required',
                 'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
                 'max:50'
