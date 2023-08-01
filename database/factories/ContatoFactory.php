@@ -18,7 +18,7 @@ class ContatoFactory extends Factory
     {
         return [
             'email' => fake()->email(),
-            'telefone' => fake()->phoneNumber()
+            'telefone' => fake()->numerify('(##) #####-####')
         ];
     }
 }

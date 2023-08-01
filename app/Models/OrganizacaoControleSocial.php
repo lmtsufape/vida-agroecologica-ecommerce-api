@@ -28,7 +28,7 @@ class OrganizacaoControleSocial extends Model
 
     public function contato()
     {
-        return $this->belongsTo(Contato::class);
+        return $this->morphOne(Contato::class, 'contactable');
     }
 
     public function associacao()
@@ -36,8 +36,8 @@ class OrganizacaoControleSocial extends Model
         return $this->belongsTo(Associacao::class);
     }
 
-    public function agricultor()
+    public function agricultores()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 }

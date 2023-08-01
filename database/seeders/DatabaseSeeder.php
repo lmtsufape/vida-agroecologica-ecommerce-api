@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             CidadeSeeder::class,
             BairroSeeder::class,
             FeiraSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class,
             AssociacaoSeeder::class,
             OrganizacaoControleSocialSeeder::class,

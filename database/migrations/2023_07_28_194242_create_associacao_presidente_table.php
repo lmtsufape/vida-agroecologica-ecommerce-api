@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bairro_banca', function (Blueprint $table) {
+        Schema::create('associacao_presidente', function (Blueprint $table) {
             $table->id();
 
-            $table->decimal('taxa')->nullable();
-            $table->boolean('faz_entrega');
-
-            $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
-            $table->foreignId('banca_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('associacao_id')->constrained('associacoes')->cascadeOnDelete();
+            $table->foreignId('presidente_id')->constrained('users')->restrictOnDelete();
 
             $table->timestamps();
         });
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bairro_banca');
+        Schema::dropIfExists('associacao_presidente');
     }
 };

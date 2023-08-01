@@ -6,13 +6,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\auth\CanResetPassword as reset;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail, reset
 {
-    use HasApiTokens, HasFactory, Notifiable, CanResetPassword;
+    use HasApiTokens, HasFactory, Notifiable, CanResetPassword, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -53,7 +54,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
 
     public function contato()
     {
-        return $this->belongsTo(Contato::class);
+        return $this->morphOne(Contato::class, 'contactable');
     }
 
     public function propriedades()
@@ -61,19 +62,24 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         return $this->hasMany(Propriedade::class);
     }
 
-    public function associacoes()
+    public function associacoesPresididas()
     {
-        return $this->hasMany(Associacao::class);
+        return $this->belongsToMany(Associacao::class, 'associacao_presidente', 'presidente_id', 'associacao_id')->withTimestamps();
+    }
+
+    public function associacao()
+    {
+        return $this->belongsTo(Associacao::class);
     }
 
     public function organizacao()
     {
-        return $this->hasOne(OrganizacaoControleSocial::class);
+        return $this->belongsTo(OrganizacaoControleSocial::class, 'organizacao_id');
     }
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
     public function transacoes()

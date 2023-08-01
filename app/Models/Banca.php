@@ -12,8 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Banca extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'nome',
@@ -46,7 +45,7 @@ class Banca extends Model
         return $this->hasMany(Produto::class);
     }
 
-    public function produtor(): BelongsTo
+    public function agricultor(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -58,11 +57,16 @@ class Banca extends Model
 
     public function formasPagamento(): BelongsToMany
     {
-        return $this->belongsToMany(FormaPagamento::class, 'banca_forma_pagamento', 'banca_id', 'forma_pagamento_id');
+        return $this->belongsToMany(FormaPagamento::class)->withTimestamps();
     }
 
-    public function bairros_info_entrega()
+    public function vendas(): HasMany
     {
-        return $this->belongsToMany(Bairro::class);
+        return $this->hasMany(Venda::class);
+    }
+
+    public function bairros_info_entrega(): BelongsToMany
+    {
+        return $this->belongsToMany(Bairro::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();
     }
 }

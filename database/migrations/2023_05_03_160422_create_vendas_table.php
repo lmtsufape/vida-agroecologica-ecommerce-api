@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('vendas', function (Blueprint $table) {
             $table->id();
 
-            $table->string('status');
+            $table->string('status', 30);
             $table->enum('tipo_entrega', ['retirada', 'entrega']);
             $table->decimal('subtotal')->default(0);
             $table->decimal('taxa_entrega')->default(0);
@@ -28,9 +28,10 @@ return new class extends Migration
             $table->dateTime('data_envio')->nullable();
             $table->dateTime('data_entrega')->nullable();
 
-            $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento');
-            $table->foreignId('consumidor_id')->constrained('users');
-            $table->foreignId('produtor_id')->constrained('users');
+            $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->restrictOnDelete();
+            $table->foreignId('consumidor_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('produtor_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('banca_id')->constrained()->restrictOnDelete();
 
             $table->timestamps();
         });

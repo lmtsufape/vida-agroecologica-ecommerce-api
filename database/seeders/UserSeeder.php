@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Banca;
+use App\Models\Contato;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -13,32 +17,25 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Contato::factory(4)->create();
+        $contatos = Contato::factory(4)->make();
+        $roles = Role::all();
+        $emails = [
+            'admin@admin.com',
+            'presidente@presidente.com',
+            'agricultor@agricultor.com',
+            'consumidor@consumidor.com'
+        ];
 
-        \App\Models\User::factory(1)->create([
-            'email' => 'admin@admin.com',
-            'cpf' => '999.999.999-99',
-            'contato_id' => 1
-        ]);
+        foreach ($roles as $indice => $role) {
+            $user = User::factory()->create([
+                'email' => $emails[$indice],
+                'cpf' => '999.999.999-9' . (9 - $indice),
+            ]);
 
-        \App\Models\User::factory(1)->create([
-            'email' => 'presidente@presidente.com',
-            'cpf' => '999.999.999-98',
-            'contato_id' => 2
-        ]);
+            $user->roles()->attach($role);
+            $user->contato()->save($contatos[$indice]);
+        }
 
-        \App\Models\User::factory(1)->create([
-            'email' => 'agricultor@agricultor.com',
-            'cpf' => '999.999.999-97',
-            'contato_id' => 3
-        ]);
-
-        \App\Models\User::factory(1)->create([
-            'email' => 'consumidor@consumidor.com',
-            'cpf' => '999.999.999-96',
-            'contato_id' => 4
-        ]);
-
-        \App\Models\Banca::factory(1)->create();
+        Banca::factory()->create();
     }
 }

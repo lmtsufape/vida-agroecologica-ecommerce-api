@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('propriedades', function (Blueprint $table) {
+        Schema::create('associacoes', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->timestamps();
 
-            $table->foreignId('user_id')->constrained();
+            $table->string('nome', 60);
+            $table->string('codigo')->unique();
+
+            $table->timestamps();
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('propriedades');
+        Schema::dropIfExists('associacoes');
     }
 };

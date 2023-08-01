@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('contatos', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->nullable();
-            $table->string('telefone');
+
+            $table->string('email', 60);
+            $table->string('telefone', 15);
+
+            $table->morphs('contactable');
             $table->timestamps();
         });
     }

@@ -15,17 +15,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+
+            $table->string('name', 60);
+            $table->string('email', 60)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('apelido')->nullable();
-            $table->string('cpf')->unique()->nullable();
-            $table->string('cnpj')->unique()->nullable();
+            $table->string('apelido', 30)->nullable();
+            $table->string('cpf', 14)->unique();
 
-            $table->foreignId('contato_id')->constrained();
+            $table->foreignId('associacao_id')->nullable()->constrained('associacoes')->nullOnDelete();
+            $table->foreignId('organizacao_id')->nullable()->constrained('organizacoes_controle_social')->nullOnDelete();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

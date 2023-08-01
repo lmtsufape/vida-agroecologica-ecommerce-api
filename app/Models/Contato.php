@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Contato extends Model
 {
@@ -14,18 +15,8 @@ class Contato extends Model
         'telefone'
     ];
 
-    public function user()
+    public function contactable(): MorphTo
     {
-        return $this->hasOne(User::class);
-    }
-
-    public function organizacaoControleSocial()
-    {
-        return $this->hasOne(OrganizacaoControleSocial::class);
-    }
-
-    public function associacao()
-    {
-        return $this->hasOne(Associacao::class);
+        return $this->MorphTo();
     }
 }

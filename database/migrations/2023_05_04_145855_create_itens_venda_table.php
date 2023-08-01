@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('itens_venda', function (Blueprint $table) {
             $table->id();
 
-            $table->string('tipo_unidade');
+            $table->string('tipo_unidade', 30);
             $table->double('quantidade', 6, 3);
             $table->decimal('preco');
 
-            $table->foreignId('produto_id')->constrained()->onDelete('restrict');
-            $table->foreignId('venda_id')->constrained();
+            $table->foreignId('produto_id')->constrained()->restrictOnDelete();
+            $table->foreignId('venda_id')->constrained()->cascadeOnDelete();
             $table->unique(['produto_id', 'venda_id']);
 
             $table->timestamps();
