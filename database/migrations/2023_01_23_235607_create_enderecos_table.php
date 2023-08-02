@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('cidade', 60);
             $table->string('estado', 30);
             $table->string('pais', 30);
-            $table->string('bairro', 60)->nullable();
 
             $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
             $table->morphs('addressable');
