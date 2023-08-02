@@ -23,7 +23,7 @@ class BancaFactory extends Factory
             "horario_fechamento" => "23:59:00",
             "funcionamento" => true,
             "preco_minimo" => 1.00,
-            "produtor_id" => 3
+            "produtor_id" => 4
         ];
     }
 }

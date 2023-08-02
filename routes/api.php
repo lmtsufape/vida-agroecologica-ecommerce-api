@@ -7,8 +7,8 @@ use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\ResetPasswordController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\Api\LoginController;
-use App\Http\Controllers\Auth\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +47,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     //consumidor
     Route::middleware('check.consumidor')->group(function () {
-        Route::apiResource('/consumidores', ConsumidorController::class, ['parameters' => ['consumidores' => 'consumidor']])->except('store');
-
         Route::post('/vendas/{id}/comprovante', [VendaController::class, 'anexarComprovante']);
         Route::post('/vendas/{id}/entregar', [VendaController::class, 'marcarEntregue']);
         Route::post('/vendas', [VendaController::class, 'store']);
@@ -74,8 +72,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/produtores', [ProdutorController::class, 'store']);
 
-Route::post('/consumidores', [UserConsumidorController::class, 'store']);
-
 Route::get('/login', fn () => response()->json(['error' => 'Login necessário'], 401))->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/token', [LoginController::class, 'token']);
@@ -95,6 +91,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
+Route::controller(UserController::class)->group(function () {
+    Route::post('/users', 'store');
+    Route::put('/users/{id}', 'update')->middleware('auth:sanctum');
+});
 // Parte do gesão web
 
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
