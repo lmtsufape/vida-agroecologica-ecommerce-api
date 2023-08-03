@@ -28,6 +28,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Usuário
+Route::apiResource('/users', UserController::class)->except('store')->middleware('auth:sanctum');
+
+Route::controller(UserController::class)->group(function () {
+    Route::post('/users', 'store');
+    Route::put('/users/{id}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
+});
+
+// Consumidor
+Route::controller(UserConsumidorController::class)->group(function () {
+    Route::post('/users/{consumidor_id}/enderecos', 'storeEndereco');
+    Route::patch('/users/{endereco_id}/enderecos', 'updateEndereco');
+    Route::delete('/users/{endereco_id}/enderecos', 'deleteEndereco');
+})->middleware('auth:sanctum');
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(BairroController::class)->group(function () {
@@ -64,7 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::get('/produtos', function () {
         $produtos = App\Models\ProdutoTabelado::all();
-        return response()->json(['produtos' => $produtos]);
+        return response()->json(['produtos' => $produtos], 200);
     });
     Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
     Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
@@ -91,10 +108,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
-Route::controller(UserController::class)->group(function () {
-    Route::post('/users', 'store');
-    Route::put('/users/{id}', 'update')->middleware('auth:sanctum');
-});
 // Parte do gesão web
 
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {

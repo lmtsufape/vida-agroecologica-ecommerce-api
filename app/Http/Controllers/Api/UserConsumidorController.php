@@ -11,7 +11,9 @@ class UserConsumidorController extends UserController
     public function storeEndereco(StoreEnderecoRequest $request, $consumidor_id)
     {
         $validatedData = $request->validated();
+
         $user = User::findOrFail($consumidor_id);
+        $this->authorize('createEndereco', $user);
 
         $endereco = Endereco::make($validatedData);
         $user->endereco()->save($endereco);
@@ -24,6 +26,8 @@ class UserConsumidorController extends UserController
         $validatedData = $request->validated();
 
         $endereco = Endereco::findOrFail($endereco_id);
+        $this->authorize('updateOrDeleteEndereco', $endereco);
+
         $endereco->update($validatedData);
 
         return response()->json(['endereco' => $endereco], 200);
@@ -32,6 +36,8 @@ class UserConsumidorController extends UserController
     public function destroyEndereco($endereco_id)
     {
         $endereco = Endereco::findOrFail($endereco_id);
+        $this->authorize('updateOrDeleteEndereco', $endereco);
+
         $endereco->delete();
 
         return response()->noContent();

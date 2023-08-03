@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Endereco;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -17,6 +18,18 @@ class UserPolicy
     public function before(User $user, string $ability): bool|null
     {
         if ($ability === 'create') {
+            return null;
+        }
+        
+        if ($ability === 'delete') {
+            return null;
+        }
+
+        if ($ability === 'forceDelete') {
+            return false;
+        }
+
+        if ($ability === 'createEndereco') {
             return null;
         }
 
@@ -97,6 +110,14 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
+        if ($model->hasAnyRoles(['administrador'])) {
+            return Response::deny();
+        }
+
+        if ($user->hasAnyRoles(['administrador'])) {
+            return Response::allow();
+        }
+
         return $user->id === $model->id
             ? Response::allow()
             : Response::deny();
@@ -111,7 +132,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model)
     {
-        //
+        return Response::deny();
     }
 
     /**
@@ -124,5 +145,34 @@ class UserPolicy
     public function forceDelete(User $user, User $model)
     {
         //
+    }
+
+    // public function updateUserRoles(User $user, User $model)
+    // {
+    //     if ($model->hasAnyRoles(['administrador'])) {
+    //         return Response::deny();
+    //     }
+    // }
+
+    public function createEndereco(User $user, User $model)  // Consumidor
+    {
+        if (!$model->hasAnyRoles(['consumidor'])) {
+            return Response::deny();
+        }
+
+        if ($user->hasAnyRoles(['administrador']) || $user->id === $model->id) {
+            return Response::allow();
+        }
+
+        return Response::deny();
+    }
+
+    public function updateOrDeleteEndereco(User $user, Endereco $endereco)  // Consumidor
+    {
+        if ($endereco->addressable_type === 'user' && $endereco->addressable_id === $user->id) {
+            return Response::allow();
+        }
+
+        return Response::deny();
     }
 }

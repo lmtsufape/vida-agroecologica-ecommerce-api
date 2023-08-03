@@ -35,8 +35,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
 
     Route::get('/usuarios', [App\Http\Controllers\AdminController::class, 'usuarios_index'])->name('usuarios.index');
-    Route::post('/usuario/store', [App\Http\Controllers\UserController::class, 'store'])->name('usuario.store');
-    Route::post('/usuario/update', [App\Http\Controllers\UserController::class, 'update'])->name('usuario.update');
+    // Route::post('/usuario/store', [App\Http\Controllers\UserController::class, 'store'])->name('usuario.store');
+    // Route::post('/usuario/update', [App\Http\Controllers\UserController::class, 'update'])->name('usuario.update');
 });
 
 Route::middleware(['auth:sanctum', 'type.admin.presidente'])->group(function () {

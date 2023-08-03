@@ -68,7 +68,7 @@ class UserController extends Controller
         return response()->noContent();
     }
 
-    public function setUserRoles(Request $request, $id)
+    public function updateUserRoles(Request $request, $id)
     {
         $validatedData = $request->validate([
             'roles' => 'required|array|min:1',
