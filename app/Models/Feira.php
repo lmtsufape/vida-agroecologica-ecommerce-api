@@ -9,10 +9,22 @@ class Feira extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'funcionamento', 'latitude', 'longitude',
-        'horario_abertura', 'horario_fechamento'
+        'funcionamento',
+        'horario_abertura',
+        'horario_fechamento',
+        'bairro_id'
     ];
     protected $casts = [
         'funcionamento' => 'array'
     ];
+
+    public function bairro()
+    {
+        return $this->belongsTo(Bairro::class);
+    }
+    
+    public function bancas()
+    {
+        return $this->hasMany(Banca::class);
+    }
 }

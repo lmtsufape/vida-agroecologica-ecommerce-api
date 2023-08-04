@@ -3,10 +3,12 @@
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
+use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\VendaController;
+use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +40,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(BancaController::class)->group(function () {
             Route::delete('/bancas/imagens', 'deleteImagem');
 
-            Route::post('/bancas', 'store')->middleware('check_bancas');
             Route::get('/bancas', 'index');
             Route::get('/bancas/{banca}', 'show');
             Route::put('/bancas/{banca}', 'update');
@@ -77,9 +78,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
-Route::post('/produtores', [ProdutorController::class, 'store']);
 
-Route::post('/consumidores', [ConsumidorController::class, 'store']);
 
 Route::get('/login', fn () => response()->json(['error' => 'Não autorizado'], 401))->name('login'); //desnecessário, apenas para teste
 Route::post('/login', [LoginController::class, 'login']);
@@ -94,4 +93,28 @@ Route::post('/email/verification-notification', [LoginController::class, 'reenvi
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
 // Rota para solicitar o email de redefinição de senha
+
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
+Route::prefix('cidades')->group(function(){
+    Route::get('/', [CidadeController::class, 'index']);
+    Route::post('/', [CidadeController::class, 'store']);
+});
+
+Route::prefix('bairros')->group(function(){
+    Route::get('/', [BairroController::class, 'index']);
+    Route::post('/store', [BairroController::class, 'store']);
+});
+
+Route::prefix('feiras')->group(function(){
+    Route::get('/', [FeiraController::class, 'index']);
+    Route::post('/store', [FeiraController::class, 'store']);
+});
+
+Route::prefix('produtores')->group(function(){
+    Route::post('/store', [ProdutorController::class, 'store']);
+});
+
+Route::prefix('consumidores')->group(function(){
+    Route::post('/store', [ConsumidorController::class, 'store']);
+});
+Route::post('/bancas/store', [BancaController::class, 'store'])->middleware('check_bancas');

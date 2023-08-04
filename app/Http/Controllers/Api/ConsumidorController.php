@@ -19,7 +19,8 @@ class ConsumidorController extends Controller
         $consumidores = User::where("users.papel_type", "=", "Consumidor")->join("consumidores", "consumidores.id", "=", "users.papel_id")
             ->orderBy('name')
             ->get();
-        if (!$consumidores) {
+        if (!$consumidores)
+        {
             return response()->json(['erro' => 'Nenhum consumidor cadastrado'], 200);
         }
         return response()->json(['usuários' => $consumidores], 200);
@@ -31,7 +32,8 @@ class ConsumidorController extends Controller
         $consumidor->save();
 
         $consumidor = $consumidor->user()->create($request->except('passowrd'));
-        if (!$consumidor) {
+        if (!$consumidor)
+        {
             return response()->json(['erro' => 'Não foi possível criar o usuário'], 400);
         }
         $consumidor->password = Hash::make($request->password);
@@ -54,7 +56,8 @@ class ConsumidorController extends Controller
     {
         $consumidor = Consumidor::find($id);
         $consumidor->user;
-        if (!$consumidor) {
+        if (!$consumidor)
+        {
             return response()->json(['erro' => 'Usuário não encontrado'], 404);
         }
         return response()->json(['usuário' => $consumidor], 200);
