@@ -11,17 +11,13 @@ class CidadeController extends Controller
 {
     public function index()
     {
-        $cidades = Cidade::All();
-
+        $cidades = Cidade::all();
         return response()->json(['cidades' => $cidades]);
     }
-
 
     public function store(StoreCidadeRequest $request)
     {
         $cidade = Cidade::create($request->all());
-        return response()->json(['cidade' => $cidade]);
-
+        return response()->json(['cidade' => $cidade], 201);
     }
-
 }

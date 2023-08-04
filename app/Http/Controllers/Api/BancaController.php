@@ -42,13 +42,11 @@ class BancaController extends Controller
                 DB::rollBack();
                 return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
             }
-
-            $banca->imagem()->create(['caminho' => $caminho]);
-            $feira = Feira::findOrFail($request->feira_id);
-            $banca->feira()->associate($feira);
-
-
         }
+        
+        $banca->imagem()->create(['caminho' => $caminho]);
+        $feira = Feira::findOrFail($request->feira_id);
+        $banca->feira()->associate($feira);
         DB::commit();
         return response()->json(['banca' => $banca], 201);
     }

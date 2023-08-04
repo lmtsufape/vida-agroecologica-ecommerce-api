@@ -12,8 +12,7 @@ class FeiraController extends Controller
 
     public function index()
     {
-        $feiras = Feira::All();
-
+        $feiras = Feira::all();
         return response()->json(['feiras' => $feiras]);
     }
 
@@ -23,8 +22,6 @@ class FeiraController extends Controller
         $feira = Feira::create($request->all());
         $bairro = Bairro::findOrFail($request->bairro_id);
         $feira->bairro()->associate($bairro);
-
-        return response()->json(['feira' => $feira]);
-
+        return response()->json(['feira' => $feira], 201);
     }
 }

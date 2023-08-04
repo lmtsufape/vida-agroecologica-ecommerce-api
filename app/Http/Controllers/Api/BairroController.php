@@ -22,6 +22,6 @@ class BairroController extends Controller
         $bairro = Bairro::create($request->all());
         $cidade = Cidade::findOrFail($request->cidade_id);
         $bairro->cidade()->associate($cidade);
-        return response()->json(['bairro' => $bairro]);
+        return response()->json(['bairro' => $bairro], 201);
     }
 }

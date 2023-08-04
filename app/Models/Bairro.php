@@ -20,10 +20,14 @@ class Bairro extends Model
     {
         return $this->belongsToMany(Banca::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();
     }
-    public function feira(){
+
+    public function feira()
+    {
         return $this->hasOne(Feira::class);
     }
-    public function cidade(){
+    
+    public function cidade()
+    {
         return $this->belongsTo(Cidade::class);
     }
 }

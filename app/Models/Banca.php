@@ -37,9 +37,11 @@ class Banca extends Model
         'feira_id'
     ];
 
-    public function feira(){
+    public function feira()
+    {
         return $this->belongsTo(Feira::class);
     }
+    
     public function produtos(): HasMany
     {
         return $this->hasMany(Produto::class);

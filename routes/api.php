@@ -97,7 +97,7 @@ Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
 Route::prefix('cidades')->group(function(){
     Route::get('/', [CidadeController::class, 'index']);
-    Route::post('/store', [CidadeController::class, 'store']);
+    Route::post('/', [CidadeController::class, 'store']);
 });
 
 Route::prefix('bairros')->group(function(){

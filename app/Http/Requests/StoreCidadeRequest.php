@@ -31,7 +31,6 @@ class StoreCidadeRequest extends FormRequest
                 'max:30',
                 'min:3'
             ]
-
         ];
         return $rules;
     }

@@ -10,7 +10,9 @@ class Feira extends Model
     use HasFactory;
     protected $fillable = [
         'funcionamento',
-        'horario_abertura', 'horario_fechamento', 'bairro_id'
+        'horario_abertura',
+        'horario_fechamento',
+        'bairro_id'
     ];
     protected $casts = [
         'funcionamento' => 'array'
@@ -20,6 +22,7 @@ class Feira extends Model
     {
         return $this->belongsTo(Bairro::class);
     }
+    
     public function bancas()
     {
         return $this->hasMany(Banca::class);

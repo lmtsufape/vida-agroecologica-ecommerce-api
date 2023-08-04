@@ -23,14 +23,18 @@ class StoreBairroRequest extends FormRequest
      */
     public function rules()
     {
-
         $rules = [
             'nome' => [
                 'required',
-                'string',
-                'max:50',
+                'regex:/[a-zA-ZÀ-ÿ\s]/',
+                'max:60',
                 'min:3'
             ],
+            'cidade_id' => [
+                'required',
+                'integer',
+                'max:5'
+            ]
         ];
         return $rules;
     }

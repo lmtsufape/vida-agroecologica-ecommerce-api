@@ -23,8 +23,22 @@ class StoreFeiraRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
+        $rules = [
+            'funcionamento' => [
+                'required'
+            ],
+            'horario_abertura' => [
+                'required',
+                'date_format:H:i:s',
+                'before:horario_fechamento'
+            ],
+            'horario_fechamento' => [
+                'required',
+                'date_format:H:i:s',
+                'after:horario_abertura'
+            ]
         ];
+
+        return $rules;
     }
 }
