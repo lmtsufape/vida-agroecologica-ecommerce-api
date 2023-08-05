@@ -17,11 +17,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $contatos = Contato::factory(4)->make();
+        $contatos = Contato::factory(5)->make();
         $roles = Role::all();
         $emails = [
             'admin@admin.com',
             'presidente@presidente.com',
+            'secretario@secretario.com',
             'agricultor@agricultor.com',
             'consumidor@consumidor.com'
         ];

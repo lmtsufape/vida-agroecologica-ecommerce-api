@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('descricao', 120)->nullable();
             $table->time('horario_abertura');
             $table->time('horario_fechamento');
-            $table->boolean('funcionamento')->default(true);
             $table->float('preco_minimo')->default(0);
 
             $table->foreignId('feira_id')->default(1)->constrained()->restrictOnDelete();

@@ -21,9 +21,9 @@ class BancaFactory extends Factory
             "descricao" => "Loja de frutas",
             "horario_abertura" => "00:00:00",
             "horario_fechamento" => "23:59:00",
-            "funcionamento" => true,
             "preco_minimo" => 1.00,
-            "produtor_id" => 3
+            "feira_id" => 1,
+            "agricultor_id" => 4
         ];
     }
 }
