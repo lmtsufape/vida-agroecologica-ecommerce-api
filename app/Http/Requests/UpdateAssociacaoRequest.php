@@ -27,7 +27,7 @@ class UpdateAssociacaoRequest extends FormRequest
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "codigo"            => ['required', 'min:1', 'max:10'],
-            "presidente"        => ['required', 'numeric'],
+            "presidente"        => ['required', 'array'],
             "associacao_id"     => ['required', 'numeric'],
 
             "email"             => ['required', 'string', 'email', 'max:255'],
