@@ -26,6 +26,7 @@ class BancaController extends Controller
     public function store(StoreBancaRequest $request)
     {
         $user = Auth::user();
+
         DB::beginTransaction();
         $banca = $user->papel->banca()->create($request->except('formas_pagamento'));
         $formasPagamento = explode(',', $request->formas_pagamento);
@@ -42,12 +43,14 @@ class BancaController extends Controller
                 DB::rollBack();
                 return response()->json(['erro' => 'Não foi possível fazer upload da imagem'], 500);
             }
+
+            $banca->imagem()->create(['caminho' => $caminho]);
         }
-        
-        $banca->imagem()->create(['caminho' => $caminho]);
+
         $feira = Feira::findOrFail($request->feira_id);
         $banca->feira()->associate($feira);
         DB::commit();
+
         return response()->json(['banca' => $banca], 201);
     }
 
@@ -119,7 +122,7 @@ class BancaController extends Controller
         $imagem = Banca::findOrFail($id)->imagem;
 
         if (!$imagem || !Storage::exists($imagem->caminho)) {
-            return response()->json(["erro" => "imagem não encontrada"],404);
+            return response()->json(["erro" => "imagem não encontrada"], 404);
         }
 
         $file = Storage::get($imagem->caminho);
