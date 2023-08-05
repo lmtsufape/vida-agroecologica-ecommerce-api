@@ -9,7 +9,7 @@ class Bairro extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'taxa'];
+    protected $fillable = ['nome', 'cidade_id'];
 
     public function enderecos()
     {
@@ -19,5 +19,15 @@ class Bairro extends Model
     public function bancas_info_entrega()
     {
         return $this->belongsToMany(Banca::class)->withPivot('taxa', 'faz_entrega')->withTimestamps();
+    }
+
+    public function feira()
+    {
+        return $this->hasOne(Feira::class);
+    }
+    
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class);
     }
 }

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->float('preco_minimo')->default(0);
 
             $table->foreignId('feira_id')->default(1)->constrained()->restrictOnDelete();
-            $table->foreignId('produtor_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('agricultor_id')->constrained('users')->cascadeOnDelete();
 
             $table->timestamps();
             $table->softDeletes();

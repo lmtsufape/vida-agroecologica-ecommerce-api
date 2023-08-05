@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBancaRequest;
 use App\Models\Banca;
 use App\Models\FormaPagamento;
 use App\Models\User;
+use App\Models\Feira;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -25,6 +26,7 @@ class BancaController extends Controller
     public function store(StoreBancaRequest $request)
     {
         $user = Auth::user();
+
         DB::beginTransaction();
         $banca = $user->papel->banca()->create($request->except('formas_pagamento'));
         $formasPagamento = explode(',', $request->formas_pagamento);
@@ -44,7 +46,11 @@ class BancaController extends Controller
 
             $banca->imagem()->create(['caminho' => $caminho]);
         }
+
+        $feira = Feira::findOrFail($request->feira_id);
+        $banca->feira()->associate($feira);
         DB::commit();
+
         return response()->json(['banca' => $banca], 201);
     }
 
@@ -116,7 +122,7 @@ class BancaController extends Controller
         $imagem = Banca::findOrFail($id)->imagem;
 
         if (!$imagem || !Storage::exists($imagem->caminho)) {
-            return response()->json(["erro" => "imagem não encontrada"],404);
+            return response()->json(["erro" => "imagem não encontrada"], 404);
         }
 
         $file = Storage::get($imagem->caminho);

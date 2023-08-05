@@ -48,6 +48,11 @@ class StoreBancaRequest extends FormRequest
             ],
             'formas_pagamento' => [
                 'required'
+            ],
+            'bairro_id' => [
+                'required',
+                'integer',
+                'max:5'
             ]
         ];
 

@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
+use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
+use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\Api\LoginController;
@@ -87,7 +89,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
-Route::post('/produtores', [ProdutorController::class, 'store']);
 
 Route::get('/login', fn () => response()->json(['error' => 'Login necessário'], 401))->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -100,6 +101,7 @@ Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail
 Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 // Rota para solicitar o email de redefinição de senha
+
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
 
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
@@ -144,3 +146,25 @@ Route::middleware(['auth:sanctum', 'type.agricultor'])->group(function () {
 });
 
 Route::post('/verifica', [UserController::class, 'verificaUsuario']);
+Route::prefix('cidades')->group(function () {
+    Route::get('/', [CidadeController::class, 'index']);
+    Route::post('/', [CidadeController::class, 'store']);
+});
+
+Route::prefix('bairros')->group(function () {
+    Route::get('/', [BairroController::class, 'index']);
+    Route::post('/store', [BairroController::class, 'store']);
+});
+
+Route::prefix('feiras')->group(function () {
+    Route::get('/', [FeiraController::class, 'index']);
+    Route::post('/store', [FeiraController::class, 'store']);
+});
+
+Route::prefix('produtores')->group(function () {
+    Route::post('/store', [ProdutorController::class, 'store']);
+});
+
+Route::prefix('consumidores')->group(function () {
+    Route::post('/store', [ConsumidorController::class, 'store']);
+});

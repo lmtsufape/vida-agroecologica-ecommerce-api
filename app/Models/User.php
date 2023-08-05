@@ -47,7 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         'email_verified_at' => 'datetime',
     ];
 
-    public function endereco()
+    public function enderecos()
     {
         return $this->morphMany(Endereco::class, 'addressable');
     }

@@ -20,6 +20,7 @@ class FeiraFactory extends Factory
             'funcionamento' => ['sexta', 'sabado', 'domingo'],
             'horario_abertura' => '10:00',
             'horario_fechamento' => '16:00',
+            'bairro_id' => 1
         ];
     }
 }
