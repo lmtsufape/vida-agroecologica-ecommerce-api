@@ -20,7 +20,7 @@ class UserPolicy
         if ($ability === 'create') {
             return null;
         }
-        
+
         if ($ability === 'delete') {
             return null;
         }
@@ -30,6 +30,10 @@ class UserPolicy
         }
 
         if ($ability === 'createEndereco') {
+            return null;
+        }
+
+        if ($ability === 'updateUserRoles') {
             return null;
         }
 
@@ -147,12 +151,39 @@ class UserPolicy
         //
     }
 
-    // public function updateUserRoles(User $user, User $model)
-    // {
-    //     if ($model->hasAnyRoles(['administrador'])) {
-    //         return Response::deny();
-    //     }
-    // }
+    public function updateUserRoles(User $user, User $model, $roles_id)
+    {
+        if ($model->hasAnyRoles(['administrador'])) {
+            return Response::deny();
+        }
+
+        if (!$user->hasAnyRoles(['administrador'])) {
+            return Response::deny();
+        }
+
+        $allRoles = DB::table('roles')->pluck('nome')->all();
+        $roles = [];
+
+        foreach ($roles_id as $role_id) {
+            array_push($roles, $allRoles[$role_id - 1]);
+        }
+
+        if (!in_array('agricultor', $roles)) {
+            if ($model->bancas()->exists() || $model->organizacao()->exists() || $model->associacao()->exists()) {
+                return Response::deny();
+            }
+        }
+
+        if (!in_array('presidente', $roles)) {
+            if ($model->associacoesPresididas()->exists()) {
+                return Response::deny();
+            }
+        }
+
+        if (in_array('administrador', $roles)) {
+            return Response::deny();
+        }
+    }
 
     public function createEndereco(User $user, User $model)  // Consumidor
     {

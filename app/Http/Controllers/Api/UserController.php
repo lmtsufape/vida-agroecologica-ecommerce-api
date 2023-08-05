@@ -76,6 +76,8 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+        $this->authorize('updateUserRoles', [$user, $request->roles]);
+
         $user->roles()->sync($validatedData);
 
         return response()->json(['success' => 'Roles de usuário atualizadas.'], 200);
