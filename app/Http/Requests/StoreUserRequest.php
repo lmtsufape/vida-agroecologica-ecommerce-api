@@ -38,11 +38,6 @@ class StoreUserRequest extends FormRequest
                 'min:3',
                 'max:30'
             ],
-            'telefone' => [
-                'required',
-                'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
-                'unique:users'
-            ],
             'cpf' => [
                 'nullable',
                 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"
@@ -70,21 +65,6 @@ class StoreUserRequest extends FormRequest
             'complemento' => [
                 'nullable',
                 'string',
-                'max:50'
-            ],
-            'cidade' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:50'
-            ],
-            'estado' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:50'
-            ],
-            'país' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
                 'max:50'
             ],
             'bairro_id' => [

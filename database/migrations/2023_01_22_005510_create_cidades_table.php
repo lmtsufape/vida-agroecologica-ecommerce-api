@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('cidades', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->unique();//fazer o aviso no controller quando ja houver uma cidade
+            $table->foreignId('estado_id')->constrained();
             $table->timestamps();
         });
     }

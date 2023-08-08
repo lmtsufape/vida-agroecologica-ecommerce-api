@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Cidade;
+use App\Models\Estado;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CidadeSeeder extends Seeder
+class EstadoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,9 @@ class CidadeSeeder extends Seeder
      */
     public function run()
     {
-        Cidade::create([
-            'nome' => 'Garanhuns',
-            'estado_id' => 1
+        Estado::create([
+            'nome' => 'Pernambuco',
+
         ]);
     }
 }

@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
     {
         DB::beginTransaction();
         $this->call([
+            EstadoSeeder::class,
             CidadeSeeder::class,
             BairroSeeder::class,
             FeiraSeeder::class,
