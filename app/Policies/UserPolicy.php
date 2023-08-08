@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\Endereco;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\DB;
 
 class UserPolicy
 {
@@ -26,7 +26,7 @@ class UserPolicy
         }
 
         if ($ability === 'forceDelete') {
-            return false;
+            return null;
         }
 
         if ($ability === 'createEndereco') {
@@ -52,7 +52,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return Response::allow();
     }
 
     /**
@@ -64,7 +64,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        //
+        return !$model->hasAnyRoles(['administrador']);
     }
 
     /**
@@ -75,10 +75,11 @@ class UserPolicy
      */
     public function create(?User $user, $roles_id)
     {
-        $allRoles = DB::table('roles')->pluck('nome')->all();
+        $allRoles = Role::all();
         $roles = [];
+
         foreach ($roles_id as $role_id) {
-            array_push($roles, $allRoles[$role_id - 1]);
+            array_push($roles, $allRoles->find($role_id)->nome);
         }
 
         if (in_array('administrador', $roles)) {
@@ -88,6 +89,7 @@ class UserPolicy
                 return Response::deny();
             }
         }
+
         return Response::allow();
     }
 
@@ -148,7 +150,15 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model)
     {
-        //
+        if ($model->hasAnyRoles(['administrador'])) {
+            return Response::deny();
+        }
+
+        if ($user->hasAnyRoles(['administrador'])) {
+            return Response::allow();
+        }
+
+        return Response::deny();
     }
 
     public function updateUserRoles(User $user, User $model, $roles_id)
@@ -161,11 +171,11 @@ class UserPolicy
             return Response::deny();
         }
 
-        $allRoles = DB::table('roles')->pluck('nome')->all();
+        $allRoles = Role::all();
         $roles = [];
 
         foreach ($roles_id as $role_id) {
-            array_push($roles, $allRoles[$role_id - 1]);
+            array_push($roles, $allRoles->find($role_id)->nome);
         }
 
         if (!in_array('agricultor', $roles)) {

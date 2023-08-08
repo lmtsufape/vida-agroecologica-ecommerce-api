@@ -15,7 +15,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::whereHas('role', function ($query) {
+            $query->where('nome', '!=', 'administrador');
+        })->get();
 
         return response()->json(['users' => $users], 200);
     }
@@ -41,6 +43,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
+        $this->authorize('view', $user);
 
         return response()->json(['user' => $user], 200);
     }
@@ -49,7 +52,6 @@ class UserController extends Controller
     {
         $validatedData = $request->validated();
         $user = User::findOrFail($id);
-        $this->authorize('update', $user);
 
         DB::beginTransaction();
         $user->update($validatedData);
@@ -63,6 +65,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $this->authorize('delete', $user);
+
         $user->delete();
 
         return response()->noContent();

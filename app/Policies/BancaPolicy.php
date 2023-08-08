@@ -16,11 +16,15 @@ class BancaPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->papel_type == 'Produtor') {
+        if ($ability === 'create') {
             return null;
         }
 
-        return false;
+        if ($user->hasAnyRoles(['administrador'])) {
+            return true;
+        }
+
+        return null;
     }
 
     /**
@@ -31,7 +35,7 @@ class BancaPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return Response::allow();
     }
 
     /**
@@ -43,7 +47,7 @@ class BancaPolicy
      */
     public function view(User $user, Banca $banca)
     {
-        //
+        return Response::allow();
     }
 
     /**
@@ -52,9 +56,17 @@ class BancaPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create(User $user, User $agricultor)
     {
-        //
+        if (!$agricultor->hasAnyRoles(['agricultor'])) {
+            return Response::deny();
+        }
+
+        if ($user->hasAnyRoles(['administrador']) || $user->id === $agricultor->id) {
+            return Response::allow();
+        }
+
+        return Response::deny();
     }
 
     /**
@@ -66,9 +78,9 @@ class BancaPolicy
      */
     public function update(User $user, Banca $banca)
     {
-        return $user->papel->banca->id === $banca->id
+        return $user->id === $banca->agricultor->id
             ? Response::allow()
-            : Response::deny('Esta banca não é sua.');
+            : Response::deny();
     }
 
     /**
@@ -80,9 +92,9 @@ class BancaPolicy
      */
     public function delete(User $user, Banca $banca)
     {
-        return $user->papel->banca->id === $banca->id
+        return $user->id === $banca->agricultor->id
             ? Response::allow()
-            : Response::deny('Esta banca não é sua.');
+            : Response::deny();
     }
 
     /**
@@ -94,7 +106,7 @@ class BancaPolicy
      */
     public function restore(User $user, Banca $banca)
     {
-        //
+        return Response::deny();
     }
 
     /**
@@ -106,6 +118,15 @@ class BancaPolicy
      */
     public function forceDelete(User $user, Banca $banca)
     {
-        //
+        return $user->id === $banca->agricultor->id
+            ? Response::allow()
+            : Response::deny();
+    }
+
+    public function deleteImagem(User $user, Banca $banca)
+    {
+        return $user->id === $banca->agricultor->id
+            ? Response::allow()
+            : Response::deny();
     }
 }

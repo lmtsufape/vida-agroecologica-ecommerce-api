@@ -45,6 +45,7 @@ Route::controller(UserConsumidorController::class)->group(function () {
     Route::delete('/users/{endereco_id}/enderecos', 'deleteEndereco');
 })->middleware('auth:sanctum');
 
+Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -58,7 +59,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
         Route::delete('/bancas/imagens', [BancaController::class, 'deleteImagem']);
-        Route::apiResource('/bancas', BancaController::class);
         Route::apiResource('banca/produtos', ProdutoController::class);
 
         Route::post('/vendas/{id}/confirmar', [VendaController::class, 'confirmarVenda']);
