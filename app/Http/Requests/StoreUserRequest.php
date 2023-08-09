@@ -38,6 +38,11 @@ class StoreUserRequest extends FormRequest
                 'min:3',
                 'max:30'
             ],
+            'telefone' => [
+                'required',
+                'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
+                'unique:users'
+            ],
             'cpf' => [
                 'nullable',
                 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"

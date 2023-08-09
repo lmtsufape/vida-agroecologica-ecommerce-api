@@ -21,5 +21,8 @@ class Cidade extends Model
         return $this->hasMany(Bairro::class);
     }
 
-    //pertence
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class);
+    }
 }

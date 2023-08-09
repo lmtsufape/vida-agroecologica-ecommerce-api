@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\ConsumidorController;
@@ -93,6 +94,11 @@ Route::post('/email/verification-notification', [LoginController::class, 'reenvi
 Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
 // Rota para solicitar o email de redefinição de senha
+
+
+Route::prefix('estados')->group(function(){
+    Route::get('/', [EstadoController::class, 'index']);
+});
 
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
 Route::prefix('cidades')->group(function(){
