@@ -17,7 +17,7 @@ class CidadeSeeder extends Seeder
     {
         Cidade::create([
             'nome' => 'Garanhuns',
-
+            'estado_id' => 1
         ]);
     }
 }
