@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
 
             $table->decimal('taxa')->nullable();
-            $table->boolean('faz_entrega');
 
             $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
             $table->foreignId('banca_id')->constrained()->cascadeOnDelete();
+            $table->unique(['bairro_id', 'banca_id']);
 
             $table->timestamps();
         });

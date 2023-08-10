@@ -11,6 +11,35 @@ class VendaPolicy
 {
     use HandlesAuthorization;
 
+    public function before(User $user, string $ability): bool|null
+    {
+        if ($ability === 'confirmarVenda') {
+            return null;
+        }
+
+        if ($ability === 'cancelarCompra') {
+            return null;
+        }
+
+        if ($ability === 'anexarComprovante') {
+            return null;
+        }
+
+        if ($ability === 'marcarEnviado') {
+            return null;
+        }
+
+        if ($ability === 'marcarEntregue') {
+            return null;
+        }
+
+        if ($user->hasAnyRoles(['administrador'])) {
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Determine whether the user can view any models.
      *
@@ -19,7 +48,7 @@ class VendaPolicy
      */
     public function viewAny(User $user)
     {
-        return Response::allow();
+        return Response::deny();
     }
 
     /**
@@ -31,15 +60,11 @@ class VendaPolicy
      */
     public function view(User $user, Venda $venda)
     {
-        if ($user->papel_type == "Consumidor") {
-            return $user->papel_id === $venda->consumidor_id
-                ? Response::allow()
-                : Response::deny();
-        } else {
-            return $user->papel_id === $venda->produtor_id
-                ? Response::allow()
-                : Response::deny();
+        if ($user->id === $venda->banca->agricultor_id || $user->id === $venda->consumidor_id) {
+            return Response::allow();
         }
+
+        return Response::deny();
     }
 
     /**
@@ -50,7 +75,7 @@ class VendaPolicy
      */
     public function create(User $user)
     {
-        return $user->papel_type == 'Consumidor'
+        return $user->hasAnyRoles(['consumidor'])
             ? Response::allow()
             : Response::deny();
     }
@@ -64,7 +89,7 @@ class VendaPolicy
      */
     public function update(User $user, Venda $venda)
     {
-        //
+        return Response::deny();
     }
 
     /**
@@ -76,7 +101,7 @@ class VendaPolicy
      */
     public function delete(User $user, Venda $venda)
     {
-        //
+        return Response::deny();
     }
 
     /**
@@ -88,7 +113,7 @@ class VendaPolicy
      */
     public function restore(User $user, Venda $venda)
     {
-        //
+        return Response::deny();
     }
 
     /**
@@ -100,65 +125,54 @@ class VendaPolicy
      */
     public function forceDelete(User $user, Venda $venda)
     {
-        //
+        return Response::deny();
     }
 
     public function confirmarVenda(User $user, Venda $venda)
     {
-        if ($user->papel_type == 'Produtor' && $user->papel_id === $venda->produtor_id) {
+        if ($user->id === $venda->banca->agricultor_id && $user->hasAnyRoles(['agricultor'])) {
             return Response::allow();
-        } else {
-            return Response::deny();
         }
+
+        return Response::deny();
     }
 
     public function cancelarCompra(User $user, Venda $venda)
     {
-        if ($user->papel_type == 'Consumidor' && $user->papel_id === $venda->consumidor_id) {
-            return Response::allow();
-        } elseif ($user->papel_type == 'Produtor' && $user->papel_id === $venda->produtor_id) {
+        if ($user->id === $venda->banca->agricultor_id || $user->id === $venda->consumidor_id) {
             return Response::allow();
         }
+
         return Response::deny();
     }
 
     public function anexarComprovante(User $user, Venda $venda)
     {
-        if ($user->papel_type == 'Consumidor' && $user->papel_id === $venda->consumidor_id) {
-            return Response::allow();
-        } else {
-            return Response::deny();
-        }
+        return $user->id === $venda->consumidor_id
+            ? Response::allow()
+            : Response::deny();
     }
 
     public function verComprovante(User $user, Venda $venda)
     {
-        if ($user->papel_type == "Consumidor") {
-            return $user->papel_id === $venda->consumidor_id
-                ? Response::allow()
-                : Response::deny();
-        } else {
-            return $user->papel_id === $venda->produtor_id
-                ? Response::allow()
-                : Response::deny();
+        if ($user->id === $venda->banca->agricultor_id || $user->id === $venda->consumidor_id) {
+            return Response::allow();
         }
+
+        return Response::deny();
     }
 
     public function marcarEnviado(User $user, Venda $venda)
     {
-        if ($user->papel_type == 'Produtor' && $user->papel_id === $venda->produtor_id) {
-            return Response::allow();
-        } else {
-            return Response::deny();
-        }
+        return $user->id === $venda->banca->agricultor_id
+            ? Response::allow()
+            : Response::deny();
     }
 
     public function marcarEntregue(User $user, Venda $venda)
     {
-        if ($user->papel_type == 'Consumidor' && $user->papel_id === $venda->consumidor_id) {
-            return Response::allow();
-        } else {
-            return Response::deny();
-        }
+        return $user->id === $venda->consumidor_id
+            ? Response::allow()
+            : Response::deny();
     }
 }

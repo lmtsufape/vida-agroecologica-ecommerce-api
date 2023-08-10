@@ -25,8 +25,7 @@ class VendaFactory extends Factory
             'total' => fake()->randomFloat(2, 0, 100),
             'forma_pagamento_id' => 1,
             'banca_id' => 1,
-            'consumidor_id' => 4,
-            'produtor_id' => 3,
+            'consumidor_id' => 4
         ];
     }
 }

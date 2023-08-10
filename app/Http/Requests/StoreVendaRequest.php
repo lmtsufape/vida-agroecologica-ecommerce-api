@@ -13,7 +13,7 @@ class StoreVendaRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->papel_type == 'Consumidor';
+        return $this->user()->can('create', Venda::class);
     }
 
     /**
@@ -24,9 +24,10 @@ class StoreVendaRequest extends FormRequest
     public function rules()
     {
         return [
-            'produtor' => 'required|exists:produtores,id',
-            'tipo_entrega' => 'required|in:retirada,entrega',
-            'forma_pagamento' => 'required|exists:formas_pagamento,id',
+            'tipo_entrega' => 'required|string|in:retirada,entrega',
+            'banca_id' => 'required|integer|exists:bancas,id',
+            'forma_pagamento_id' => 'required|integer|exists:formas_pagamento,id',
+            'endereco_id' => 'nullable|integer|exists:enderecos,id',
             'produtos' => 'required|array|min:1',
             'produtos.*' => 'array|size:2',
             'produtos.*.*' => 'integer',

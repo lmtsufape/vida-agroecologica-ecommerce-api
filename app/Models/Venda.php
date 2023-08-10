@@ -12,7 +12,7 @@ class Venda extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['status', 'tipo_entrega', 'data_pedido', 'total', 'comprovante_pagamento'];
+    protected $fillable = ['tipo_entrega'];
 
     public function banca(): BelongsTo
     {
@@ -24,14 +24,14 @@ class Venda extends Model
         return $this->belongsTo(FormaPagamento::class);
     }
 
-    public function produtor(): BelongsTo
+    public function consumidor(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function consumidor(): BelongsTo
+    public function enderecoEntrega(): MorphOne
     {
-        return $this->belongsTo(User::class);
+        return $this->morphOne(Endereco::class, 'addressable');
     }
 
     public function itens(): HasMany

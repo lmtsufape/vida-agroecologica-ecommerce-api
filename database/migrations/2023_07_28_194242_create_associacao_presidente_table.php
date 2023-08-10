@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->foreignId('associacao_id')->constrained('associacoes')->cascadeOnDelete();
             $table->foreignId('presidente_id')->constrained('users')->restrictOnDelete();
+            $table->unique(['associacao_id', 'presidente_id']);
 
             $table->timestamps();
         });

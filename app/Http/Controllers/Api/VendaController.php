@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
-use App\Models\Produtor;
+use App\Models\User;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVendaRequest;
+use App\Models\Banca;
+use App\Models\Endereco;
 use App\Models\FormaPagamento;
 use App\Models\Produto;
 use App\Models\Venda;
@@ -22,50 +24,64 @@ class VendaController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $transacoes = $user->papel_type == 'Produtor'
-            ? $user->papel->vendas->load('itens')->load('consumidor.user.endereco') //carrega os itens de cada venda
-            : $user->papel->compras->load('itens')->load('produtor.user.endereco');
-        return response()->json(['transações' => $transacoes], 200);
+        $this->authorize('viewAny', Venda::class);
+        $vendas = Venda::orderBy('data_pedido', 'desc')->get();
+
+        return response()->json(['vendas' => $vendas], 200);
     }
 
     public function store(StoreVendaRequest $request)
     {
-        $consumidor = Auth::user()->papel;
-        $produtor = Produtor::findOrFail($request->produtor);
-        if (!now()->isBetween($produtor->banca->horario_abertura, $produtor->banca->horario_fechamento, true)) {
+        $validatedData = $request->validated();
+
+        $consumidor = $request->user();
+        $banca = Banca::findOrFail($validatedData['banca_id']);
+        $enderecoEntrega = Endereco::find($request->endereco_id);
+        $formaPagamento = FormaPagamento::findOrFail($validatedData['forma_pagamento_id']);
+
+        if (!now()->isBetween($banca->horario_abertura, $banca->horario_fechamento, true)) {
             return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
         }
-        if ($request->tipo_entrega == 'entrega' && !$produtor->banca->faz_entrega) {
-            return response()->json(['error' => 'Esta banca não faz entregas.'], 400);
+
+        if ($validatedData['tipo_entrega'] == 'entrega') {
+            if (!$enderecoEntrega) {
+                return response()->json(['error' => 'Endereço de entrega não informado.'], 400);
+            }
+
+            if (!$banca->bairros_info_entrega()->whereIn('id', $enderecoEntrega->id)->exists()) {
+                return response()->json(['error' => 'Esta banca não faz entrega no endereço selecionado.'], 400);
+            }
         }
 
         DB::beginTransaction();
         $venda = new Venda();
         $venda->status = 'pedido realizado';
-        $venda->tipo_entrega = $request->tipo_entrega;
+        $venda->tipo_entrega = $validatedData['tipo_entrega'];
         $venda->data_pedido = now();
         $venda->consumidor()->associate($consumidor);
-        $venda->produtor()->associate($produtor);
-        $formaPagamento = FormaPagamento::find($request->forma_pagamento);
+        $venda->banca()->associate($banca);
         $venda->formaPagamento()->associate($formaPagamento);
-        $venda->save();
         $subtotal = BigDecimal::of('0.00');
         $taxaEntrega = BigDecimal::of('0.00');
-        if ($request->tipo_entrega == 'entrega') {
-            $taxaEntrega = BigDecimal::of(Auth::user()->endereco->bairro->taxa);
+
+        if ($validatedData['tipo_entrega'] == 'entrega') {
+            $venda->enderecoEntrega()->associate($enderecoEntrega);
+            $taxaEntrega = BigDecimal::of($banca->bairros_info_entrega()->whereIn('id', $enderecoEntrega->id)->first()->pivot->taxa_entrega);
         }
+
+        $venda->save();
+
         $itens = [];
 
-        foreach ($request->produtos as $produto) {
+        foreach ($validatedData['produtos'] as $produto) {
             $prod = Produto::findOrFail($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
 
             if ($produto[1] > $prod->estoque || !$prod->disponivel) {
                 DB::rollBack();
                 return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.', 'produto' => $prod], 400);
-            } elseif ($request->produtor != $prod->banca->produtor->id) {
+            } elseif ($banca->id != $prod->banca->id) {
                 DB::rollBack();
-                return response()->json(['error' => 'O produto não pertence à banca do produtor especificado', 'produto' => $prod], 400);
+                return response()->json(['error' => 'O produto não pertence à banca especificada.', 'produto' => $prod], 400);
             }
 
             $item = new ItemVenda();
@@ -80,7 +96,7 @@ class VendaController extends Controller
             $prod->estoque -= $produto[1];
             $prod->save();
         }
-        if ($subtotal->isLessThan($produtor->banca->preco_minimo) && $request->tipo_entrega == 'entrega') {
+        if ($subtotal->isLessThan($banca->preco_minimo) && $validatedData['tipo_entrega'] == 'entrega') {
             DB::rollBack();
             return response()->json(['error' => 'O valor da compra é inferior ao valor mínimo para entrega.']);
         }
@@ -90,14 +106,16 @@ class VendaController extends Controller
         $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
         DB::commit();
-        return response()->json(['venda' => $venda->makeHidden('consumidor'), 'consumidor' => $consumidor->user->makeHidden('endereco'), 'endereço' => $consumidor->user->endereco, 'itens' => $itens], 200);
+
+        return response()->json(['venda' => $venda, 'endereço' => $enderecoEntrega, 'itens' => $itens], 201);
     }
 
     public function show($id)
     {
         $venda = Venda::findOrFail($id);
-        $comprovante = $venda->comprovante_pagamento != null;
-        return response()->json(['venda' => $venda->makeHidden('comprovante_pagamento'), 'comprovante' => $comprovante]);
+        $this->authorize('view', $venda);
+
+        return response()->json(['venda' => $venda], 200);
     }
 
     public function confirmarVenda(Request $request, $id)
@@ -105,8 +123,9 @@ class VendaController extends Controller
         $request->validate(['confirmacao' => 'required|boolean']);
         $venda = Venda::findOrFail($id);
         $this->authorize('confirmarVenda', $venda);
+
         if ($venda->status != 'pedido realizado') {
-            return response()->json(['error' => 'Esta venda já foi confirmada ou recusada'], 400);
+            return response()->json(['error' => 'Esta venda já foi confirmada ou recusada.'], 400);
         }
 
         if ($request->confirmacao) {
@@ -114,9 +133,11 @@ class VendaController extends Controller
             $venda->status = 'pagamento pendente';
             $venda->data_confirmacao = now();
             $venda->save();
-            event(new PedidoConfirmadoEvent($venda));
             DB::commit();
-            return response()->json(['sucess' => 'O pedido foi confirmado.', 'pedido' => $venda->refresh()]);
+
+            event(new PedidoConfirmadoEvent($venda));
+
+            return response()->json(['success' => 'O pedido foi confirmado.', 'pedido' => $venda->refresh()]);
         } else {
             return $this->cancelarCompra($venda->id);
         }
@@ -127,47 +148,55 @@ class VendaController extends Controller
         $user = Auth::user();
         $venda = Venda::findOrFail($id);
         $this->authorize('cancelarCompra', $venda);
+
         if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
             return response()->json(['error' => 'Esta venda não pode mais ser cancelada.'], 400);
         }
+
         DB::beginTransaction();
         foreach ($venda->itens as $item) {
             $produto = $item->produto;
             $produto->estoque += $item->quantidade;
             $produto->save();
         }
+
         $status = '';
+
         if ($user) {
-            switch ($user->papel_type) {
-                case 'Consumidor':
+            switch ($user->id) {
+                case $venda->consumidor_id:
                     $status = 'pedido cancelado';
                     break;
-                case 'Produtor':
+                case $venda->banca->agricultor_id:
                     if ($venda->status == 'pedido realizado') {
                         $status = 'pedido recusado';
                     } elseif ($venda->status == 'comprovante anexado') {
                         $status = 'comprovante recusado';
                     }
+                    break;
             }
         } else {
             $status = 'pagamento expirado';
         }
+
         $venda->status = $status;
         $venda->data_cancelamento = now();
         $venda->save();
         DB::commit();
-        return response()->json(['sucess' => 'Pedido cancelado', 'pedido' => $venda->refresh()], 200);
+
+        return response()->json(['success' => 'Pedido cancelado', 'pedido' => $venda->refresh()], 200);
     }
 
     public function anexarComprovante(Request $request, $id)
     {
+        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
         $venda = Venda::findOrFail($id);
         $this->authorize('anexarComprovante', $venda);
+
         if ($venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
             return response()->json(['error' => 'Não é possível anexar comprovante a esta venda.'], 400);
         }
 
-        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
         $imagem = $request->file('comprovante');
         $nomeImagem = $venda->id . '.' . $imagem->getClientOriginalExtension();
         $comprovanteAntigo = glob(storage_path("app/public/uploads/imagens/comprovante/{$venda->id}.*"));
@@ -179,7 +208,7 @@ class VendaController extends Controller
         }
 
         DB::beginTransaction();
-        $venda->comprovante()->updateOrCreate(['imageable_id' => $venda->id, 'imageable_type' => 'Venda'], ['caminho' => $caminho]);
+        $venda->comprovante()->updateOrCreate(['imageable_id' => $venda->id, 'imageable_type' => 'venda'], ['caminho' => $caminho]);
         $venda->status = 'comprovante anexado';
         $venda->data_pagamento = now();
         $venda->save();
@@ -191,7 +220,7 @@ class VendaController extends Controller
             }
         }
 
-        return response()->json(['success' => 'Comprovante enviado.']);
+        return response()->json(['success' => 'Comprovante enviado.'], 200);
     }
 
     public function verComprovante($id)
@@ -201,11 +230,12 @@ class VendaController extends Controller
         $comprovante = $venda->comprovante;
 
         if (!$comprovante || !Storage::exists($comprovante->caminho)) {
-            return response()->json(['error' => 'A venda não possui comprovante de pagamento'], 404);
+            return response()->json(['error' => 'A venda não possui comprovante de pagamento.'], 404);
         }
 
         $file = Storage::get($comprovante->caminho);
         $mimeType = Storage::mimeType($comprovante->caminho);
+
         return response($file)->header('Content-Type', $mimeType);
     }
 
@@ -213,15 +243,19 @@ class VendaController extends Controller
     {
         $venda = Venda::findOrFail($id);
         $this->authorize('marcarEnviado', $venda);
+
         if ($venda->status != 'comprovante anexado') {
             return response()->json(['error' => 'Esta venda não pode ser marcada como "enviada".'], 400);
         }
+
         DB::beginTransaction();
-        $venda->status = 'enviado';
+        $venda->status = $venda->tipo_entrega == 'entrega' ? 'enviado' : 'aguardando retirada';
         $venda->data_envio = now();
         $venda->save();
         DB::commit();
-        $venda->consumidor->user->notify(new EnviarEmailCompra($venda));
+
+        $venda->consumidor->notify(new EnviarEmailCompra($venda));
+
         return response()->json(['success' => 'A compra foi marcada como enviada.'], 200);
     }
 
@@ -229,14 +263,17 @@ class VendaController extends Controller
     {
         $venda = Venda::findOrFail($id);
         $this->authorize('marcarEntregue', $venda);
-        if ($venda->status != 'enviado') {
+
+        if ($venda->status != 'enviado' && $venda->status != 'aguardando retirada') {
             return response()->json(['error' => 'Esta venda não pode ser marcada como "entregue".'], 400);
         }
+
         DB::beginTransaction();
         $venda->status = 'entregue';
         $venda->data_entrega = now();
         $venda->save();
         DB::commit();
+
         return response()->json(['success' => 'A compra foi marcada como entregue.'], 200);
     }
 }

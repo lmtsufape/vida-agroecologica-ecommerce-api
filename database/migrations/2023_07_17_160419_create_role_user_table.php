@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->foreignId('role_id')->constrained()->restrictOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->unique(['role_id', 'user_id']);
 
             $table->timestamps();
         });

@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         $contatos = Contato::factory(5)->make();
         $roles = Role::all();
         $emails = [
-            'admin@admin.com',
+            'administrador@administrador.com',
             'presidente@presidente.com',
             'secretario@secretario.com',
             'agricultor@agricultor.com',

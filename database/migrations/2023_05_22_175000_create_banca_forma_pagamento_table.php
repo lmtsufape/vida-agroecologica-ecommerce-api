@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->foreignId('banca_id')->constrained()->cascadeOnDelete();
             $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->restrictOnDelete();
+            $table->unique(['banca_id', 'forma_pagamento_id']);
 
             $table->timestamps();
         });
