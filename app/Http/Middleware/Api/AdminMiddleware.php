@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\Api;
 
 use Closure;
 use Illuminate\Http\Request;
+use function auth;
+use function response;
 
-class CheckEstoque
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,14 +18,10 @@ class CheckEstoque
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( $request->quantidade > \App\Models\Produto::find($request->produto_id)->estoque) {
-            return response()->json([
-                'error' => [
-                    'message' => 'Quantidade excede o estoque do produto.'
-                ]
-            ]);
+        if ($request->user()->roles->contains('nome', 'administrador')) {
+            return $next($request);
         }
 
-        return $next($request);
+        return response()->json('Not Authorized', 401);
     }
 }

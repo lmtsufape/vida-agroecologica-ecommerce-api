@@ -3,10 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Banca;
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBancaRequest extends FormRequest
+class UpdateBancaRequest extends FormRequest
 {
     public function prepareForValidation()
     {
@@ -18,12 +17,22 @@ class StoreBancaRequest extends FormRequest
         }
     }
 
-    public function authorize(): bool
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
     {
-        $user = User::findOrFail($this->input('agricultor_id'));
-        return $this->user()->can('create', [Banca::class, $user]);
+        $banca = Banca::findOrFail($this->route('banca'));
+        return $this->user()->can('update', $banca);
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, mixed>
+     */
     public function rules()
     {
         return [
@@ -65,16 +74,6 @@ class StoreBancaRequest extends FormRequest
             'formas_pagamento.*' => [
                 'integer',
                 'exists:formas_pagamento,id'
-            ],
-            'feira_id' => [
-                'required',
-                'integer',
-                'exists:feiras,id'
-            ],
-            'agricultor_id' => [
-                'required',
-                'integer',
-                'exists:users,id'
             ]
         ];
     }

@@ -82,6 +82,11 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
+    public function hasAnyRoles($roles)
+    {
+        return $this->roles()->whereIn('nome', $roles)->exists();
+    }
+
     public function transacoes()
     {
         return $this->hasMany(Venda::class);

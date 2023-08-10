@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\Api;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class CheckBancaValida
+class PresidenteMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,14 +16,10 @@ class CheckBancaValida
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::user()->papel->banca || Auth::user()->papel->banca->id != $request->banca) {
-            return response()->json([
-                'error' => [
-                    'message' => 'Operação não autorizada.'
-                ]
-            ]);
+        if ($request->user()->roles->contains('nome', 'presidente')) {
+            return $next($request);
         }
 
-        return $next($request);
+        return response()->json('Not Authorized', 401);
     }
 }

@@ -18,7 +18,8 @@ class OrganizacaoControleSocial extends Model
         "data_fundacao",
         "contato_id",
         "endereco_id",
-        "associacao_id"
+        "associacao_id",
+        "user_id"
     ];
 
     public function endereco()
