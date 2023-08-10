@@ -12,11 +12,17 @@ class Cidade extends Model
     protected $fillable = [
         'nome',
         'longitude',
-        'latitude'
+        'latitude',
+        'estado_id'
     ];
-    
+
     public function bairros()
     {
         return $this->hasMany(Bairro::class);
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class);
     }
 }

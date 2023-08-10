@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\CidadeController;
@@ -107,6 +108,11 @@ Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail
 Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 // Rota para solicitar o email de redefinição de senha
+
+
+Route::prefix('estados')->group(function(){
+    Route::get('/', [EstadoController::class, 'index']);
+});
 
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
 

@@ -70,7 +70,7 @@ class ProdutorController extends Controller
         }
         $user = $produtor->user;
 
-        DB::beginTransaction();     
+        DB::beginTransaction();
         $keys = ['name', 'apelido', 'telefone', 'email'];
         $dados = $request->only($keys);
         $dados['password'] = Hash::make($request->password);
