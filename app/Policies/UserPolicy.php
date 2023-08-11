@@ -179,7 +179,7 @@ class UserPolicy
         }
 
         if (!in_array('agricultor', $roles)) {
-            if ($model->bancas()->exists() || $model->organizacao()->exists() || $model->associacao()->exists()) {
+            if ($model->organizacao()->exists() || $model->associacao()->exists()) {
                 return Response::deny();
             }
         }
