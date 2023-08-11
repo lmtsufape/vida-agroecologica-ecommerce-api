@@ -40,11 +40,13 @@ Route::controller(UserController::class)->group(function () {
 Route::apiResource('/users', UserController::class)->except('store')->middleware('auth:sanctum');
 
 // Consumidor
-Route::controller(UserConsumidorController::class)->group(function () {
-    Route::post('/users/{consumidor_id}/enderecos', 'storeEndereco');
-    Route::patch('/users/{endereco_id}/enderecos', 'updateEndereco');
-    Route::delete('/users/{endereco_id}/enderecos', 'deleteEndereco');
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->group(function () {
+    Route::get('/users/{id}/enderecos', 'indexEndereco');
+    Route::post('/users/enderecos', 'storeEndereco');
+    Route::get('/users/enderecos/{id}', 'showEndereco');
+    Route::patch('/users/enderecos/{id}', 'updateEndereco');
+    Route::delete('/users/enderecos/{id}', 'destroyEndereco');
+});
 
 // banca
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
@@ -110,7 +112,7 @@ Route::post('/email/verification-notification', [LoginController::class, 'reenvi
 // Rota para solicitar o email de redefinição de senha
 
 
-Route::prefix('estados')->group(function(){
+Route::prefix('estados')->group(function () {
     Route::get('/', [EstadoController::class, 'index']);
 });
 

@@ -7,16 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreEnderecoRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return false;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
@@ -42,21 +32,6 @@ class StoreEnderecoRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:120'
-            ],
-            'cidade' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:60'
-            ],
-            'estado' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:30'
-            ],
-            'pais' => [
-                'required',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // mesmo do "name"
-                'max:30'
             ],
             'bairro_id' => [
                 'required',

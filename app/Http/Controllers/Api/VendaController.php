@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
-use App\Models\User;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

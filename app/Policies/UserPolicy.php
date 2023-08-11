@@ -194,26 +194,4 @@ class UserPolicy
             return Response::deny();
         }
     }
-
-    public function createEndereco(User $user, User $model)  // Consumidor
-    {
-        if (!$model->hasAnyRoles(['consumidor'])) {
-            return Response::deny();
-        }
-
-        if ($user->hasAnyRoles(['administrador']) || $user->id === $model->id) {
-            return Response::allow();
-        }
-
-        return Response::deny();
-    }
-
-    public function updateOrDeleteEndereco(User $user, Endereco $endereco)  // Consumidor
-    {
-        if ($endereco->addressable_type === 'user' && $endereco->addressable_id === $user->id) {
-            return Response::allow();
-        }
-
-        return Response::deny();
-    }
 }
