@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Feira;
 use App\Models\Bairro;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFeiraRequest;
 use Illuminate\Http\Request;
 
 class FeiraController extends Controller
@@ -13,15 +14,16 @@ class FeiraController extends Controller
     public function index()
     {
         $feiras = Feira::all();
+
         return response()->json(['feiras' => $feiras]);
     }
 
 
-    public function store(Request $request)
+    public function store(StoreFeiraRequest $request)
     {
-        $feira = Feira::create($request->all());
-        $bairro = Bairro::findOrFail($request->bairro_id);
-        $feira->bairro()->associate($bairro);
+        $validatedData = $request->validated();
+        $feira = Feira::create($validatedData);
+
         return response()->json(['feira' => $feira], 201);
     }
 }

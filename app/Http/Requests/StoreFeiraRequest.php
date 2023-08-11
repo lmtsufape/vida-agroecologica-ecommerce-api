@@ -13,7 +13,7 @@ class StoreFeiraRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,17 +25,23 @@ class StoreFeiraRequest extends FormRequest
     {
         $rules = [
             'funcionamento' => [
-                'required'
+                'required',
+                'array'
             ],
             'horario_abertura' => [
                 'required',
-                'date_format:H:i:s',
+                'date_format:H:i',
                 'before:horario_fechamento'
             ],
             'horario_fechamento' => [
                 'required',
-                'date_format:H:i:s',
+                'date_format:H:i',
                 'after:horario_abertura'
+            ],
+            'bairro_id' => [
+                'required',
+                'integer',
+                'exists:bairros,id'
             ]
         ];
 

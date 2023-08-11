@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Controllers\Api;
+
 use App\Models\Cidade;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -12,12 +13,15 @@ class CidadeController extends Controller
     public function index()
     {
         $cidades = Cidade::all();
-        return response()->json(['cidades' => $cidades]);
+
+        return response()->json(['cidades' => $cidades], 200);
     }
 
     public function store(StoreCidadeRequest $request)
     {
-        $cidade = Cidade::create($request->all());
+        $validatedData = $request->validated();
+        $cidade = Cidade::create($validatedData);
+
         return response()->json(['cidade' => $cidade], 201);
     }
 }

@@ -22,7 +22,7 @@ class Feira extends Model
     {
         return $this->belongsTo(Bairro::class);
     }
-    
+
     public function bancas()
     {
         return $this->hasMany(Banca::class);

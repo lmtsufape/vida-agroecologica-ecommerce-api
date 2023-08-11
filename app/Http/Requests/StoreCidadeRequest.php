@@ -26,12 +26,18 @@ class StoreCidadeRequest extends FormRequest
         $rules = [
             'nome' => [
                 'required',
-                'string',
-                'unique:cidades',
+                'regex:/[a-zA-ZÀ-ÿ\s]/',
+                'unique:cidades,nome',
                 'max:30',
                 'min:3'
+            ],
+            'estado_id' => [
+                'required',
+                'integer',
+                'exists:estados,id'
             ]
         ];
+
         return $rules;
     }
 }

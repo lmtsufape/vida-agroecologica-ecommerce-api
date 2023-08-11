@@ -67,6 +67,24 @@ Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/
     Route::get('/{id}', 'show');
 });
 
+// Feiras
+Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('feiras')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store')->middleware('role:administrador');
+});
+
+// Bairros
+Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('bairros')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store')->middleware('role:administrador');
+});
+
+// Cidades
+Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('cidades')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store')->middleware('role:administrador');
+});
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -160,21 +178,3 @@ Route::middleware(['auth:sanctum', 'type.agricultor'])->group(function () {
 });
 
 Route::post('/verifica', [UserController::class, 'verificaUsuario']);
-Route::prefix('cidades')->group(function () {
-    Route::get('/', [CidadeController::class, 'index']);
-    Route::post('/', [CidadeController::class, 'store']);
-});
-
-Route::prefix('bairros')->group(function () {
-    Route::get('/', [BairroController::class, 'index']);
-    Route::post('/store', [BairroController::class, 'store']);
-});
-
-Route::prefix('feiras')->group(function () {
-    Route::get('/', [FeiraController::class, 'index']);
-    Route::post('/store', [FeiraController::class, 'store']);
-});
-
-Route::prefix('produtores')->group(function () {
-    Route::post('/store', [ProdutorController::class, 'store']);
-});
