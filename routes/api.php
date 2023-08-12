@@ -30,87 +30,80 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Consumidor
+// Consumidores
 Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
     Route::get('/enderecos', 'indexEndereco');
     Route::post('/enderecos', 'storeEndereco');
-    Route::get('/enderecos/{id}', 'showEndereco');
-    Route::patch('/enderecos/{id}', 'updateEndereco');
-    Route::delete('/enderecos/{id}', 'destroyEndereco');
+    Route::get('/enderecos/{endereco}', 'showEndereco');
+    Route::patch('/enderecos/{endereco}', 'updateEndereco');
+    Route::delete('/enderecos/{endereco}', 'destroyEndereco');
 });
 
-// Usuário
+// Usuários
 Route::controller(UserController::class)->group(function () {
     Route::post('/users', 'store');
-    Route::put('/users/{id}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
+    Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
 
 Route::apiResource('/users', UserController::class)->except('store')->middleware('auth:sanctum');
 
-// banca
+// Bancas
+Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
+    Route::get('/{banca}/imagem', 'getImagem');
+    Route::delete('/{banca}/imagem', 'deleteImagem');
+});
+
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
-Route::delete('/bancas/{id}/imagens', [BancaController::class, 'deleteImagem'])->middleware('auth:sanctum');
-Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
 
-// venda
+// Vendas
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/vendas')->group(function () {
-    Route::post('/{id}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
-    Route::post('/{id}/enviar', 'marcarEnviado')->middleware('role:agricultor');
+    Route::post('/{venda}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
+    Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
 
-    Route::post('/{id}/comprovante', 'anexarComprovante')->middleware('role:consumidor');
-    Route::post('/{id}/entregar', 'marcarEntregue')->middleware('role:consumidor');
+    Route::post('/{venda}/comprovante', 'anexarComprovante')->middleware('role:consumidor');
+    Route::post('/{venda}/entregar', 'marcarEntregue')->middleware('role:consumidor');
     Route::post('/', 'store')->middleware('role:consumidor');
 
     Route::get('/', 'index')->middleware('role:administrador');
 
-    Route::post('/{id}/cancelar', 'cancelarCompra');
-    Route::get('/{id}/comprovante', 'verComprovante');
-    Route::get('/{id}', 'show');
+    Route::post('/{venda}/cancelar', 'cancelarCompra');
+    Route::get('/{venda}/comprovante', 'verComprovante');
+    Route::get('/{venda}', 'show');
 });
 
+// Produtos
+Route::middleware('auth:sanctum')->controller(ProdutoController::class)->prefix('/produtos')->group(function () {
+    Route::get('/categorias', 'getCategorias');
+    Route::get('/tabelados', 'getTabelados');
+    Route::get('/{produto}/imagem', 'getImagem');
+});
+
+Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanctum');
+
 // Feiras
-Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('feiras')->group(function () {
+Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
 });
 
 // Bairros
-Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('bairros')->group(function () {
+Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
 });
 
 // Cidades
-Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('cidades')->group(function () {
+Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
 });
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Route::middleware(['auth:sanctum'])->group(function () {
-
-    Route::controller(BairroController::class)->group(function () {
-        Route::get('bairros', 'index');
-    });
-
-
-    Route::apiResource('banca/produtos', ProdutoController::class);
-
-
-    Route::get('/categorias', function () {
-        return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
-    });
-    Route::controller(ProdutoController::class)->group(function () {
-        Route::post('/busca', 'buscar');
-        Route::get('/categorias/{categoria}/produtos', 'buscarCategoria');
-    });
-    Route::get('/produtos', function () {
-        $produtos = App\Models\ProdutoTabelado::all();
-        return response()->json(['produtos' => $produtos], 200);
-    });
+// Estados
+Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('/estados')->group(function () {
+    Route::get('/', 'index');
 });
 
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::get('/login', fn () => response()->json(['error' => 'Login necessário'], 401))->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -125,13 +118,9 @@ Route::post('/email/verification-notification', [LoginController::class, 'reenvi
 // Rota para solicitar o email de redefinição de senha
 
 
-Route::prefix('estados')->group(function () {
-    Route::get('/', [EstadoController::class, 'index']);
-});
 
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
 
-Route::get('/imagens/produtos/{id}', [ProdutoController::class, 'getImagem']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Banca;
+use App\Models\Produto;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProdutoRequest extends FormRequest
+class UpdateProdutoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,9 +14,9 @@ class StoreProdutoRequest extends FormRequest
      */
     public function authorize()
     {
-        $banca = Banca::findOrFail($this->input('banca_id'));
+        $produto = Produto::findOrFail($this->route('produto'));
 
-        return $this->user()->can('create', [Produto::class, $banca]);
+        return $this->user()->can('update', $produto);
     }
 
     /**
@@ -27,15 +27,15 @@ class StoreProdutoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' =>  'required|max:120|string',
-            'tipo_unidade' => 'required|in:unidade,fracionario,peso',
-            'estoque' => 'required|numeric',
-            'preco' => 'required|decimal:2',
-            'custo' => 'required|decimal:2',
-            'banca_id' => 'required|integer|exists:bancas,id',
-            'produto_tabelado_id' => 'required|integer|exists:produtos_tabelados,id'
+            'descricao' => 'nullable|max:120|string',
+            'tipo_unidade' => 'nullable|in:unidade,fracionario,peso',
+            'estoque' => 'nullable|numeric',
+            'preco' => 'nullable|decimal:2',
+            'custo' => 'nullable|decimal:2',
+            'disponivel' => 'nullable|bool'
         ];
     }
+
     public function messages()
     {
         return [

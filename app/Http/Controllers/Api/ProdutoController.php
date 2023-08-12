@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProdutoRequest;
 use App\Models\Banca;
 use App\Models\Produto;
-use App\Models\Produtor;
 use App\Models\ProdutoTabelado;
+use App\Http\Requests\StoreProdutoRequest;
+use App\Http\Requests\UpdateProdutoRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\File;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
@@ -24,17 +20,7 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $banca = $user->papel->banca->id;
-        $produtos = DB::table('produtos')
-            ->where('banca_id', $banca)
-            ->join('produtos_tabelados', 'produtos.produto_tabelado_id', '=', 'produtos_tabelados.id')
-            ->select('produtos_tabelados.nome', 'produtos.*')
-            ->get();
-
-        if (!$produtos ||  sizeof($produtos) == 0) {
-            return response()->json(['erro' => 'Não foi encontrar os produtos ou a banca está vazia'], 400);
-        }
+        $produtos = Produto::all();
 
         return response()->json(['produtos' => $produtos], 200);
     }
@@ -47,23 +33,11 @@ class ProdutoController extends Controller
      */
     public function store(StoreProdutoRequest $request)
     {
-        $produtoTabelado = ProdutoTabelado::find($request->produto_id); // id do produto tabelado que se quer referenciar
-        if ($produtoTabelado) {
-            $user = Auth::user();
-            $banca = $user->papel->banca;
-            DB::beginTransaction();
-            $produto = $banca->produtos()->make($request->all());
-            $produto->produtoTabelado()->associate($produtoTabelado);
-            $produto->save();
-            if (!$produto) {
-                return response()->json(['erro' => 'Não foi possível criar o produto'], 400);
-            }
-            $banca->save();
-            $produto->banca;
-            DB::commit();
-        } else {
-            return response()->json(['erro' => 'Nenhum produto tabelado corresponde ao id fornecido.'], 400);
-        }
+        $validatedData = $request->validated();
+        $banca = Banca::find($request->banca_id);
+
+        $produto = $banca->produtos()->create($validatedData);
+
         return response()->json(['produto' => $produto], 201);
     }
 
@@ -75,10 +49,8 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        $produto = Produto::find($id);
-        if (!$produto) {
-            return response()->json(['erro' => 'Não foi encontrar o produto'], 400);
-        }
+        $produto = Produto::findOrFail($id);
+
         return response()->json(['produto' => $produto], 200);
     }
 
@@ -89,21 +61,14 @@ class ProdutoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(StoreProdutoRequest $request, $id)
+    public function update(UpdateProdutoRequest $request, $id)
     {
-        DB::beginTransaction();
-
+        $validatedData = $request->validated();
         $produto = Produto::find($id);
-        $produtoTabelado = ProdutoTabelado::find($request->produto_id);
-        if (!$produto || !$produtoTabelado) {
-            return response()->json(['erro' => 'Não foi encontrar o produto'], 404);
-        }
-        $produto->fill($request->all());
-        $produto->produtoTabelado()->associate($produtoTabelado);
-        $produto->save();
-        $produto->banca;
-        DB::commit();
-        return response()->json(['produto' => $produto], 200);
+
+        $produto->update($validatedData);
+
+        return response()->json(['produto' => $produto]);
     }
 
     /**
@@ -114,11 +79,38 @@ class ProdutoController extends Controller
      */
     public function destroy($id)
     {
-        DB::beginTransaction();
-        $produto = Produto::find($id);
+        $produto = Produto::findOrfail($id);
+        $this->authorize('delete', $produto);
+
         $produto->delete();
-        DB::commit();
+
         return response()->noContent();
+    }
+
+    public function getTabelados()
+    {
+        $produtos = ProdutoTabelado::all();
+
+        return response()->json(['produtos' => $produtos], 200);
+    }
+
+    public function getCategorias()
+    {
+        return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
+    }
+
+    public function getImagem($id)
+    {
+        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
+
+        if (!$imagem || !Storage::exists($imagem->caminho)) {
+            return response()->json(["error" => "imagem não encontrada."], 404);
+        }
+
+        $file = Storage::get($imagem->caminho);
+        $mimeType = Storage::mimeType($imagem->caminho);
+
+        return response($file)->header('Content-Type', $mimeType);
     }
 
     public function buscar(Request $request)
@@ -153,25 +145,11 @@ class ProdutoController extends Controller
     public function buscarCategoria(String $nomeCategoria)
     {
         $produtos = ProdutoTabelado::where('categoria', $nomeCategoria)->get();
-        
+
         if ($produtos->count() == 0) {
             return response()->json(['erro' => "Nenhum produto encontrado em $nomeCategoria."], 400);
         }
 
         return response()->json(['produtos' => $produtos], 200);
-    }
-
-    public function getImagem($id)
-    {
-        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
-
-        if (!$imagem || !file_exists(storage_path('app/') . $imagem->caminho)) {
-            abort(404);
-        }
-
-        $file = Storage::get($imagem->caminho);
-        $mimeType = Storage::mimeType($imagem->caminho);
-
-        return response($file)->header('Content-Type', $mimeType);
     }
 }
