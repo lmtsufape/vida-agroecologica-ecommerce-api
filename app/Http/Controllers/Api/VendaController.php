@@ -47,7 +47,7 @@ class VendaController extends Controller
                 return response()->json(['error' => 'Endereço de entrega não informado.'], 400);
             }
 
-            if (!$banca->bairros_info_entrega()->whereIn('id', $enderecoEntrega->id)->exists()) {
+            if (!$banca->bairros_info_entrega()->where('bairro_id', $enderecoEntrega->bairro_id)->exists()) {
                 return response()->json(['error' => 'Esta banca não faz entrega no endereço selecionado.'], 400);
             }
         }
@@ -62,13 +62,13 @@ class VendaController extends Controller
         $venda->formaPagamento()->associate($formaPagamento);
         $subtotal = BigDecimal::of('0.00');
         $taxaEntrega = BigDecimal::of('0.00');
+        $venda->save();
 
         if ($validatedData['tipo_entrega'] == 'entrega') {
-            $venda->enderecoEntrega()->associate($enderecoEntrega);
-            $taxaEntrega = BigDecimal::of($banca->bairros_info_entrega()->whereIn('id', $enderecoEntrega->id)->first()->pivot->taxa_entrega);
+            $venda->enderecoEntrega()->create($enderecoEntrega->getAttributes());
+            $taxaEntrega = BigDecimal::of($banca->bairros_info_entrega()->where('bairro_id', $enderecoEntrega->bairro_id)->first()->pivot->taxa);
         }
 
-        $venda->save();
 
         $itens = [];
 

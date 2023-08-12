@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\StoreEnderecoRequest;
 use App\Models\Endereco;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserConsumidorController extends UserController
 {
-    public function indexEndereco($consumidor_id)
+    public function indexEndereco()
     {
-        $enderecos = User::findOrFail($consumidor_id)->enderecos;
+        $enderecos = Auth::user()->enderecos;
 
         return response()->json(['enderecos' => $enderecos], 200);
     }
@@ -31,6 +32,7 @@ class UserConsumidorController extends UserController
     public function showEndereco($id)
     {
         $endereco = Endereco::findOrFail($id);
+        $this->authorize('view', $endereco);
 
         return response()->json(['endereco' => $endereco], 200);
     }

@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
-use App\Http\Controllers\Api\ProdutorController;
 use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
@@ -31,6 +30,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Consumidor
+Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
+    Route::get('/enderecos', 'indexEndereco');
+    Route::post('/enderecos', 'storeEndereco');
+    Route::get('/enderecos/{id}', 'showEndereco');
+    Route::patch('/enderecos/{id}', 'updateEndereco');
+    Route::delete('/enderecos/{id}', 'destroyEndereco');
+});
+
 // Usuário
 Route::controller(UserController::class)->group(function () {
     Route::post('/users', 'store');
@@ -39,17 +47,10 @@ Route::controller(UserController::class)->group(function () {
 
 Route::apiResource('/users', UserController::class)->except('store')->middleware('auth:sanctum');
 
-// Consumidor
-Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->group(function () {
-    Route::get('/users/{id}/enderecos', 'indexEndereco');
-    Route::post('/users/enderecos', 'storeEndereco');
-    Route::get('/users/enderecos/{id}', 'showEndereco');
-    Route::patch('/users/enderecos/{id}', 'updateEndereco');
-    Route::delete('/users/enderecos/{id}', 'destroyEndereco');
-});
-
 // banca
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
+Route::delete('/bancas/{id}/imagens', [BancaController::class, 'deleteImagem'])->middleware('auth:sanctum');
+Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
 
 // venda
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/vendas')->group(function () {
@@ -93,13 +94,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('bairros', 'index');
     });
 
-    //produtor
-    Route::middleware('check.produtor')->group(function () {
-        Route::apiResource('/produtores', ProdutorController::class, ['parameters' => ['produtores' => 'produtor']])->except('store');
 
-        Route::delete('/bancas/imagens', [BancaController::class, 'deleteImagem']);
-        Route::apiResource('banca/produtos', ProdutoController::class);
-    });
+    Route::apiResource('banca/produtos', ProdutoController::class);
+
 
     Route::get('/categorias', function () {
         return response()->json(['categorias' => App\Models\ProdutoTabelado::distinct()->pluck('categoria')]);
@@ -112,8 +109,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         $produtos = App\Models\ProdutoTabelado::all();
         return response()->json(['produtos' => $produtos], 200);
     });
-    Route::get('/imagens/bancas/{banca}', [BancaController::class, 'getImagem']);
-    Route::get('/produtores/{produtorId}/bancas', [ProdutorController::class, 'getBanca']);
 });
 
 

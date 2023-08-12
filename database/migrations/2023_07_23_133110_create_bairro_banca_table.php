@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bairro_banca', function (Blueprint $table) {
             $table->id();
 
-            $table->decimal('taxa')->nullable();
+            $table->decimal('taxa');
 
             $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
             $table->foreignId('banca_id')->constrained()->cascadeOnDelete();

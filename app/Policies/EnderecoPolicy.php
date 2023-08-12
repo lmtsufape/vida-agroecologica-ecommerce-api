@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\Venda;
 use App\Models\Endereco;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 class EnderecoPolicy
@@ -28,7 +29,7 @@ class EnderecoPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return Response::allow();
     }
 
     /**
@@ -40,7 +41,16 @@ class EnderecoPolicy
      */
     public function view(User $user, Endereco $endereco)
     {
-        //
+        if ($endereco->addressable_type === 'user' && $endereco->addressable_id === $user->id) {
+            return Response::allow();
+        } elseif ($endereco->addressable_type === 'venda') {
+            $venda = Venda::find($endereco->addressable_id);
+            if ($user->id === $venda->consumidor_id || $user->id === $venda->banca->agricultor_id) {
+                return Response::allow();
+            }
+        }
+
+        return Response::deny();
     }
 
     /**
