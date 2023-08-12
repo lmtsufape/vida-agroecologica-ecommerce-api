@@ -49,6 +49,7 @@ Route::apiResource('/users', UserController::class)->except('store')->middleware
 
 // Bancas
 Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
+    Route::get('/{banca}/produtos', 'getProdutos');
     Route::get('/{banca}/imagem', 'getImagem');
     Route::delete('/{banca}/imagem', 'deleteImagem');
 });
