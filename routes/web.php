@@ -1,8 +1,7 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\WebAuthController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Api\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,16 +18,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Exibir formulário de redefinição de senha
-Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::controller(WebAuthController::class)->group(function () {
+    Route::get('/login', 'showLoginForm')->middleware('guest')->name('login');
+    Route::post('/login', 'authenticate')->middleware('guest');
+    Route::post('/logout', 'logout')->middleware('auth')->name('logout');
 
-// Rota para redefinir a senha com base no token
-Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.update');
+    Route::get('/email/verify', 'showEmailNotice')->middleware('auth')->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', 'verifyEmail')->middleware('signed')->name('verification.verify');
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+    Route::get('/forgot-password', 'showResetPasswordForm')->middleware('guest')->name('password.request');
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/reset-password/{token}', 'showResetForm')->middleware('guest')->name('password.reset');
+    Route::post('/reset-password', 'resetPassword')->middleware('guest')->name('password.update');
+});
 
 // Parte do gestão web
 
-Auth::routes();
+//Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 

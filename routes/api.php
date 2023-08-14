@@ -8,9 +8,8 @@ use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
-use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Auth\Api\LoginController;
+use App\Http\Controllers\Api\Auth\ApiAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -104,28 +103,19 @@ Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('
     Route::get('/', 'index');
 });
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------
+// Auth
+Route::controller(ApiAuthController::class)->group(function () {
+    Route::post('/sanctum/token', 'token')->middleware('guest');
+    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
 
-Route::get('/login', fn () => response()->json(['error' => 'Login necessário'], 401))->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/token', [LoginController::class, 'token']);
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
-Route::get('/email/verify', function () {
-    return response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403);
-})->middleware('auth:sanctum')->name('verification.notice');
-Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verificarEmail'])->middleware('signed')->name('verification.verify');
-Route::post('/email/verification-notification', [LoginController::class, 'reenviarEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-
-// Rota para solicitar o email de redefinição de senha
-
-
-
-Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetEmail'])->name('password.email');
-
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
+    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
 });
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Parte do gesão web
 
