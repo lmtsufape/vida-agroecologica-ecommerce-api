@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\VinculaAgricultoOrganizacaoRequest;
 use App\Interfaces\IAgricultorService;
 use Exception;

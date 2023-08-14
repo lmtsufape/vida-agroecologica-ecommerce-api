@@ -37,26 +37,30 @@ Route::controller(WebAuthController::class)->group(function () {
 
 //Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\Web\HomeController::class, 'index'])->name('home');
 
-Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
-
-    Route::get('/usuarios', [App\Http\Controllers\AdminController::class, 'usuarios_index'])->name('usuarios.index');
-    // Route::post('/usuario/store', [App\Http\Controllers\UserController::class, 'store'])->name('usuario.store');
-    // Route::post('/usuario/update', [App\Http\Controllers\UserController::class, 'update'])->name('usuario.update');
+Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
+    Route::get('/usuarios', [App\Http\Controllers\Web\UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usuarios/store', [App\Http\Controllers\Web\UserController::class, 'store'])->name('usuario.store');
+    Route::post('/usuarios/update', [App\Http\Controllers\Web\UserController::class, 'update'])->name('usuario.update');
 });
 
-Route::middleware(['auth:sanctum', 'type.admin.presidente'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
 
-    Route::get('/associacoes', [App\Http\Controllers\AdminController::class, 'associacoes_index'])->name('associacoes.index');
-    Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [App\Http\Controllers\OrganizacaoControleSocialController::class, 'index'])->name('ocs.index');
+    # ASSOCIAÇÃO
 
-    Route::post('/associacao/store', [App\Http\Controllers\AssociacaoController::class, 'store'])->name('associacao.store');
-    Route::post('/associacao/update', [App\Http\Controllers\AssociacaoController::class, 'update'])->name('associacao.update');
+    Route::get('/associacoes', [App\Http\Controllers\Web\AssociacaoController::class, 'index'])->name('associacoes.index');
+    Route::post('/associacao/store', [App\Http\Controllers\Web\AssociacaoController::class, 'store'])->name('associacao.store');
+    Route::post('/associacao/update', [App\Http\Controllers\Web\AssociacaoController::class, 'update'])->name('associacao.update');
 
-    Route::post('/organizacaoControleSocial/store', [App\Http\Controllers\OrganizacaoControleSocialController::class, 'store'])->name('ocs.store');
-    Route::post('/organizacaoControleSocial/update', [App\Http\Controllers\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
+    # OCS
 
-    Route::get('/agricultores', [App\Http\Controllers\AgricultorController::class, 'agricultoresIndex'])->name('agricultores.index');
-    Route::PUT('/agricultores/vincula-ocs', [App\Http\Controllers\AgricultorController::class, 'vincularAgricultoOrganizacao'])->name('vincula.agricultor');
+    Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'index'])->name('ocs.index');
+    Route::post('/organizacaoControleSocial/store', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'store'])->name('ocs.store');
+    Route::post('/organizacaoControleSocial/update', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
+
+    # AGRICULTORES
+
+    Route::get('/agricultores', [App\Http\Controllers\Web\AgricultorController::class, 'agricultoresIndex'])->name('agricultores.index');
+    Route::PUT('/agricultores/vincula-ocs', [App\Http\Controllers\Web\AgricultorController::class, 'vincularAgricultoOrganizacao'])->name('vincula.agricultor');
 });
