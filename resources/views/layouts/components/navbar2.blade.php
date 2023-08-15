@@ -22,7 +22,7 @@
                             <a class="nav-link" href="{{route('associacoes.index')}}">{{ __('Associações') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('agricultores.index')}}">{{ __('Agricultores') }}</a>
+                            <a class="nav-link" href="{{route('agricultor.index')}}">{{ __('Agricultores') }}</a>
                         </li>
                     @endif
                 @endauth

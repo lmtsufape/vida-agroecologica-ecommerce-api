@@ -65,7 +65,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form method="POST" action="{{route('vincula.agricultor')}}">
+                            <form method="POST" action="{{route('agricultor.vincular')}}">
                                 @method('PUT')
                                 @csrf
                                 <div class="modal-body">
