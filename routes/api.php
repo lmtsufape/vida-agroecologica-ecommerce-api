@@ -103,6 +103,12 @@ Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('
     Route::get('/', 'index');
 });
 
+Route::get('/locais', function () {
+    $estados = \App\Models\Estado::with('cidades.bairros')->get();
+
+    return response()->json(['estados' => $estados]);
+});
+
 // Auth
 Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
