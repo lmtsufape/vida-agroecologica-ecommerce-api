@@ -16,6 +16,7 @@ class UserAgricultorController extends Controller
         })->get();
 
         $organizacoes = OrganizacaoControleSocial::all();
+
         return view('agricultor.agricultores_index', ['agricultores' => $agricultores, "organizacoes" => $organizacoes]);
     }
 

@@ -42,7 +42,7 @@ class WebAuthController extends AuthController
 
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
 
     public function showLoginForm()
