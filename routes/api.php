@@ -104,7 +104,7 @@ Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('
 });
 
 Route::get('/locais', function () {
-    $estados = \App\Models\Estado::with('cidades.bairros')->get();
+    $estados = \App\Models\Estado::has('cidades.bairros')->with('cidades.bairros')->get();
 
     return response()->json(['estados' => $estados]);
 });
