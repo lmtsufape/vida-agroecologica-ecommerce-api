@@ -34,6 +34,10 @@ class WebAuthController extends AuthController
         ])->onlyInput('email');
     }
 
+    public function showRegisterForm() {
+        return view("auth.register");
+    }
+
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
