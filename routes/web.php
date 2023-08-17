@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Auth\WebAuthController;
+use App\Http\Controllers\Web\UserAgricultorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Auth
 Route::controller(WebAuthController::class)->group(function () {
     Route::get('/register', 'showRegisterForm')->middleware('guest')->name('register');
     Route::get('/login', 'showLoginForm')->middleware('guest')->name('login');
@@ -34,9 +36,13 @@ Route::controller(WebAuthController::class)->group(function () {
     Route::post('/reset-password', 'resetPassword')->middleware('guest')->name('password.update');
 });
 
-// Parte do gestão web
+// Agricultores
+Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+    Route::get('/', 'index')->name('agricultor.index');
+    Route::put('/vincular', 'vincularAgricultorOrganizacao')->name('agricultor.vincular');
+});
 
-//Auth::routes();
+// Parte do gestão web
 
 Route::get('/home', [App\Http\Controllers\Web\HomeController::class, 'index'])->name('home');
 
@@ -61,7 +67,4 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
     Route::put('/organizacaoControleSocial/{id}', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
     
     # AGRICULTORES
-
-    Route::get('/agricultores', [App\Http\Controllers\Web\AgricultorController::class, 'agricultoresIndex'])->name('agricultores.index');
-    Route::PUT('/agricultores/vincula-ocs', [App\Http\Controllers\Web\AgricultorController::class, 'vincularAgricultoOrganizacao'])->name('vincula.agricultor');
 });
