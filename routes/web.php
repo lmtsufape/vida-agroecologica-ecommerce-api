@@ -19,6 +19,7 @@ Route::get('/', function () {
 });
 
 Route::controller(WebAuthController::class)->group(function () {
+    Route::get('/register', 'showRegisterForm')->middleware('guest')->name('register');
     Route::get('/login', 'showLoginForm')->middleware('guest')->name('login');
     Route::post('/login', 'authenticate')->middleware('guest');
     Route::post('/logout', 'logout')->middleware('auth')->name('logout');
@@ -57,8 +58,8 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
 
     Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'index'])->name('ocs.index');
     Route::post('/organizacaoControleSocial/store', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'store'])->name('ocs.store');
-    Route::post('/organizacaoControleSocial/update', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
-
+    Route::put('/organizacaoControleSocial/{id}', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
+    
     # AGRICULTORES
 
     Route::get('/agricultores', [App\Http\Controllers\Web\AgricultorController::class, 'agricultoresIndex'])->name('agricultores.index');

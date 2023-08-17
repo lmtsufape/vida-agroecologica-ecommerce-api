@@ -13,7 +13,6 @@ class OrganizacaoControleSocial extends Model
 
     protected $fillable = [
         'nome',
-        'representante',
         "cnpj",
         "data_fundacao",
         "contato_id",

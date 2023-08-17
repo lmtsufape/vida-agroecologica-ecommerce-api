@@ -27,15 +27,12 @@ class UpdateOrganizacaoRequest extends FormRequest
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "cnpj"              => ['required', 'cnpj', Rule::unique('organizacoes_controle_social')->ignore($this->ocs_id)],
-            "representante"     => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
             "ocs_id"            => ['required', 'numeric'],
 
             "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
             "telefone"          => ['required', "celular_com_ddd"],
 
-            "pais"              => ['required', 'string', 'min:3', "max:50"],
-            "uf"                => ['required', 'string', 'min:3', "max:20"],
             "cidade"            => ['required', 'string', 'min:3', "max:20"],
             "bairro"            => ['required', 'string', 'min:3', "max:50"],
             "rua"               => ['required', 'string', 'min:3', "max:50"],
