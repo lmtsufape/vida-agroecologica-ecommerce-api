@@ -65,7 +65,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form method="POST" action="{{route('agricultor.vincular')}}">
+                            <form method="POST" action="{{ route('agricultor.vincular', ['id' => $agricultor->id]) }}">
                                 @method('PUT')
                                 @csrf
                                 <div class="modal-body">

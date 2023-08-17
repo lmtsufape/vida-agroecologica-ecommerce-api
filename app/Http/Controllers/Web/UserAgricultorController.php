@@ -23,8 +23,12 @@ class UserAgricultorController extends Controller
     public function vincularAgricultorOrganizacao(VincularAgricultorRequest $request, $id)
     {
         $agricultor = User::findOrFail($id);
-        $agricultor->associate(OrganizacaoControleSocial::findOrFail($request->organizacao_id));
+        $organizacao = OrganizacaoControleSocial::findOrFail($request->organizacao_id);
 
-        return redirect(route('agricultores.index'))->with('sucesso', 'Organização vinculada com sucesso!');
+        $agricultor->organizacao()->associate($organizacao);
+        $agricultor->save();
+
+        return redirect()->back()->with('sucesso', 'Organização vinculada com sucesso!');
+
     }
 }

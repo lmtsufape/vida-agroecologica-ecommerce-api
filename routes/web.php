@@ -36,12 +36,13 @@ Route::controller(WebAuthController::class)->group(function () {
     Route::post('/reset-password', 'resetPassword')->middleware('guest')->name('password.update');
 });
 
-// Agricultores
-Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
-    Route::get('/', 'index')->name('agricultor.index');
-    Route::put('/vincular', 'vincularAgricultorOrganizacao')->name('agricultor.vincular');
-});
+ # AGRICULTORES
 
+    Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+        Route::get('/', 'index')->name('agricultor.index');
+        Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao')->name('agricultor.vincular');
+    });
+    
 // Parte do gestão web
 
 Route::get('/home', [App\Http\Controllers\Web\HomeController::class, 'index'])->name('home');
@@ -65,6 +66,7 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
     Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'index'])->name('ocs.index');
     Route::post('/organizacaoControleSocial/store', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'store'])->name('ocs.store');
     Route::put('/organizacaoControleSocial/{id}', [App\Http\Controllers\Web\OrganizacaoControleSocialController::class, 'update'])->name('ocs.update');
-    
-    # AGRICULTORES
+
+
+
 });
