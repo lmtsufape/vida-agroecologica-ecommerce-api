@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->
 
 // Usuários
 Route::controller(ApiUserController::class)->group(function () {
-    Route::post('/users', 'store')->middleware('guest');
+    Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
 
