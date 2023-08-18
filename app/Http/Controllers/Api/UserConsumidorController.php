@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Requests\StoreEnderecoRequest;
 use App\Models\Endereco;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class UserConsumidorController extends UserController
+class UserConsumidorController extends ApiUserController
 {
     public function indexEndereco()
     {

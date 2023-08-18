@@ -14,7 +14,7 @@
                 @auth
                     @if(Auth::user()->hasAnyRoles(['presidente','administrador']))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('usuarios.index')}}">{{ __('Usuarios') }}</a>
+                            <a class="nav-link" href="{{route('users.index')}}">{{ __('Usuarios') }}</a>
                         </li>
                     @endif
                     @if (Auth::user()->hasAnyRoles(['presidente','administrador']))

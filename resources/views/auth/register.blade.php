@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('users.store') }}">
                         @csrf
 
                         <div class="row mb-3">
@@ -54,6 +54,20 @@
                         </div>
 
                         <div class="row mb-3">
+                            <label for="telefone" class="col-md-4 col-form-label text-md-end">{{ __('telefone') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="telefone" type="telefone" placeholder="(99) 99999-9999" class="form-control @error('telefone') is-invalid @enderror" name="telefone" value="{{ old('telefone') }}" required autocomplete="telefone">
+
+                                @error('telefone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Senha') }}</label>
 
                             <div class="col-md-6">
@@ -74,6 +88,8 @@
                                 <input id="password-confirm" type="password" placeholder="A senha deve ter pelo menos 8 caracteres" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
+
+                        <input id="roles" type="roles" name="roles" value="4" hidden=true></input>
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">

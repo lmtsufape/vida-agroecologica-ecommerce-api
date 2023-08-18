@@ -5,11 +5,14 @@ use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
+use App\Http\Controllers\Api\PropriedadeController;
 use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\Auth\ApiAuthController;
+use App\Http\Controllers\Web\AssociacaoController;
+use App\Http\Controllers\Web\OrganizacaoControleSocialController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -39,12 +42,12 @@ Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->
 });
 
 // Usuários
-Route::controller(UserController::class)->group(function () {
-    Route::post('/users', 'store');
+Route::controller(ApiUserController::class)->group(function () {
+    Route::post('/users', 'store')->middleware('guest');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
 
-Route::apiResource('/users', UserController::class)->except('store')->middleware('auth:sanctum');
+Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
 // Bancas
 Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
@@ -127,23 +130,23 @@ Route::controller(ApiAuthController::class)->group(function () {
 
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
     // Usuario
-    Route::post('cadastro', [UserController::class, 'store']);
-    Route::post('atualizar/usuario', [UserController::class, 'update']);
-    Route::get('users', [UserController::class, 'index']);
+    // Route::post('cadastro', [UserController::class, 'store']);
+    // Route::post('atualizar/usuario', [UserController::class, 'update']);
+    // Route::get('users', [UserController::class, 'index']);
 
     // Associacao
-    Route::get('associacoes', [\App\Http\Controllers\Auth\Api\AssociacaoController::class, 'index']);
+    Route::get('associacoes', [AssociacaoController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum', 'type.admin.presidente'])->group(function () {
     //Associacao
-    Route::post('cadastrar/associacao', [\App\Http\Controllers\Auth\Api\AssociacaoController::class, 'store']);
-    Route::post('atualizar/associacao', [\App\Http\Controllers\Auth\Api\AssociacaoController::class, 'update']);
+    Route::post('cadastrar/associacao', [AssociacaoController::class, 'store']);
+    Route::post('atualizar/associacao', [AssociacaoController::class, 'update']);
 
     // OCS
-    Route::post('/organizacaoControleSocial/store', [App\Http\Controllers\Api\OrganizacaoControleSocialController::class, 'store']);
-    Route::post('/organizacaoControleSocial/update', [App\Http\Controllers\Api\OrganizacaoControleSocialController::class, 'update']);
-    Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [App\Http\Controllers\Api\OrganizacaoControleSocialController::class, 'index']);
+    Route::post('/organizacaoControleSocial/store', [OrganizacaoControleSocialController::class, 'store']);
+    Route::post('/organizacaoControleSocial/update', [OrganizacaoControleSocialController::class, 'update']);
+    Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [OrganizacaoControleSocialController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
@@ -153,9 +156,9 @@ Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
 Route::middleware(['auth:sanctum', 'type.agricultor'])->group(function () {
 
     // Propriedade
-    Route::post('/propriedade/store', [App\Http\Controllers\Api\PropriedadeController::class, 'store']);
-    Route::post('/propriedade/update', [App\Http\Controllers\Api\PropriedadeController::class, 'update']);
-    Route::get('/usuario/{user_id}/propriedades', [App\Http\Controllers\Api\PropriedadeController::class, 'index']);
+    Route::post('/propriedade/store', [PropriedadeController::class, 'store']);
+    Route::post('/propriedade/update', [PropriedadeController::class, 'update']);
+    Route::get('/usuario/{user_id}/propriedades', [PropriedadeController::class, 'index']);
 });
 
-Route::post('/verifica', [UserController::class, 'verificaUsuario']);
+//Route::post('/verifica', [UserController::class, 'verificaUsuario']);

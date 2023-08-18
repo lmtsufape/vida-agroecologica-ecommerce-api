@@ -6,6 +6,16 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
 {
+    public function prepareForValidation()
+    {
+        $roles = $this->input('roles');
+
+        if (!is_array($roles)) {
+            $campo = explode(',', $roles); // Transforma o valor em um array
+            $this->merge(['roles' => $campo]); // Atualiza o valor no request
+        }
+    }
+
     public function rules()
     {
         return [

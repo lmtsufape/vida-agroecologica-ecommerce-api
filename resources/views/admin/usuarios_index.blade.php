@@ -63,7 +63,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form method="POST" action="{{ route('usuario.store') }}">
+                        <form method="POST" action="{{ route('users.store') }}">
                             @csrf
                             <div class="modal-body">
                                 @csrf
@@ -214,7 +214,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form method="POST" action="{{ route('usuario.update') }}">
+                            <form method="POST" action="{{ route('users.update', 2) }}">
                                 @csrf
                                 <div class="modal-body">
                                     @csrf

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
@@ -15,11 +15,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::whereHas('role', function ($query) {
+        $users = User::whereHas('roles', function ($query) {
             $query->where('nome', '!=', 'administrador');
         })->get();
 
-        return response()->json(['users' => $users], 200);
+        return $users;
     }
 
     public function store(StoreUserRequest $request)
@@ -37,7 +37,7 @@ class UserController extends Controller
 
         event(new Registered($user));
 
-        return response()->json(['user' => $user], 201);
+        return $user;
     }
 
     public function show($id)
@@ -45,7 +45,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $this->authorize('view', $user);
 
-        return response()->json(['user' => $user], 200);
+        return $user;
     }
 
     public function update(UpdateUserRequest $request, $id)
@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->contato->update($validatedData);
         DB::commit();
 
-        return response()->json(['user' => $user], 200);
+        return $user;
     }
 
     public function destroy($id)
@@ -68,7 +68,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->noContent();
+        return null;
     }
 
     public function updateUserRoles(Request $request, $id)
@@ -83,6 +83,6 @@ class UserController extends Controller
 
         $user->roles()->sync($validatedData);
 
-        return response()->json(['success' => 'Roles de usuário atualizadas.'], 200);
+        return true;
     }
 }
