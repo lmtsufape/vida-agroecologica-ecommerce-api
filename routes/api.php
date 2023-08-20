@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
+use App\Http\Controllers\Api\BuscaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\PropriedadeController;
@@ -162,3 +163,10 @@ Route::middleware(['auth:sanctum', 'type.agricultor'])->group(function () {
 });
 
 //Route::post('/verifica', [UserController::class, 'verificaUsuario']);
+
+Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
+    Route::get('/{nome}', 'buscar_banca');
+    Route::post('/produto', 'buscar_produto');
+    Route::get('/vendedor/{name}', 'buscar_vendedor');
+    Route::get('/categoria/{categoria}', 'buscar_categoria');
+});
