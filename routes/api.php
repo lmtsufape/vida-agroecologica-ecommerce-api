@@ -113,6 +113,11 @@ Route::get('/locais', function () {
     return response()->json(['estados' => $estados]);
 });
 
+// Propriedades
+Route::get('/propriedades/user/{user_id}', [PropriedadeController::class, 'getPropriedades'])->middleware('auth:sanctum');
+
+Route::apiResource('/propriedades', PropriedadeController::class)->middleware('auth:sanctum');
+
 // Auth
 Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
@@ -123,6 +128,14 @@ Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
     Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
     Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
+});
+
+//Busca
+Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
+    Route::get('/{nome}', 'buscar_banca');
+    Route::post('/produto', 'buscar_produto');
+    Route::get('/vendedor/{name}', 'buscar_vendedor');
+    Route::get('/categoria/{categoria}', 'buscar_categoria');
 });
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,19 +167,4 @@ Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
     //minhas associações
 });
 
-Route::middleware(['auth:sanctum', 'type.agricultor'])->group(function () {
-
-    // Propriedade
-    Route::post('/propriedade/store', [PropriedadeController::class, 'store']);
-    Route::post('/propriedade/update', [PropriedadeController::class, 'update']);
-    Route::get('/usuario/{user_id}/propriedades', [PropriedadeController::class, 'index']);
-});
-
 //Route::post('/verifica', [UserController::class, 'verificaUsuario']);
-
-Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
-    Route::get('/{nome}', 'buscar_banca');
-    Route::post('/produto', 'buscar_produto');
-    Route::get('/vendedor/{name}', 'buscar_vendedor');
-    Route::get('/categoria/{categoria}', 'buscar_categoria');
-});

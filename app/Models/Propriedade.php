@@ -9,6 +9,8 @@ class Propriedade extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['nome'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

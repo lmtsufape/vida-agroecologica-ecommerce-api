@@ -15,7 +15,10 @@ class AuthServiceProvider extends ServiceProvider
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         App\Models\Banca::class => App\Policies\BancaPolicy::class,
         App\Models\User::class => App\Policies\UserPolicy::class,
-        App\Models\Venda::class => App\Policies\VendaPolicy::class
+        App\Models\Venda::class => App\Policies\VendaPolicy::class,
+        App\models\Propriedade::class => App\Policies\PropriedadePolicy::class,
+        App\models\Endereco::class => App\Policies\EnderecoPolicy::class,
+        App\models\Produto::class => App\Policies\ProdutoPolicy::class,
     ];
 
     /**
