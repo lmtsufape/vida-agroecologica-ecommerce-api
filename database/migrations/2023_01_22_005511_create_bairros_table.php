@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
 
             $table->string('nome', 60);
-            
-            $table->foreignId('cidade_id')->constrained();
+
+            $table->foreignId('cidade_id')->constrained()->cascadeOnDelete();
             $table->unique(['nome', 'cidade_id']);
 
             $table->timestamps();

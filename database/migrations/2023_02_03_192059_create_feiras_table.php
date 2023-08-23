@@ -19,8 +19,8 @@ return new class extends Migration
             $table->json('funcionamento');
             $table->time('horario_abertura');
             $table->time('horario_fechamento');
-            
-            $table->foreignId('bairro_id')->constrained();
+
+            $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
 
             $table->timestamps();
         });

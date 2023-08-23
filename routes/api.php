@@ -100,6 +100,7 @@ Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
+    Route::delete('{id}', 'destroy')->middleware('role:administrador');
 });
 
 // Estados
