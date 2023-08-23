@@ -123,6 +123,8 @@ Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
     Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
 
+    Route::get('/logado', 'user_logado')->middleware('auth:sanctum');;
+
     Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
     Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');

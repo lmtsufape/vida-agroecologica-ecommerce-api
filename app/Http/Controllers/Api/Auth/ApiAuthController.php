@@ -57,4 +57,10 @@ class ApiAuthController extends AuthController
             ? response()->json(['message' => 'Email de redefinição de senha enviado com sucesso.'], 200)
             : response()->json(['message' => 'Falha ao enviar o email de redefinição de senha.'], 500);
     }
+
+    public function user_logado(){
+        $user = auth()->user();
+
+        return response()->json(['usuario' => $user]);
+    }
 }
