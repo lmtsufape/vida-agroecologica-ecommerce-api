@@ -24,4 +24,13 @@ class BairroController extends Controller
         $bairro->cidade()->associate($cidade);
         return response()->json(['bairro' => $bairro], 201);
     }
+
+    public function destroy($id)
+    {
+        $bairro = Bairro::findOrFail($id);
+        $this->authorize('delete', $bairro);
+
+        $bairro->delete();
+        return response()->noContent();
+    }
 }

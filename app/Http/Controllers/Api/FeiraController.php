@@ -26,4 +26,15 @@ class FeiraController extends Controller
 
         return response()->json(['feira' => $feira], 201);
     }
+
+    public function destroy($id)
+    {
+        $feira = Feira::findOrFail($id);
+        $this->authorize('delete', $feira);
+
+        $feira->delete();
+
+        return response()->noContent();
+
+    }
 }
