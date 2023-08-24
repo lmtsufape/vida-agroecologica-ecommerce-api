@@ -49,7 +49,7 @@ class StoreUserRequest extends FormRequest
             ],
             'cpf' => [
                 'required',
-                'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', // considerando cpf no formato "999.999.999-99"
+                'cpf',  // Gerar CPF no link https://geradornv.com.br/gerador-cpf
                 'unique:users'
             ],
             'roles' => [
