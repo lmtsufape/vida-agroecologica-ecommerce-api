@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
+use App\Models\User;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -278,5 +279,36 @@ class VendaController extends Controller
         DB::commit();
 
         return response()->json(['success' => 'A compra foi marcada como entregue.'], 200);
+    }
+
+    public function getCompras($consumidorId)
+    {
+        $user = User::findOrFail($consumidorId);
+        $this->authorize('getTransacoes', [Venda::class, $user]);
+
+        $compras = $user->compras;
+
+        return response()->json(['compras' => $compras], 200);
+    }
+
+    public function getVendas($agricultorId)
+    {
+        $user = User::findOrFail($agricultorId);
+        $this->authorize('getTransacoes', [Venda::class, $user]);
+
+        $vendas = $user->vendas;
+
+        return response()->json(['vendas' => $vendas], 200);
+    }
+
+    public function getBancaVendas($bancaId)
+    {
+        $banca = Banca::findOrFail($bancaId);
+        $this->authorize('getTransacoes', [Venda::class, $banca->agricultor]);
+
+        $vendas = $banca->vendas;
+
+        return response()->json(['vendas' => $vendas], 200);
+
     }
 }

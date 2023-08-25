@@ -175,4 +175,11 @@ class VendaPolicy
             ? Response::allow()
             : Response::deny();
     }
+
+    public function getTransacoes(User $user, User $model)
+    {
+        return $user->id === $model->id
+            ? Response::allow()
+            : Response::deny();
+    }
 }

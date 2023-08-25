@@ -60,13 +60,17 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
 
 // Vendas
-Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/vendas')->group(function () {
+Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/transacoes')->group(function () {
     Route::post('/{venda}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
     Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
+    Route::get('/{agricultorId}/vendas', 'getVendas')->middleware('role:agricultor');
+    Route::get('/bancas/{banca}', 'getBancaVendas')->middleware('role:agricultor');
 
     Route::post('/{venda}/comprovante', 'anexarComprovante')->middleware('role:consumidor');
     Route::post('/{venda}/entregar', 'marcarEntregue')->middleware('role:consumidor');
     Route::post('/', 'store')->middleware('role:consumidor');
+    Route::get('/{consumidorId}/compras', 'getCompras')->middleware('role:consumidor');
+
 
     Route::get('/', 'index')->middleware('role:administrador');
 

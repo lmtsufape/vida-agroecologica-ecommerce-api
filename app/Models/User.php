@@ -87,9 +87,14 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         return $this->roles()->whereIn('nome', $roles)->exists();
     }
 
-    public function transacoes()
+    public function compras()
     {
-        return $this->hasMany(Venda::class);
+        return $this->hasMany(Venda::class, 'consumidor_id');
+    }
+
+    public function vendas()
+    {
+        return $this->hasManyThrough(Venda::class, Banca::class, 'agricultor_id');
     }
 
     public function bancas()
