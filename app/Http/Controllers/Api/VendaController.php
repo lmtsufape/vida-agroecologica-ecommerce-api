@@ -42,6 +42,10 @@ class VendaController extends Controller
             return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
         }
 
+        if (!$formaPagamento->bancas()->where('banca_id', $banca->id)->exists()) {
+            return response()->json(['error' => 'A banca não aceita ' . $formaPagamento->tipo]);
+        }
+
         if ($validatedData['tipo_entrega'] == 'entrega') {
             if (!$enderecoEntrega) {
                 return response()->json(['error' => 'Endereço de entrega não informado.'], 400);
