@@ -16,13 +16,13 @@ class DatabaseSeeder extends Seeder
             BairroSeeder::class,
             FeiraSeeder::class,
             RoleSeeder::class,
+            FormaPagamentoSeeder::class,
             UserSeeder::class,
             AssociacaoSeeder::class,
             OrganizacaoControleSocialSeeder::class,
             PropriedadeSeeder::class,
             ProdutoTabeladoSeeder::class,
             ProdutoSeeder::class,
-            FormaPagamentoSeeder::class,
             VendaSeeder::class,
         ]);
         DB::commit();

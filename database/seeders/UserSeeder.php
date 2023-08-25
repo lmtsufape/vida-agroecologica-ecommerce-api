@@ -37,6 +37,7 @@ class UserSeeder extends Seeder
             $user->contato()->save($contatos[$indice]);
         }
 
-        Banca::factory()->create();
+        $banca = Banca::factory()->create();
+        $banca->formasPagamento()->attach(1);
     }
 }
