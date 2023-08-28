@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UpdateBancaRequest;
 use App\Models\Banca;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -110,6 +111,13 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
 
         return response()->json(['produtos' => $banca->produtos], 200);
+    }
+
+    public function getAgricultorBancas($agricultorId)
+    {
+        $bancas = User::findOrFail($agricultorId)->bancas;
+
+        return response()->json(['bancas' => $bancas], 200);
     }
 
     public function getImagem($id)
