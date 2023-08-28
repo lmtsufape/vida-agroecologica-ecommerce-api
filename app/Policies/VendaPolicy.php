@@ -137,8 +137,12 @@ class VendaPolicy
         return Response::deny();
     }
 
-    public function cancelarCompra(User $user, Venda $venda)
+    public function cancelarCompra(?User $user, Venda $venda)
     {
+        if (!$user) {
+            return Response::allow();
+        }
+
         if ($user->id === $venda->banca->agricultor_id || $user->id === $venda->consumidor_id) {
             return Response::allow();
         }
