@@ -93,23 +93,23 @@ Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanc
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update'); //fazer função
-    Route::delete('/{id}', 'destroy'); //Fazer polices
+    Route::patch('/{feira}', 'update');
+    Route::delete('/{id}', 'destroy');
 });
 
 // Bairros
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{bairro}', 'update'); //fazer função
-    Route::delete('/{id}', 'destroy')->middleware('role:administrador'); //Fazer polices
+    Route::patch('/{bairro}', 'update'); 
+    Route::delete('/{id}', 'destroy')->middleware('role:administrador');
 });
 
 // Cidades
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{cidade}', 'update'); //fazer função
+    Route::patch('/{cidade}', 'update')->middleware('role:administrador');
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
 });
 

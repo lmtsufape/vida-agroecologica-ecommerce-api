@@ -28,6 +28,15 @@ class CidadeController extends Controller
         return response()->json(['cidade' => $cidade], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $cidade = Cidade::findOrFail($id);
+
+        $cidade->nome = $request->nome;
+
+        return response()->json(['cidade'=> $cidade], 200);
+
+    }
     public function destroy($id)
     {
         $cidade = Cidade::findOrFail($id);

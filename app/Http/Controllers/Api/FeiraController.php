@@ -27,14 +27,23 @@ class FeiraController extends Controller
         return response()->json(['feira' => $feira], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $feira = Feira::findOrFail($id);
+
+        $feira->funcionamento = $request->funcionamento;
+        $feira->horario_abertura = $request->horario_abertura;
+        $feira->horario_fechamento = $request->horario_fechamento;
+
+        return response()->json(['feira'=> $feira], 200);
+    }
+
     public function destroy($id)
     {
         $feira = Feira::findOrFail($id);
-        $this->authorize('delete', $feira);
 
         $feira->delete();
 
         return response()->noContent();
-
     }
 }

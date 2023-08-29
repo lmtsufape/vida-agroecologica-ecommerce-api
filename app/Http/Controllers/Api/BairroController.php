@@ -25,12 +25,21 @@ class BairroController extends Controller
         return response()->json(['bairro' => $bairro], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $bairro = Bairro::findOrFail($id);
+
+        $bairro->nome = $request->nome;
+
+        return response()->json(['bairro' => $bairro], 200);
+    }
+
     public function destroy($id)
     {
         $bairro = Bairro::findOrFail($id);
-        $this->authorize('delete', $bairro);
 
         $bairro->delete();
+
         return response()->noContent();
     }
 }
