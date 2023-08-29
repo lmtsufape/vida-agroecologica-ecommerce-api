@@ -99,6 +99,6 @@ class User extends Authenticatable implements MustVerifyEmail, reset
 
     public function bancas()
     {
-        return $this->hasMany(Banca::class);
+        return $this->hasMany(Banca::class, 'agricultor_id');
     }
 }

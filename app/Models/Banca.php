@@ -47,7 +47,7 @@ class Banca extends Model
 
     public function agricultor(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'agricultor_id');
     }
 
     public function imagem(): MorphOne

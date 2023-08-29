@@ -54,6 +54,7 @@ Route::apiResource('/users', ApiUserController::class)->except('store')->middlew
 Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
     Route::get('/{banca}/produtos', 'getProdutos');
     Route::get('/{banca}/imagem', 'getImagem');
+    Route::get('/agricultores/{agricultor}', 'getAgricultorBancas');
     Route::delete('/{banca}/imagem', 'deleteImagem');
 });
 
@@ -92,23 +93,23 @@ Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanc
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update');//fazer função
-    Route::delete('/{id}', 'destroy');//Fazer polices
+    Route::patch('/{feira}', 'update'); //fazer função
+    Route::delete('/{id}', 'destroy'); //Fazer polices
 });
 
 // Bairros
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{bairro}', 'update');//fazer função
-    Route::delete('/{id}', 'destroy')->middleware('role:administrador');//Fazer polices
+    Route::patch('/{bairro}', 'update'); //fazer função
+    Route::delete('/{id}', 'destroy')->middleware('role:administrador'); //Fazer polices
 });
 
 // Cidades
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{cidade}', 'update');//fazer função
+    Route::patch('/{cidade}', 'update'); //fazer função
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
 });
 
@@ -133,7 +134,7 @@ Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
     Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
 
-    Route::get('/logado', 'user_logado')->middleware('auth:sanctum');//para testes
+    Route::get('/logado', 'user_logado')->middleware('auth:sanctum'); //para testes
 
     Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
