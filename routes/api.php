@@ -133,11 +133,7 @@ Route::apiResource('/propriedades', PropriedadeController::class)->middleware('a
 Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
     Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
-
-    Route::get('/logado', 'user_logado')->middleware('auth:sanctum'); //para testes
-
     Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-
     Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
     Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
     Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
