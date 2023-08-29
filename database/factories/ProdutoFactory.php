@@ -20,8 +20,8 @@ class ProdutoFactory extends Factory
             'descricao' => fake()->realText(50),
             'tipo_unidade' => 'unidade',
             'estoque' => fake()->numberBetween(1,20),
-            'preco' => fake()->randomFloat(4,1,20),
-            'custo' => fake()->randomFloat(4,1,20)
+            'preco' => fake()->randomFloat(2,1,20),
+            'custo' => fake()->randomFloat(2,1,20)
         ];
     }
 }
