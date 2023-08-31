@@ -42,6 +42,11 @@ class StoreFeiraRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:bairros,id'
+            ],
+            'associacao_id' => [
+                'required',
+                'integer',
+                'exists:associacoes,id'
             ]
         ];
 

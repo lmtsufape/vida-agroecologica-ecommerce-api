@@ -37,4 +37,9 @@ class Associacao extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function feiras()
+    {
+        return $this->hasMany(Feira::class);
+    }
 }

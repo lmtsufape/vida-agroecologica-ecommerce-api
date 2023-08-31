@@ -21,6 +21,7 @@ return new class extends Migration
             $table->time('horario_fechamento');
 
             $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
+            $table->foreignId('associacao_id')->constrained('associacoes')->cascadeOnDelete();
 
             $table->timestamps();
         });

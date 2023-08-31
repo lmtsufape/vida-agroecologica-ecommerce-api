@@ -22,6 +22,7 @@ class FeiraController extends Controller
     public function store(StoreFeiraRequest $request)
     {
         $validatedData = $request->validated();
+        
         $feira = Feira::create($validatedData);
 
         return response()->json(['feira' => $feira], 201);

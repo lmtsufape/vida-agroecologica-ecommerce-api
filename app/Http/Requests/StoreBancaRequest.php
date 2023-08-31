@@ -33,6 +33,7 @@ class StoreBancaRequest extends FormRequest
     public function authorize(): bool
     {
         $user = User::findOrFail($this->input('agricultor_id'));
+        
         return $this->user()->can('create', [Banca::class, $user]);
     }
 

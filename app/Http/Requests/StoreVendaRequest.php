@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Banca;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVendaRequest extends FormRequest
@@ -13,7 +14,9 @@ class StoreVendaRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->can('create', Venda::class);
+        $banca = Banca::findOrFail($this->input('banca_id'));
+        
+        return $this->user()->can('create', [Venda::class, $banca]);
     }
 
     /**

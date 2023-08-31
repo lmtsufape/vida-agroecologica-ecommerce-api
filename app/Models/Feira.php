@@ -27,4 +27,9 @@ class Feira extends Model
     {
         return $this->hasMany(Banca::class);
     }
+
+    public function associacao()
+    {
+        return $this->belongsTo(Associacao::class);
+    }
 }

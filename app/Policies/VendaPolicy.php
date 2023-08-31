@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Banca;
 use App\Models\User;
 use App\Models\Venda;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -73,11 +74,15 @@ class VendaPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create(User $user, Banca $banca)
     {
-        return $user->hasAnyRoles(['consumidor'])
-            ? Response::allow()
-            : Response::deny();
+        if ($user->hasAnyRoles(['consumidor'])) {
+            if ($banca->ativa) {
+                return Response::allow();
+            }
+        }
+
+        return Response::deny();
     }
 
     /**
