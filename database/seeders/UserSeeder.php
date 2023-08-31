@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Banca;
 use App\Models\Contato;
+use App\Models\Endereco;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -39,5 +40,7 @@ class UserSeeder extends Seeder
 
         $banca = Banca::factory()->create();
         $banca->formasPagamento()->attach(1);
+
+        Endereco::factory()->create();
     }
 }

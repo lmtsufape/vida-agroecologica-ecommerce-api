@@ -17,14 +17,12 @@ class EnderecoFactory extends Factory
     public function definition()
     {
         return [
-            'pais' => 'Brasil',
-            'cidade' => 'Garanhuns',
-            'estado' => 'Pernambuco',
             'rua' => 'Rua das moreninhas',
-            'bairro' => 'Aluisio Pinto',
             'numero' => 214,
             'cep' => '55290-00',
-            'bairro_id' => 1
+            'bairro_id' => 1,
+            'addressable_type' => 'user',
+            'addressable_id' => 5
         ];
     }
 }
