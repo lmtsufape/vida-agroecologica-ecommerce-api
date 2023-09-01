@@ -22,7 +22,6 @@ class FeiraController extends Controller
     public function store(StoreFeiraRequest $request)
     {
         $validatedData = $request->validated();
-        
         $feira = Feira::create($validatedData);
 
         return response()->json(['feira' => $feira], 201);
@@ -35,6 +34,8 @@ class FeiraController extends Controller
         $feira->funcionamento = $request->funcionamento;
         $feira->horario_abertura = $request->horario_abertura;
         $feira->horario_fechamento = $request->horario_fechamento;
+
+        $feira->save();
 
         return response()->json(['feira'=> $feira], 200);
     }

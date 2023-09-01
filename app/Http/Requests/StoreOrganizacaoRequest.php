@@ -31,9 +31,7 @@ class StoreOrganizacaoRequest extends FormRequest
 
             "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
             "telefone"          => ['required', "celular_com_ddd"],
- 
-            "cidade"            => ['required', 'string', 'min:3', "max:20"],
-            "bairro"            => ['required', 'string', 'min:3', "max:50"],
+
             "rua"               => ['required', 'string', 'min:3', "max:50"],
             "numero"            => ['required', 'numeric'],
             "cep"               => ['required', 'numeric', 'min:0', 'digits:8']

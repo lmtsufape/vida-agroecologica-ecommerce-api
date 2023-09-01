@@ -12,13 +12,12 @@ class OrganizacaoControleSocial extends Model
     protected $table = 'organizacoes_controle_social';
 
     protected $fillable = [
-        'nome',
+        "nome",
         "cnpj",
         "data_fundacao",
         "contato_id",
         "endereco_id",
-        "associacao_id",
-        "user_id"
+        "associacao_id"
     ];
 
     public function endereco()

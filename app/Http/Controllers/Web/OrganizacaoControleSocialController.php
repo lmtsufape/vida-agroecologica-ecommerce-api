@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrganizacaoRequest;
 use App\Http\Requests\UpdateOrganizacaoRequest;
+use App\Models\Associacao;
 use App\Models\Bairro;
 use App\Models\Cidade;
 use App\Models\Contato;
@@ -15,11 +16,12 @@ use Illuminate\Http\Request;
 
 class OrganizacaoControleSocialController extends Controller
 {
-    public function index(Request $request, $associacao_id)
+    public function index($associacao_id)
     {
-        $lista_ocs = OrganizacaoControleSocial::where('associacao_id', $associacao_id)->get();
-        $lista_estados = Estado::all();
-        return view('admin.ocs_index', compact('lista_ocs', 'associacao_id', 'lista_estados'));
+        $listaOcs = OrganizacaoControleSocial::where('associacao_id', $associacao_id)->get();
+        $listaEstados = Estado::all();
+
+        return response()->json(['Lista OCS'=>$listaOcs, 'Lista Estados' => $listaEstados]);
     }
 
     public function store(StoreOrganizacaoRequest $request)
@@ -30,13 +32,13 @@ class OrganizacaoControleSocialController extends Controller
         $estadoId = $request->input('estado_id');
         $estado = Estado::find($estadoId);
         
-        $cidade = Cidade::where('nome', $cidadeName)->first();
-        if (!$cidade) {
-            $cidade = Cidade::create(['nome' => $cidadeName, 'estado_id' => $estado->id]);
-        }
+        // $cidade = Cidade::where('nome', $cidadeName)->first();
+        // if (!$cidade) {
+        //     $cidade = Cidade::create(['nome' => $cidadeName, 'estado_id' => $estado->id]);
+        // }
 
-        $cidade->estado_id = $estado->id;
-        $cidade->save();
+        // $cidade->estado_id = $estado->id;
+        // $cidade->save();
 
         if ($request->has('bairro')) {
             $bairro = Bairro::create([
@@ -68,9 +70,9 @@ class OrganizacaoControleSocialController extends Controller
 
         $organizacao->contato()->save($contato);
 
-        $associacaoId = $request->input('associacao_id');
+        $associacao = Associacao::findOrFail($request->input('associacao_id'));
 
-        return redirect()->route('ocs.index', ['associacao_id' => $associacaoId])->with('sucesso', 'Organização cadastrada com sucesso!');
+        return response()->json(['associacao'=> $associacao]);
     }
 
     public function update(UpdateOrganizacaoRequest $request, $id)
@@ -118,7 +120,7 @@ class OrganizacaoControleSocialController extends Controller
         $contato->telefone = $request->input('telefone');
         $contato->save();
 
-        return redirect()->back()->with('sucesso', 'OCS atualizada com sucesso!.');
+        return response()->json(['Associacao' => $organizacao]);
     }
 
 }

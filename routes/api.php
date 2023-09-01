@@ -163,13 +163,10 @@ Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'type.admin.presidente'])->group(function () {
     //Associacao
-    Route::post('cadastrar/associacao', [AssociacaoController::class, 'store']);
-    Route::post('atualizar/associacao', [AssociacaoController::class, 'update']);
+    
 
     // OCS
-    Route::post('/organizacaoControleSocial/store', [OrganizacaoControleSocialController::class, 'store']);
-    Route::post('/organizacaoControleSocial/update', [OrganizacaoControleSocialController::class, 'update']);
-    Route::get('/associacao/{associacao_id}/organizacaoControleSocial', [OrganizacaoControleSocialController::class, 'index']);
+   
 });
 
 Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
@@ -177,3 +174,20 @@ Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
 });
 
 //Route::post('/verifica', [UserController::class, 'verificaUsuario']);
+
+//Web
+
+Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
+
+ # ASSOCIAÇÃO
+
+ Route::get('/associacoes', [AssociacaoController::class, 'index']);//funcionando
+ Route::post('/associacoes', [AssociacaoController::class, 'store']);//funcionando
+ Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']);//funcionando
+
+ # OCS
+ Route::get('/ocs/{associacao_id}', [OrganizacaoControleSocialController::class, 'index']);
+ Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
+ Route::patch('/ocs/{id}}', [OrganizacaoControleSocialController::class, 'update']);
+
+});
