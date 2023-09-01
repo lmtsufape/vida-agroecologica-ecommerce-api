@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
 use App\Models\User;
+use App\Notifications\PedidoRealizado;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -110,6 +111,8 @@ class VendaController extends Controller
         $venda->total = $subtotal->plus($taxaEntrega);
         $venda->save();
         DB::commit();
+
+        $venda->banca->agricultor->notify(new PedidoRealizado);
 
         return response()->json(['venda' => $venda, 'endereço' => $enderecoEntrega, 'itens' => $itens], 201);
     }

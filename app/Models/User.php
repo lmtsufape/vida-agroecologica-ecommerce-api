@@ -101,4 +101,9 @@ class User extends Authenticatable implements MustVerifyEmail, reset
     {
         return $this->hasMany(Banca::class, 'agricultor_id');
     }
+
+    public function routeNotificationForFcm()
+    {
+        return $this->fcm_token;
+    }
 }

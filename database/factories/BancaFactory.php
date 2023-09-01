@@ -17,13 +17,14 @@ class BancaFactory extends Factory
     public function definition()
     {
         return [
-            "nome" => "Feira bicho",
-            "descricao" => "Loja de frutas",
-            "horario_abertura" => "00:00:00",
-            "horario_fechamento" => "23:59:00",
-            "preco_minimo" => 1.00,
-            "feira_id" => 1,
-            "agricultor_id" => 4
+            'nome' => 'Feira bicho',
+            'descricao' => 'Loja de frutas',
+            'horario_abertura' => '00:00:00',
+            'horario_fechamento' => '23:59:00',
+            'preco_minimo' => 1.00,
+            'feira_id' => 1,
+            'agricultor_id' => 4,
+            'ativa' => true
         ];
     }
 }
