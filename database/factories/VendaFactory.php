@@ -17,15 +17,15 @@ class VendaFactory extends Factory
     public function definition()
     {
         return [
-            'status' => 'Concluído',
+            'status' => 'pedido realizado',
             'tipo_entrega' => 'retirada',
             'data_pedido' => fake()->dateTime('now'),
             'subtotal' => fake()->randomFloat(2, 0, 100),
             'taxa_entrega' => fake()->randomFloat(2, 0, 10),
             'total' => fake()->randomFloat(2, 0, 100),
-            'forma_pagamento_id' => '1',
-            'consumidor_id' => 1,
-            'produtor_id' => 1,
+            'forma_pagamento_id' => 1,
+            'banca_id' => 1,
+            'consumidor_id' => 4
         ];
     }
 }

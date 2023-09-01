@@ -15,8 +15,12 @@ return new class extends Migration
     {
         Schema::create('bairros', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique();
-            $table->float('taxa');
+
+            $table->string('nome', 60);
+
+            $table->foreignId('cidade_id')->constrained()->cascadeOnDelete();
+            $table->unique(['nome', 'cidade_id']);
+
             $table->timestamps();
         });
     }

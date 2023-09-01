@@ -13,10 +13,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        Banca::class => BancaPolicy::class,
-        Produtor::class => ProdutorPolicy::class,
-        Consumidor::class => ConsumidorPolicy::class,
-        Venda::class => VendaPolicy::class
+        App\Models\Banca::class => App\Policies\BancaPolicy::class,
+        App\Models\User::class => App\Policies\UserPolicy::class,
+        App\Models\Venda::class => App\Policies\VendaPolicy::class,
+        App\models\Propriedade::class => App\Policies\PropriedadePolicy::class,
+        App\models\Endereco::class => App\Policies\EnderecoPolicy::class,
+        App\models\Produto::class => App\Policies\ProdutoPolicy::class,
     ];
 
     /**

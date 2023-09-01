@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Banca;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVendaRequest extends FormRequest
@@ -13,7 +14,9 @@ class StoreVendaRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->papel_type == 'Consumidor';
+        $banca = Banca::findOrFail($this->input('banca_id'));
+        
+        return $this->user()->can('create', [Venda::class, $banca]);
     }
 
     /**
@@ -24,9 +27,10 @@ class StoreVendaRequest extends FormRequest
     public function rules()
     {
         return [
-            'produtor' => 'required|exists:produtores,id',
-            'tipo_entrega' => 'required|in:retirada,entrega',
-            'forma_pagamento' => 'required|exists:formas_pagamento,id',
+            'tipo_entrega' => 'required|string|in:retirada,entrega',
+            'banca_id' => 'required|integer|exists:bancas,id',
+            'forma_pagamento_id' => 'required|integer|exists:formas_pagamento,id',
+            'endereco_id' => 'nullable|integer|exists:enderecos,id',
             'produtos' => 'required|array|min:1',
             'produtos.*' => 'array|size:2',
             'produtos.*.*' => 'integer',

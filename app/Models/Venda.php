@@ -6,27 +6,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Venda extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['status', 'tipo_entrega', 'data_pedido', 'total', 'comprovante_pagamento'];
+    protected $fillable = ['tipo_entrega'];
+
+    public function banca(): BelongsTo
+    {
+        return $this->belongsTo(Banca::class);
+    }
 
     public function formaPagamento(): BelongsTo
     {
         return $this->belongsTo(FormaPagamento::class);
     }
 
-    public function produtor(): BelongsTo
-    {
-        return $this->belongsTo(Produtor::class);
-    }
-
     public function consumidor(): BelongsTo
     {
-        return $this->belongsTo(Consumidor::class);
+        return $this->belongsTo(User::class, 'consumidor_id');
+    }
+
+    public function enderecoEntrega(): MorphOne
+    {
+        return $this->morphOne(Endereco::class, 'addressable');
     }
 
     public function itens(): HasMany

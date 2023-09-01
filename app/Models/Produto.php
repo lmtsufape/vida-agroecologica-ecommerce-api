@@ -14,10 +14,13 @@ class Produto extends Model
 
     protected $fillable = [
         'descricao',
+        'tipo_unidade',
         'estoque',
         'preco',
-        'tipo_unidade',
-        'custo'
+        'custo',
+        'disponivel',
+        'banca_id',
+        'produto_tabelado_id'
     ];
 
     public function banca()

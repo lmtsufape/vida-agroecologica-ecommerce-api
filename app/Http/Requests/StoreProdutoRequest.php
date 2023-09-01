@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Banca;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class StoreProdutoRequest extends FormRequest
 {
@@ -14,8 +14,9 @@ class StoreProdutoRequest extends FormRequest
      */
     public function authorize()
     {
+        $banca = Banca::findOrFail($this->input('banca_id'));
 
-        return Auth::user()->papel_type == "Produtor" ? true : false;
+        return $this->user()->can('create', [Produto::class, $banca]);
     }
 
     /**
@@ -26,11 +27,13 @@ class StoreProdutoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' =>  'required|max:250|string',
+            'descricao' =>  'required|max:120|string',
             'tipo_unidade' => 'required|in:unidade,fracionario,peso',
-            'estoque' => 'required|integer',
-            'preco' => 'required|decimal:1,3',
-            'custo' => 'required|decimal:1,3'
+            'estoque' => 'required|numeric',
+            'preco' => 'required|decimal:2',
+            'custo' => 'required|decimal:2',
+            'banca_id' => 'required|integer|exists:bancas,id',
+            'produto_tabelado_id' => 'required|integer|exists:produtos_tabelados,id'
         ];
     }
     public function messages()
@@ -40,8 +43,8 @@ class StoreProdutoRequest extends FormRequest
             'max' => ':attribute deve ter no máximo :max caracteres.',
             'min' => ':attribute deve ter no no mínimo:min  caracteres.',
             'string' => ':attribute deve ser uma string.',
-            'integer' =>':attribute deve ser inteiro.',
-            'decimal' =>':attribute deve ser decimal.',
+            'integer' => ':attribute deve ser inteiro.',
+            'decimal' => ':attribute deve ser decimal.',
             'in' => ':attribute deve está entre :values'
         ];
     }

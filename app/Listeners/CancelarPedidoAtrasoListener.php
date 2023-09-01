@@ -27,6 +27,6 @@ class CancelarPedidoAtrasoListener
      */
     public function handle(PedidoConfirmadoEvent $event)
     {
-        dispatch(new VerifyPedidoJob($event->venda))->delay(now()->addMinutes(20));
+        dispatch(new VerifyPedidoJob($event->venda))->delay(now()->addMinutes(60));
     }
 }

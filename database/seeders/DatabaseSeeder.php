@@ -11,15 +11,20 @@ class DatabaseSeeder extends Seeder
     {
         DB::beginTransaction();
         $this->call([
+            EstadoSeeder::class,
+            CidadeSeeder::class,
+            BairroSeeder::class,
+            RoleSeeder::class,
+            FormaPagamentoSeeder::class,
+            AssociacaoSeeder::class,
             FeiraSeeder::class,
-            ProdutorSeeder::class,
-            ConsumidorSeeder::class,
+            UserSeeder::class,
+            OrganizacaoControleSocialSeeder::class,
+            PropriedadeSeeder::class,
             ProdutoTabeladoSeeder::class,
             ProdutoSeeder::class,
-            BairroSeeder::class,
-            FormaPagamentoSeeder::class,
             VendaSeeder::class,
         ]);
-        Db::commit();
+        DB::commit();
     }
 }

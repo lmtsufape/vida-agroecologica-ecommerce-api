@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\WebAuthController;
+use App\Http\Controllers\Web\UserAgricultorController;
+use App\Http\Controllers\Web\WebUserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +20,48 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Exibir formulário de redefinição de senha
-Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+// Auth
+Route::controller(WebAuthController::class)->group(function () {
+    Route::get('/login', 'showLoginForm')->middleware('guest')->name('login');
+    Route::post('/login', 'authenticate')->middleware('guest');
+    Route::post('/logout', 'logout')->middleware('auth')->name('logout');
 
-// Rota para redefinir a senha com base no token
-Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.update');
+    Route::get('/email/verify', 'showEmailNotice')->middleware('auth')->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', 'verifyEmail')->middleware('signed')->name('verification.verify');
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+    Route::get('/forgot-password', 'showResetPasswordForm')->middleware('guest')->name('password.request');
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/reset-password/{token}', 'showResetForm')->middleware('guest')->name('password.reset');
+    Route::post('/reset-password', 'resetPassword')->middleware('guest')->name('password.update');
+});
+
+# AGRICULTORES
+
+Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+    Route::get('/', 'index')->name('agricultor.index');
+    Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao')->name('agricultor.vincular');
+});
+
+// Users
+Route::middleware('guest')->controller(WebUserController::class)->prefix('/users')->group(function () {
+    Route::get('/create', 'create')->name('register');
+    Route::post('/', 'store')->name('users.store');
+});
+
+Route::resource('/users', WebUserController::class)->except(['create', 'store'])->middleware('auth');
+
+// Parte do gestão web
+
+Route::get('/home', [App\Http\Controllers\Web\HomeController::class, 'index'])->name('home');
+
+// Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
+//     Route::get('/usuarios', [App\Http\Controllers\Web\UserController::class, 'index'])->name('usuarios.index');
+//     Route::post('/usuarios/store', [App\Http\Controllers\Web\UserController::class, 'store'])->name('usuario.store');
+//     Route::post('/usuarios/update', [App\Http\Controllers\Web\UserController::class, 'update'])->name('usuario.update');
+// });
+
+
+
+   
+

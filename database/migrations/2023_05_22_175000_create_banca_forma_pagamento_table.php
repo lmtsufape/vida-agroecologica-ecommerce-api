@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('banca_forma_pagamento', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('banca_id')->constrained()->onDelete('cascade');
-            $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->onDelete('cascade');
+
+            $table->foreignId('banca_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->restrictOnDelete();
+            $table->unique(['banca_id', 'forma_pagamento_id']);
+
             $table->timestamps();
         });
     }

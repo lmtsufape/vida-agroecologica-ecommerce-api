@@ -2,44 +2,68 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Banca;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-
-use Illuminate\Http\Exceptions\HttpResponseException;
-
-use Illuminate\Contracts\Validation\Validator;
 
 class StoreBancaRequest extends FormRequest
 {
+    public function prepareForValidation()
+    {
+        $formasPagamento = $this->input('formas_pagamento');
+
+        if (!is_array($formasPagamento)) {
+            $campo = explode(',', $formasPagamento); // Transforma o valor em um array
+            $this->merge(['formas_pagamento' => $campo]); // Atualiza o valor no request
+        }
+
+        $bairroEntrega = $this->input('bairro_entrega');
+
+        if (!is_array($bairroEntrega)) {
+            $array = explode(',', $bairroEntrega); // Transforma o valor em um array
+            $valores = [];
+            foreach ($array as $campo) {
+                $campo = explode('=>', $campo);
+                array_push($valores, $campo);
+            }
+            $this->merge(['bairro_entrega' => $valores]); // Atualiza o valor no request
+        }
+    }
+
+    public function authorize(): bool
+    {
+        $user = User::findOrFail($this->input('agricultor_id'));
+        
+        return $this->user()->can('create', [Banca::class, $user]);
+    }
+
     public function rules()
     {
-        $rules = [
+        return [
             'nome' => [
                 'required',
                 'string',
-                'max:50',
+                'max:60',
                 'min:3'
             ],
             'descricao' => [
-                'required',
+                'nullable',
                 'string',
-                'max:250'
+                'max:120'
             ],
             'horario_abertura' => [
                 'required',
-                'date_format:H:i:s',
+                'date_format:H:i',
                 'before:horario_fechamento'
             ],
             'horario_fechamento' => [
                 'required',
-                'date_format:H:i:s',
+                'date_format:H:i',
                 'after:horario_abertura'
             ],
             'preco_minimo' => [
-                'required'
-            ],
-            'faz_entrega' => [
                 'required',
-                'boolean'
+                'decimal:2'
             ],
             'imagem' => [
                 'nullable',
@@ -47,24 +71,52 @@ class StoreBancaRequest extends FormRequest
                 'max:5120'
             ],
             'formas_pagamento' => [
-                'required'
+                'required',
+                'array',
+                'min:1'
+            ],
+            'formas_pagamento.*' => [
+                'integer',
+                'exists:formas_pagamento,id'
+            ],
+            'bairro_entrega' => [
+                'Required',
+                'array'
+            ],
+            'bairro_entrega.*' => [
+                'array',
+                'size:2'
+            ],
+            'bairro_entrega.*.0' => [
+                'integer',
+                'exists:bairros,id'
+            ],
+            'bairro_entrega.*.1' => [
+                'decimal:2'
+            ],
+            'feira_id' => [
+                'required',
+                'integer',
+                'exists:feiras,id'
+            ],
+            'agricultor_id' => [
+                'required',
+                'integer',
+                'exists:users,id'
             ]
         ];
-
-        return $rules;
     }
 
     public function messages()
     {
         return [
-            'required' => ':attribute é um parâmetro obrigatório.',
-            'max' => ':attribute deve ter no máximo 50 caracteres.',
-            'min' => ':attribute deve ter no mínimo 3 caracteres.',
-            'string' => ':attribute deve ser uma string.',
-            'date_format' => ':attribute deve estar no formato: hora:minuto:segundo.',
-            'horario_abertura.before' => 'Horário de abertura deve ser antes do fechamento.',
-            'horario_fechamento.after' => 'Horário de fechamento deve ser depois da abertura.',
-            'tipo_entrega.in' => 'Tipo de entrega de ser entrega ou retirada',
+            'required' => 'o campo :attribute é um parâmetro obrigatório.',
+            'max' => 'o campo :attribute deve ter no máximo :max caracteres.',
+            'min' => 'o campo :attribute deve ter no mínimo :min caracteres.',
+            'string' => 'o campo :attribute deve ser uma string.',
+            'date_format' => 'o campo :attribute deve estar no formato hora:minuto.',
+            'horario_abertura.before' => 'Horário de abertura deve ser antes do Horário de fechamento.',
+            'horario_fechamento.after' => 'Horário de fechamento deve ser depois do Horário de abertura.',
             'imagem.image' => 'O arquivo enviado não é uma imagem',
             'imagem.max' => 'A imagem enviada é muito grande (máximo de :max KB)'
         ];
