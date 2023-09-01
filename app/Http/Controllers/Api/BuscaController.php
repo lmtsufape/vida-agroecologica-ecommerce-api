@@ -12,7 +12,7 @@ class BuscaController extends Controller
 {
     
 
-    public function buscar_produto(Request $request)
+    public function buscar(Request $request)
     {
         $busca = $request->input('search');
 
@@ -22,18 +22,17 @@ class BuscaController extends Controller
 
         $tabelas = array();
 
-        $tabelas['nomeBanca'] = Banca::where('nome', 'ilike', '%'.$busca.'%')->get();//pequisar independente do capslock
-        $tabelas['nomeProdutor'] = User::where('name', 'ilike', '%'.$busca.'%')->whereHas('roles', function($query)
+        $tabelas['banca'] = Banca::where('nome', 'ilike', '%'.$busca.'%')->get();//pequisar independente do capslock
+        $tabelas['agricultor'] = User::where('name', 'ilike', '%'.$busca.'%')->whereHas('roles', function($query)
         {
             $query->where('nome', 'agricultor');
         })->get();
-        $tabelas['produtos_categoria'] = ProdutoTabelado::where('categoria', 'ilike', '%'.$busca.'%')->get();
+        $tabelas['categoria'] = ProdutoTabelado::where('categoria', 'ilike', '%'.$busca.'%')->distinct()->pluck('categoria');//havia o metodo get
 
-        $tabelas['produtos'] = ProdutoTabelado::where('nome', 'like', "%$busca%")
+        $tabelas['produtos'] = ProdutoTabelado::where('nome', 'ilike', "%$busca%")
              ->join('produtos', 'produtos_tabelados.id', '=', 'produtos.produto_tabelado_id')
              ->select('produtos_tabelados.nome', 'produtos.*')
              ->get();
-        $tabelas['categorias'] = ProdutoTabelado::where('categoria', 'like', "%$busca%")->distinct()->pluck('categoria');
 
         $tabelas = array_filter($tabelas, function ($valor)
         {

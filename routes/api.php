@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\Auth\ApiAuthController;
+use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\Web\AssociacaoController;
 use App\Http\Controllers\Web\OrganizacaoControleSocialController;
 use Illuminate\Http\Request;
@@ -141,15 +142,12 @@ Route::controller(ApiAuthController::class)->group(function () {
 
 //Busca
 Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
-    Route::get('/{nome}', 'buscar_banca');
-    Route::post('/produto', 'buscar_produto');
-    Route::get('/vendedor/{name}', 'buscar_vendedor');
-    Route::get('/categoria/{categoria}', 'buscar_categoria');
+    Route::post('/', 'buscar');
 });
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Parte do gesão web
+// Parte do gestão web
 
 Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
     // Usuario
@@ -159,14 +157,6 @@ Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
 
     // Associacao
     Route::get('associacoes', [AssociacaoController::class, 'index']);
-});
-
-Route::middleware(['auth:sanctum', 'type.admin.presidente'])->group(function () {
-    //Associacao
-    
-
-    // OCS
-   
 });
 
 Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
@@ -188,6 +178,13 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
  # OCS
  Route::get('/ocs/{associacao_id}', [OrganizacaoControleSocialController::class, 'index']);
  Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
- Route::patch('/ocs/{id}}', [OrganizacaoControleSocialController::class, 'update']);
+ Route::patch('/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
+
+});
+
+Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::patch('/{cidade}', 'update');
 
 });

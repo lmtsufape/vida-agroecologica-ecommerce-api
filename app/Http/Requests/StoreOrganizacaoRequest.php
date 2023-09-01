@@ -27,14 +27,13 @@ class StoreOrganizacaoRequest extends FormRequest
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "cnpj"              => ['required', 'cnpj', 'unique:organizacoes_controle_social'],
             "data_fundacao"     => ['required', 'date'],
-            "associacao_id"     => ['required', 'numeric'],
-
             "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
             "telefone"          => ['required', "celular_com_ddd"],
-
             "rua"               => ['required', 'string', 'min:3', "max:50"],
             "numero"            => ['required', 'numeric'],
-            "cep"               => ['required', 'numeric', 'min:0', 'digits:8']
+            "cep"               => ['required', 'numeric', 'min:0', 'digits:8'],
+            "bairro_id"         => ['required', 'numeric'],
+            "associacao_id"     => ['required', 'numeric']
         ];
     }
 

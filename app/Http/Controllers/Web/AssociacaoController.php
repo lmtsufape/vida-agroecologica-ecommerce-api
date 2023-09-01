@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAssociacaoRequest;
 use App\Http\Requests\UpdateAssociacaoRequest;
 use App\Models\Associacao;
 use App\Models\Contato;
+use Illuminate\Support\Facades\DB;
 
 class AssociacaoController extends Controller
 {
@@ -20,23 +21,19 @@ class AssociacaoController extends Controller
 
     public function store(StoreAssociacaoRequest $request)
     {
+        DB::beginTransaction();
         $associacao = Associacao::create($request->only('nome', 'codigo', 'user_id'));
-
-        $contato = new Contato([
-            'email' => $request->input('email'),
-            'telefone' => $request->input('telefone'),
-        ]);
-
-        $associacao->contato()->save($contato);
+        $associacao->contato()->update($request->only('email','telefone'));
         $associacao->presidentes()->sync($request->input('presidente'));
-
+        DB::commit();
+        
         return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
     }
 
-    public function update(UpdateAssociacaoRequest $request)
+    public function update(UpdateAssociacaoRequest $request, $id)
     {
-        $associacao = Associacao::findOrFail($request->input('associacao_id'));
-        $associacao->update($request->except('_token', 'associacao_id'));
+        $associacao = Associacao::findOrFail($id);
+        $associacao->update($request->except('_token'));
 
         $associacao->presidentes()->sync($request->input('presidente'));
 
