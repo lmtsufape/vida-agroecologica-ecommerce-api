@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Auth\ApiAuthController;
 use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\Web\AssociacaoController;
 use App\Http\Controllers\Web\OrganizacaoControleSocialController;
+use App\Http\Contollers\Web\UserAgricultorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -187,4 +188,9 @@ Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix(
     Route::post('/', 'store');
     Route::patch('/{cidade}', 'update');
 
+});
+
+Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+    Route::get('/', 'index');
+    Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao');
 });

@@ -17,7 +17,7 @@ class UserAgricultorController extends Controller
 
         $organizacoes = OrganizacaoControleSocial::all();
 
-        return view('agricultor.agricultores_index', compact('agricultores', 'organizacoes'));
+        return response()->json(['agricultores' => $agricultores, 'organizacao' => $organizacoes]);
     }
 
     public function vincularAgricultorOrganizacao(VincularAgricultorRequest $request, $id)
@@ -28,6 +28,6 @@ class UserAgricultorController extends Controller
         $agricultor->organizacao()->associate($organizacao);
         $agricultor->save();
 
-        return redirect()->back()->with('sucesso', 'Organização vinculada com sucesso!');
+        return response()->json();
     }
 }

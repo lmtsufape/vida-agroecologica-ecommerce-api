@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('reuniaos', function (Blueprint $table) {
+        Schema::create('reunioes', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['Em analise', 'Recusada', 'Aprovada']);
+            $table->string('titulo');
+            $table->text('detalhamento');
+            $table->enum('status', ['Em analise', 'Recusada', 'Aprovada'])->default('Em analise');
             $table->date('data');
             $table->enum('tipo', ['Ordinaria', 'extraordinaria', 'multirão']);
             $table->foreignId('associacao_id')->constrained('associacoes');
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reuniaos');
+        Schema::dropIfExists('reunioes');
     }
 };

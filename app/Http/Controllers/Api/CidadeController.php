@@ -8,8 +8,8 @@ use App\Models\Bairro;
 use App\Models\Endereco;
 use App\Models\Feira;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreCidadeRequest;
+use App\Http\Requests\UpdateCidadeRequest;
 
 class CidadeController extends Controller
 {
@@ -28,11 +28,11 @@ class CidadeController extends Controller
         return response()->json(['cidade' => $cidade], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCidadeRequest $request, $id)
     {
         $cidade = Cidade::findOrFail($id);
 
-        $cidade->nome = $request->nome;
+        $cidade->update($request->all());
 
         return response()->json(['cidade'=> $cidade], 200);
 

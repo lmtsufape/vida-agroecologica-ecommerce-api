@@ -7,6 +7,7 @@ use App\Models\Bairro;
 use App\Models\Cidade;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreBairroRequest;
+use App\Http\Requests\UpdateBairroRequest;
 
 class BairroController extends Controller
 {
@@ -26,11 +27,11 @@ class BairroController extends Controller
         return response()->json(['bairro' => $bairro], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateBairroRequest $request, $id)
     {
         $bairro = Bairro::findOrFail($id);
 
-        $bairro->update($request->nome);
+        $bairro->update($request);
 
         return response()->json(['bairro' => $bairro], 200);
     }

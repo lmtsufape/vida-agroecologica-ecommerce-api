@@ -38,10 +38,7 @@ Route::controller(WebAuthController::class)->group(function () {
 
 # AGRICULTORES
 
-Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
-    Route::get('/', 'index')->name('agricultor.index');
-    Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao')->name('agricultor.vincular');
-});
+
 
 // Users
 Route::middleware('guest')->controller(WebUserController::class)->prefix('/users')->group(function () {

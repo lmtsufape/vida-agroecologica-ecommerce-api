@@ -9,7 +9,11 @@ class Reuniao extends Model
 {
     use HasFactory;
 
+    protected $table = 'reunioes';
+
     protected $fillable = [
+        'titulo',
+        'detalhamento',
         'status',
         'data',
         'tipo',

@@ -42,4 +42,9 @@ class Associacao extends Model
     {
         return $this->hasMany(Feira::class);
     }
+
+    public function reunioes()
+    {
+        return $this->hasMany(Reuniao::class);
+    }
 }
