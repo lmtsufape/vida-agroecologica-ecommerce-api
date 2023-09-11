@@ -111,7 +111,7 @@ class VendaController extends Controller
         $venda->save();
         DB::commit();
 
-        return response()->json(['venda' => $venda, 'endereço' => $enderecoEntrega, 'itens' => $itens], 201);
+        return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'enderecoEntrega', 'formaPagamento', 'itens.produto'])], 201);
     }
 
     public function show($id)
