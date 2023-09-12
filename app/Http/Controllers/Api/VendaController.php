@@ -76,15 +76,21 @@ class VendaController extends Controller
 
 
         $itens = [];
+        $produtosForaEstoque = [];
 
         foreach ($validatedData['produtos'] as $produto) {
             $prod = Produto::findOrFail($produto[0]); // índice 0: id do produto; índice 1: quantidade do produto.
 
-            if ($produto[1] > $prod->estoque || !$prod->disponivel) {
+            if (!$prod->disponivel) {
                 DB::rollBack();
-                return response()->json(['error' => 'A quantidade solicitada ultrapassa o estoque, ou o produto não está a venda.', 'produto' => $prod], 400);
+
+                return response()->json(['error' => 'O produto não está a venda.', 'produto' => $prod], 400);
+            } elseif ($produto[1] > $prod->estoque) {
+
+                array_push($produtosForaEstoque, $prod);
             } elseif ($banca->id != $prod->banca->id) {
                 DB::rollBack();
+                
                 return response()->json(['error' => 'O produto não pertence à banca especificada.', 'produto' => $prod], 400);
             }
 
@@ -97,7 +103,7 @@ class VendaController extends Controller
             $item->save();
             array_push($itens, $item->makeHidden('venda'));
             $subtotal = $subtotal->plus(BigDecimal::of($prod->preco)->multipliedBy($produto[1])); // preço x quantidade
-            $prod->estoque -= $produto[1];
+            $prod->estoque = $prod->estoque - $produto[1] <= 0 ? 0 : $prod->estoque - $produto[1];
             $prod->save();
         }
         if ($subtotal->isLessThan($banca->preco_minimo) && $validatedData['tipo_entrega'] == 'entrega') {
@@ -111,7 +117,7 @@ class VendaController extends Controller
         $venda->save();
         DB::commit();
 
-        return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'enderecoEntrega', 'formaPagamento', 'itens.produto'])], 201);
+        return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'enderecoEntrega', 'formaPagamento', 'itens.produto']), 'produtos fora de estoque' => $produtosForaEstoque], 201);
     }
 
     public function show($id)
