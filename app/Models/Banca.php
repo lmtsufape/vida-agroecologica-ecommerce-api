@@ -35,7 +35,7 @@ class Banca extends Model
         'agricultor_id'
     ];
 
-    public function feira()
+    public function feira(): BelongsTo
     {
         return $this->belongsTo(Feira::class);
     }

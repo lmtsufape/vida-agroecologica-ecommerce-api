@@ -115,13 +115,6 @@ class BancaController extends Controller
         return response()->noContent();
     }
 
-    public function getProdutos($id)
-    {
-        $banca = Banca::findOrFail($id);
-
-        return response()->json(['produtos' => $banca->produtos], 200);
-    }
-
     public function getAgricultorBancas($agricultorId)
     {
         $bancas = User::findOrFail($agricultorId)->bancas;

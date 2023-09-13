@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Consumidores
+# Consumidores
 Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
     Route::get('/enderecos', 'indexEndereco');
     Route::post('/enderecos', 'storeEndereco');
@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->
     Route::delete('/enderecos/{endereco}', 'destroyEndereco');
 });
 
-// Usuários
+# Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
@@ -52,9 +52,8 @@ Route::controller(ApiUserController::class)->group(function () {
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
-// Bancas
+# Bancas
 Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
-    Route::get('/{banca}/produtos', 'getProdutos');
     Route::get('/{banca}/imagem', 'getImagem');
     Route::get('/agricultores/{agricultor}', 'getAgricultorBancas');
     Route::delete('/{banca}/imagem', 'deleteImagem');
@@ -62,7 +61,7 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
 
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
 
-// Vendas
+# Vendas
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/transacoes')->group(function () {
     Route::post('/{venda}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
     Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
@@ -82,16 +81,18 @@ Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/
     Route::get('/{venda}', 'show');
 });
 
-// Produtos
+# Produtos
 Route::middleware('auth:sanctum')->controller(ProdutoController::class)->prefix('/produtos')->group(function () {
     Route::get('/categorias', 'getCategorias');
     Route::get('/tabelados', 'getTabelados');
     Route::get('/{produto}/imagem', 'getImagem');
 });
 
+Route::get('/bancas/{banca}/produtos', 'getBancaProdutos');
+
 Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanctum');
 
-// Feiras
+# Feiras
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
@@ -99,15 +100,15 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
     Route::delete('/{id}', 'destroy');
 });
 
-// Bairros
+# Bairros
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{bairro}', 'update'); 
+    Route::patch('/{bairro}', 'update');
     Route::delete('/{id}', 'destroy')->middleware('role:administrador');
 });
 
-// Cidades
+# Cidades
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
@@ -115,7 +116,7 @@ Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
 });
 
-// Estados
+# Estados
 Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('/estados')->group(function () {
     Route::get('/', 'index');
 });
@@ -126,12 +127,12 @@ Route::get('/locais', function () {
     return response()->json(['estados' => $estados]);
 });
 
-// Propriedades
+# Propriedades
 Route::get('/propriedades/user/{user_id}', [PropriedadeController::class, 'getPropriedades'])->middleware('auth:sanctum');
 
 Route::apiResource('/propriedades', PropriedadeController::class)->middleware('auth:sanctum');
 
-// Auth
+# Auth
 Route::controller(ApiAuthController::class)->group(function () {
     Route::post('/sanctum/token', 'token')->middleware('guest');
     Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
@@ -141,53 +142,30 @@ Route::controller(ApiAuthController::class)->group(function () {
     Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
 });
 
-//Busca
+# Buscas
 Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
     Route::post('/', 'buscar');
 });
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Parte do gestão web
-
-Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
-    // Usuario
-    // Route::post('cadastro', [UserController::class, 'store']);
-    // Route::post('atualizar/usuario', [UserController::class, 'update']);
-    // Route::get('users', [UserController::class, 'index']);
-
-    // Associacao
-    Route::get('associacoes', [AssociacaoController::class, 'index']);
-});
-
-Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
-    //minhas associações
-});
-
-//Route::post('/verifica', [UserController::class, 'verificaUsuario']);
-
-//Web
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
 
- # ASSOCIAÇÃO
-
- Route::get('/associacoes', [AssociacaoController::class, 'index']);//funcionando
- Route::post('/associacoes', [AssociacaoController::class, 'store']);//funcionando
- Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']);//funcionando
-
- # OCS
- Route::get('/ocs/{associacao_id}', [OrganizacaoControleSocialController::class, 'index']);
- Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
- Route::patch('/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
-
+    # OCS
+    Route::get('/associacoes/{associacao_id}/ocs', [OrganizacaoControleSocialController::class, 'index']);
+    Route::post('/associacoes/ocs', [OrganizacaoControleSocialController::class, 'store']);
+    Route::patch('/associacoes/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
+    
+    # Associações
+    Route::get('/associacoes', [AssociacaoController::class, 'index']); //funcionando
+    Route::post('/associacoes', [AssociacaoController::class, 'store']); //funcionando
+    Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']); //funcionando
 });
 
 Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store');
     Route::patch('/{cidade}', 'update');
-
 });
 
 Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
