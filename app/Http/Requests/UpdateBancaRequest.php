@@ -37,6 +37,7 @@ class UpdateBancaRequest extends FormRequest
     public function authorize()
     {
         $banca = Banca::findOrFail($this->route('banca'));
+
         return $this->user()->can('update', $banca);
     }
 
@@ -71,7 +72,7 @@ class UpdateBancaRequest extends FormRequest
             ],
             'preco_minimo' => [
                 'required',
-                'decimal:2'
+                'string'
             ],
             'imagem' => [
                 'nullable',
@@ -100,7 +101,7 @@ class UpdateBancaRequest extends FormRequest
                 'exists:bairros,id'
             ],
             'bairro_entrega.*.1' => [
-                'decimal:2'
+                'string'
             ]
         ];
     }
