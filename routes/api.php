@@ -88,7 +88,7 @@ Route::middleware('auth:sanctum')->controller(ProdutoController::class)->prefix(
     Route::get('/{produto}/imagem', 'getImagem');
 });
 
-Route::get('/bancas/{banca}/produtos', 'getBancaProdutos');
+Route::get('/bancas/{banca}/produtos', [ProdutoController::class, 'getBancaProdutos']);
 
 Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanctum');
 

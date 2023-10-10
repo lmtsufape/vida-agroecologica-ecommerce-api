@@ -35,7 +35,14 @@ class ProdutoController extends Controller
         $validatedData = $request->validated();
         $banca = Banca::find($request->banca_id);
 
-        $produto = $banca->produtos()->create($validatedData);
+        $produto = Produto::onlyTrashed()->where(['banca_id' => $validatedData['banca_id'], 'produto_tabelado_id' => $validatedData['produto_tabelado_id']])->first();
+
+        if($produto) {
+            $produto->restore();
+            $produto->update($validatedData);
+        } else {
+            $produto  = $banca->produtos()->create($validatedData);
+        }
 
         return response()->json(['produto' => $produto], 201);
     }
