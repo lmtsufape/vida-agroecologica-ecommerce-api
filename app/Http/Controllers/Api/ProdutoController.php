@@ -98,6 +98,13 @@ class ProdutoController extends Controller
         return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
     }
 
+    public function getBancaProdutos($id)
+    {
+        $banca = Banca::findOrFail($id);
+
+        return response()->json(['produtos' => $banca->produtos], 200);
+    }
+
     public function getImagem($id)
     {
         $imagem = ProdutoTabelado::findOrFail($id)->imagem;
