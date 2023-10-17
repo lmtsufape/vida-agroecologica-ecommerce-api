@@ -30,7 +30,7 @@ class ApiAuthController extends AuthController
 
         $token = $user->createToken($request->device_name);
 
-        return response()->json(['token' => $token->plainTextToken, 'user' => $user->only(['id', 'name', 'email'])], 200);
+        return response()->json(['token' => $token->plainTextToken, 'user' => $user->only(['id', 'name', 'email', 'roles'])], 200);
     }
 
     public function revokeToken(Request $request)
