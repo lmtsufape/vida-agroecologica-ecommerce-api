@@ -12,8 +12,11 @@ class Associacao extends Model
     protected $table = 'associacoes';
 
     protected $fillable = [
+        'id',
         'nome',
         'codigo',
+        'email',
+        'telefone',
         'contato_id',
         'user_id'
     ];

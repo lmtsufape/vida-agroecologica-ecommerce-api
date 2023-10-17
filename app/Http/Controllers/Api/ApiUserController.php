@@ -16,6 +16,13 @@ class ApiUserController extends UserController
         return response()->json(['users' => $users], 200);
     }
 
+    public function getPresidents()
+    {
+        $users = parent::getPresidents();
+
+        return response()->json(['users' => $users], 200);
+    }
+
     public function store(StoreUserRequest $request)
     {
         $user = parent::store($request);

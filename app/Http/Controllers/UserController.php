@@ -22,6 +22,15 @@ class UserController extends Controller
         return $users;
     }
 
+    public function getPresidents()
+{
+    $users = User::whereHas('roles', function ($query) {
+        $query->whereIn('nome', ['presidente']);
+    })->get();
+
+    return $users;
+}
+
     public function store(StoreUserRequest $request)
     {
         $validatedData = $request->validated();

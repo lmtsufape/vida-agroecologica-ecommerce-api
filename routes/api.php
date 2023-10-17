@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
+    Route::get('/users/presidents', 'getPresidents');
 });
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
@@ -103,7 +104,7 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{bairro}', 'update'); 
+    Route::patch('/{bairro}', 'update');
     Route::delete('/{id}', 'destroy')->middleware('role:administrador');
 });
 
@@ -173,14 +174,17 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
  # ASSOCIAÇÃO
 
  Route::get('/associacoes', [AssociacaoController::class, 'index']);//funcionando
+ Route::get('/associacoes/{id}', [AssociacaoController::class, 'show']);
  Route::post('/associacoes', [AssociacaoController::class, 'store']);//funcionando
  Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']);//funcionando
+ Route::delete('/associacoes/{id}', [AssociacaoController::class, 'destroy']);
+
 
  # OCS
- Route::get('/ocs/{associacao_id}', [OrganizacaoControleSocialController::class, 'index']);
+ Route::get('/ocs', [OrganizacaoControleSocialController::class, 'index']);
+ Route::get('/ocs/{id}', [OrganizacaoControleSocialController::class, 'show'])->where('id', '[0-9]+');
  Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
  Route::patch('/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
-
 });
 
 Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {

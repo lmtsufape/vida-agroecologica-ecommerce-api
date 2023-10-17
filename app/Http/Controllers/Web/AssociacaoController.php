@@ -13,30 +13,64 @@ class AssociacaoController extends Controller
 {
 
     public function index()
-    {   
+    {
         return response()->json([
-            'associacoes' => Associacao::with('presidentes')->get()
+            'associacoes' => Associacao::with('presidentes', 'contato')->get()
         ]);
     }
 
-    public function store(StoreAssociacaoRequest $request)
-    {
-        DB::beginTransaction();
-        $associacao = Associacao::create($request->only('nome', 'codigo', 'user_id'));
-        $associacao->contato()->update($request->only('email','telefone'));
-        $associacao->presidentes()->sync($request->input('presidente'));
-        DB::commit();
-        
-        return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+    public function show($id)
+{
+    $associacao = Associacao::where('id', $id)->with('presidentes', 'contato')->first();
+
+    if (!$associacao) {
+        return response()->json(['message' => 'Association not found'], 404);
     }
 
-    public function update(UpdateAssociacaoRequest $request, $id)
-    {
-        $associacao = Associacao::findOrFail($id);
-        $associacao->update($request->except('_token'));
+    return response()->json(['associacao' => $associacao]);
+}
 
-        $associacao->presidentes()->sync($request->input('presidente'));
+public function store(StoreAssociacaoRequest $request)
+{
+    DB::beginTransaction();
+    $associacao = Associacao::create($request->only('nome', 'codigo', 'user_id'));
+    $associacao->contato()->create($request->only('email','telefone'));
+    $associacao->presidentes()->sync($request->input('presidente'));
+    DB::commit();
 
-        return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+}
+
+public function destroy($id)
+{
+    $associacao = Associacao::findOrFail($id);
+
+    $associacao->delete();
+
+    return response()->json($associacao);
+}
+
+public function update(UpdateAssociacaoRequest $request, $id)
+{
+
+    $codigo = $request->input('codigo');
+    $existingAssociacao = Associacao::where('codigo', $codigo)->where('id', '!=', $id)->first();
+
+    if ($existingAssociacao) {
+        return response()->json(['message' => 'Código já registrado.'], 422);
     }
+
+    $associacao = Associacao::where('id', $id)->first();
+
+    if (!$associacao) {
+        return response()->json(['message' => 'Associação não encontrada.'], 404);
+    }
+
+    $associacao->update($request->only('nome', 'codigo', 'presidente'));
+    $associacao->contato()->update($request->except('_token', 'nome', 'codigo', 'presidente'));
+
+    $associacao->presidentes()->sync($request->input('presidente'));
+
+    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+}
 }

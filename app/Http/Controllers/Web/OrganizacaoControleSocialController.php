@@ -15,12 +15,17 @@ use Illuminate\Support\Facades\DB;
 
 class OrganizacaoControleSocialController extends Controller
 {
-    public function index($associacao_id)
+    public function index()
     {
-        $listaOcs = OrganizacaoControleSocial::where('associacao_id', $associacao_id)->get();
-        $listaEstados = Estado::all();
+        $listaOcs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro')->get();
 
-        return response()->json(['Lista OCS'=>$listaOcs, 'Lista Estados' => $listaEstados]);
+        return response()->json(['ocs'=>$listaOcs]);
+    }
+
+    public function show($id)
+    {
+        $ocs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro')->findOrFail($id);
+        return response()->json(['ocs' => $ocs]);
     }
 
     public function store(StoreOrganizacaoRequest $request)
@@ -32,7 +37,7 @@ class OrganizacaoControleSocialController extends Controller
 
         $associacao = Associacao::findOrFail($request->associacao_id);
         DB::commit();
-        
+
         return response()->json(['associacao'=> $associacao->load('organizacoescontrolesocial.endereco')]);
     }
 
