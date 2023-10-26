@@ -31,6 +31,7 @@ class UserController extends Controller
         $user = User::make($validatedData);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
+        $user->enderecos()->create($validatedData);
         $user->contato()->create($validatedData);
         $user->roles()->sync($validatedData['roles']);
         DB::commit();
