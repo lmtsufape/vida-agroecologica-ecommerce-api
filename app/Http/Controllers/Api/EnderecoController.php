@@ -2,34 +2,29 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEnderecoRequest;
 use App\Models\Endereco;
 use Illuminate\Support\Facades\Auth;
 
-class UserConsumidorController extends ApiUserController
+class EnderecoController extends Controller
 {
-    public function indexEndereco()
+    public function index()
+    {
+        $this->authorize('viewAny', Endereco::class);
+        $enderecos = Endereco::all();
+
+        return response()->json(['enderecos' => $enderecos], 200);
+    }
+
+    public function indexUser()
     {
         $enderecos = Auth::user()->enderecos;
 
         return response()->json(['enderecos' => $enderecos], 200);
     }
 
-    public function storeEndereco(StoreEnderecoRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        $user = $request->user();
-        $this->authorize('create', Endereco::class);
-
-        $endereco = Endereco::make($validatedData);
-        $user->enderecos()->save($endereco);
-
-        return response()->json(['endereco' => $endereco], 201);
-    }
-
-    public function showEndereco($id)
+    public function show($id)
     {
         $endereco = Endereco::findOrFail($id);
         $this->authorize('view', $endereco);
@@ -37,7 +32,7 @@ class UserConsumidorController extends ApiUserController
         return response()->json(['endereco' => $endereco], 200);
     }
 
-    public function updateEndereco(StoreEnderecoRequest $request, $id)
+    public function update(StoreEnderecoRequest $request, $id)
     {
         $validatedData = $request->validated();
 
@@ -49,9 +44,9 @@ class UserConsumidorController extends ApiUserController
         return response()->json(['endereco' => $endereco], 200);
     }
 
-    public function destroyEndereco($endereco_id)
+    public function destroy($id)
     {
-        $endereco = Endereco::findOrFail($endereco_id);
+        $endereco = Endereco::findOrFail($id);
         $this->authorize('delete', $endereco);
 
         $endereco->delete();

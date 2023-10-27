@@ -22,9 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(IOrganizacaoService::class, OrganizacaoService::class);
-        $this->app->bind(IAgricultorService::class, AgricultorService::class);
-        $this->app->bind(IAssociacaoService::class, AssociacaoService::class);
+        $this->app->singleton(\App\Services\EnderecoService::class);
     }
 
     /**

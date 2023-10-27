@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Services\EnderecoService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    protected $EnderecoService;
+
+    public function __construct(EnderecoService $EnderecoService)
+    {
+        $this->EnderecoService = $EnderecoService;
+    }
+
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -31,7 +39,7 @@ class UserController extends Controller
         $user = User::make($validatedData);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
-        $user->enderecos()->create($validatedData);
+        $user->enderecos()->save($this->EnderecoService->Criar($request));
         $user->contato()->create($validatedData);
         $user->roles()->sync($validatedData['roles']);
         DB::commit();

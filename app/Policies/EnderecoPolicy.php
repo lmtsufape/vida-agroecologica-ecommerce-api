@@ -29,7 +29,7 @@ class EnderecoPolicy
      */
     public function viewAny(User $user)
     {
-        return Response::allow();
+        return Response::deny();
     }
 
     /**
@@ -61,10 +61,6 @@ class EnderecoPolicy
      */
     public function create(User $user)
     {
-        if (!$user->hasAnyRoles(['consumidor'])) {
-            return Response::deny();
-        }
-
         return Response::allow();
     }
 
