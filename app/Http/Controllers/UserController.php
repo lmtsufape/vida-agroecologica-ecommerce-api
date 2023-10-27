@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEnderecoRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
@@ -91,6 +92,14 @@ class UserController extends Controller
         $this->authorize('updateUserRoles', [$user, $request->roles]);
 
         $user->roles()->sync($validatedData);
+
+        return true;
+    }
+
+    public function criarEndereco(StoreEnderecoRequest $request)
+    {
+        $user = $request->user();
+        $user->enderecos()->save($this->EnderecoService->Criar($request));
 
         return true;
     }

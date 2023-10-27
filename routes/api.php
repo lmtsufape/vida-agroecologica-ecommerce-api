@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;
@@ -7,7 +8,6 @@ use App\Http\Controllers\Api\BuscaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\PropriedadeController;
-use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ApiUserController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\Web\AssociacaoController;
 use App\Http\Controllers\Web\OrganizacaoControleSocialController;
 use App\Http\Contollers\Web\UserAgricultorController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -35,20 +36,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-# Consumidores
-Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
-    Route::get('/enderecos', 'indexEndereco');
-    Route::post('/enderecos', 'storeEndereco');
-    Route::get('/enderecos/{endereco}', 'showEndereco');
-    Route::patch('/enderecos/{endereco}', 'updateEndereco');
-    Route::delete('/enderecos/{endereco}', 'destroyEndereco');
-});
+# Enderecos
+Route::apiResource('/enderecos', EnderecoController::class)->except('store')->middleware('auth:sanctum');
 
 # Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
+
+Route::get('/users/enderecos', [EnderecoController::class, 'indexUser'])->middleware('auth:sanctum');
+Route::post('/users/enderecos', [UserController::class, 'criarEndereco'])->middleware('auth:sanctum');
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
