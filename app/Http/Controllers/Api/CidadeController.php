@@ -4,9 +4,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cidade;
-use App\Models\Bairro;
-use App\Models\Endereco;
-use App\Models\Feira;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCidadeRequest;
 use App\Http\Requests\UpdateCidadeRequest;
