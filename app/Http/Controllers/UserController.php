@@ -10,6 +10,7 @@ use App\Models\Endereco;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -89,6 +90,13 @@ class UserController extends Controller
         return true;
     }
 
+    # Endereços
+
+    public function indexEndereco()
+    {
+        return Auth::user()->enderecos;
+    }
+
     public function createNewEndereco(StoreEnderecoRequest $request)
     {
         $validatedData = $request->validated();
@@ -111,7 +119,7 @@ class UserController extends Controller
         return $endereco;
     }
 
-    public function deleteEndereco($id)
+    public function destroyEndereco($id)
     {
         $endereco = Endereco::findOrFail($id);
         $this->authorize('delete', $endereco);

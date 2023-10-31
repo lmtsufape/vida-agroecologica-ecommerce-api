@@ -36,17 +36,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-# Enderecos
-Route::apiResource('/enderecos', EnderecoController::class)->except('store')->middleware('auth:sanctum');
-
 # Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
 
-Route::get('/users/enderecos', [EnderecoController::class, 'indexUser'])->middleware('auth:sanctum');
-Route::post('/users/enderecos', [UserController::class, 'criarEndereco'])->middleware('auth:sanctum');
+Route::get('/users/enderecos', [UserController::class, 'indexEndereco'])->middleware('auth:sanctum');
+Route::post('/users/enderecos', [UserController::class, 'createNewEndereco'])->middleware('auth:sanctum');
+Route::patch('/users/enderecos/{endereco}', [UserController::class, 'updateEndereco'])->middleware('auth:sanctum');
+Route::delete('/users/enderecos/{endereco}', [UserController::class, 'destroyEndereco'])->middleware('auth:sanctum'); // Posteriormente, alterar classe para ApiUserController.
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
