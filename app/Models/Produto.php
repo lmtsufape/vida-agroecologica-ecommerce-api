@@ -14,7 +14,7 @@ class Produto extends Model
 
     protected $fillable = [
         'descricao',
-        'tipo_unidade',
+        'tipo_medida',
         'estoque',
         'preco',
         'custo',

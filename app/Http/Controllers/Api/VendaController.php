@@ -95,7 +95,7 @@ class VendaController extends Controller
             }
 
             $item = new ItemVenda();
-            $item->tipo_unidade = $prod->tipo_unidade;
+            $item->tipo_medida = $prod->tipo_medida;
             $item->quantidade = $produto[1];
             $item->preco = BigDecimal::of($prod->preco);
             $item->venda()->associate($venda);

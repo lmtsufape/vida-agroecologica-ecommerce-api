@@ -17,7 +17,7 @@ class ItemVendaFactory extends Factory
     public function definition()
     {
         return [
-            'tipo_unidade' => 'unidade',
+            'tipo_medida' => 'unidade',
             'quantidade' => fake()->numberBetween(1, 10),
             'preco' => fake()->randomFloat(4,1,20),
             'produto_id' => fake()->numberBetween(1, 10),

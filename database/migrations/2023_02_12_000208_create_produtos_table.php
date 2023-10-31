@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('descricao', 120);
-            $table->string('tipo_unidade', 30);
+            $table->string('tipo_medida', 30);
             $table->double('estoque', 6, 3);
             $table->decimal('preco');
             $table->decimal('custo')->nullable();
