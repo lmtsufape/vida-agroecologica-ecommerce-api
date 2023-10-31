@@ -39,7 +39,8 @@ class AppServiceProvider extends ServiceProvider
             'venda' => 'App\Models\Venda',
             'associacao' => 'App\Models\Associacao',
             'organizacao' => 'App\Models\OrganizacaoControleSocial',
-            'propriedade' => 'App\Models\Propriedade'
+            'propriedade' => 'App\Models\Propriedade',
+            'feira' => 'App\Models\Feira'
         ]);
     }
 }

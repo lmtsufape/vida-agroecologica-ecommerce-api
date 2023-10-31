@@ -32,4 +32,9 @@ class Feira extends Model
     {
         return $this->belongsTo(Associacao::class);
     }
+
+    public function imagem()
+    {
+        return $this->morphOne(Imagem::class, 'imageable');
+    }
 }

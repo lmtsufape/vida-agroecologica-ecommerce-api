@@ -31,12 +31,10 @@ class BancaController extends Controller
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
         }
         if ($banca->agricultor->associacao) {
-            if ($banca->agricultor->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
-                $banca->ativa = true;
-            } elseif($banca->agricultor->organizacao->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
+            if ($banca->agricultor->associacao->feiras()->where('id', $banca->feira_id)->exists() || $banca->agricultor->organizacao->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
                 $banca->ativa = true;
             }
-
+            
             $banca->save();
         }
 
