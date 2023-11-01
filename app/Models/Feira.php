@@ -9,13 +9,11 @@ class Feira extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'funcionamento',
-        'horario_abertura',
-        'horario_fechamento',
+        'horarios_funcionamento',
         'bairro_id'
     ];
     protected $casts = [
-        'funcionamento' => 'array'
+        'horarios_funcionamento' => 'array'
     ];
 
     public function bairro()

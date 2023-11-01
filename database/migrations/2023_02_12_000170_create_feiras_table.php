@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('feiras', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name', 60);
-            $table->string('descricao', 120);
+            $table->string('nome', 60);
+            $table->string('descricao', 120)->nullable();
             $table->json('horarios_funcionamento');
 
             $table->foreignId('bairro_id')->constrained()->restrictOnDelete();
