@@ -26,10 +26,11 @@ class UpdateAssociacaoRequest extends FormRequest
     {
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
-            "codigo"            => ['required', 'min:1', 'max:10'],
-            "presidente"        => ['required', 'array'],
-            "email"             => ['required', 'string', 'email', 'max:255'],
-            "telefone"          => ['required', "celular_com_ddd"]
+            "data_fundacao"     => ['required', 'date'],
+            "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            "telefone"          => ['required', "celular_com_ddd"],
+            "presidentes_id"    => ['required', 'array'],
+            "secretarios_id"    => ['required', 'array'],
         ];
     }
 }

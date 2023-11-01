@@ -57,24 +57,19 @@ public function destroy($id)
 public function update(UpdateAssociacaoRequest $request, $id)
 {
 
-    $codigo = $request->input('codigo');
-    $existingAssociacao = Associacao::where('codigo', $codigo)->where('id', '!=', $id)->first();
-
-    if ($existingAssociacao) {
-        return response()->json(['message' => 'Código já registrado.'], 422);
-    }
-
     $associacao = Associacao::where('id', $id)->first();
 
     if (!$associacao) {
         return response()->json(['message' => 'Associação não encontrada.'], 404);
     }
 
-    $associacao->update($request->only('nome', 'codigo', 'presidente'));
-    $associacao->contato()->update($request->except('_token', 'nome', 'codigo', 'presidente'));
+    $associacao->update($request->only('nome', 'data_fundacao'));
+    $associacao->contato()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'cep', 'rua', 'numero', 'bairro_id'));
+    $associacao->endereco()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'email','telefone'));
 
-    $associacao->presidentes()->sync($request->input('presidente'));
+    $associacao->presidentes()->sync($request->input('presidentes_id'));
+    $associacao->secretarios()->sync($request->input('secretarios_id'));
 
-    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'secretarios', 'endereco'])]);
 }
 }
