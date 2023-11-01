@@ -20,7 +20,7 @@ class AssociacaoController extends Controller
     }
 
     public function show($id)
-{
+    {
     $associacao = Associacao::where('id', $id)->with('presidentes', 'contato')->first();
 
     if (!$associacao) {
@@ -32,13 +32,17 @@ class AssociacaoController extends Controller
 
 public function store(StoreAssociacaoRequest $request)
 {
+
     DB::beginTransaction();
-    $associacao = Associacao::create($request->only('nome', 'codigo', 'user_id'));
+
+    $associacao = Associacao::create($request->only('nome', 'data_fundacao', 'user_id'));
     $associacao->contato()->create($request->only('email','telefone'));
-    $associacao->presidentes()->sync($request->input('presidente'));
+    $associacao->presidentes()->sync($request->input('presidentes_id'));
+    $associacao->secretarios()->sync($request->input('secretarios_id'));
+    $associacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
     DB::commit();
 
-    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato'])]);
+    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'endereco', 'secretarios'])]);
 }
 
 public function destroy($id)

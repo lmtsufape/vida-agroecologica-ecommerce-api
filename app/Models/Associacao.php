@@ -14,10 +14,7 @@ class Associacao extends Model
     protected $fillable = [
         'id',
         'nome',
-        'codigo',
-        'email',
-        'telefone',
-        'contato_id',
+        'data_fundacao',
         'user_id'
     ];
 
@@ -31,11 +28,20 @@ class Associacao extends Model
         return $this->morphOne(Contato::class, 'contactable');
     }
 
+    public function endereco()
+    {
+        return $this->morphOne(Endereco::class, 'addressable');
+    }
+
     public function presidentes()
     {
         return $this->belongsToMany(User::class, 'associacao_presidente', 'associacao_id', 'presidente_id')->withTimestamps();
     }
 
+    public function secretarios()
+    {
+        return $this->belongsToMany(User::class, 'associacao_secretario', 'associacao_id', 'secretario_id')->withTimestamps();
+    }
     public function agricultores()
     {
         return $this->hasMany(User::class);

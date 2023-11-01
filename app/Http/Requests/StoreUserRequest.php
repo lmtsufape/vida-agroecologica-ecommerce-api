@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
 {
+
     public function prepareForValidation()
     {
         $roles = $this->input('roles');
