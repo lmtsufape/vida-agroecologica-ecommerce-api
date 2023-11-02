@@ -70,6 +70,11 @@ class User extends Authenticatable implements MustVerifyEmail, reset
     {
         return $this->belongsToMany( Associacao::class, 'associacao_secretario', 'secretario_id', 'associacao_id')->withTimestamps();
     }
+
+    public function oscAgricultores()
+    {
+        return $this->belongsToMany(Associacao::class, 'ocs_agricultores', 'agricultor_id', 'organizacoes_controle_social_id')->withTimestamps();
+    }
     public function associacao()
     {
         return $this->belongsTo(Associacao::class);
