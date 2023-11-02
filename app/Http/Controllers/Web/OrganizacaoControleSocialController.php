@@ -44,11 +44,18 @@ class OrganizacaoControleSocialController extends Controller
 
     public function update(UpdateOrganizacaoRequest $request, $id)
     {
-        $organizacao = OrganizacaoControleSocial::findOrFail($id);
-        $organizacao->update($request->only('nome','cnpj','data_fundacao'));
-        $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
-        $organizacao->contato()->udpate($request->only('email','telefone'));
+        $organizacao = OrganizacaoControleSocial::where('id', $id)->first();
 
-        return response()->json(['Organização' => $organizacao]);
+        if (!$organizacao) {
+            return response()->json(['message' => 'OCS não encontrada.'], 404);
+        }
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+        $organizacao->update($request->only('nome','cnpj'));
+        $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
+        $organizacao->contato->update($request->only('email', 'telefone'));
+        $organizacao->agricultores()->sync($request->input('agricultores_id'));
+
+        return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
+
     }
 }
