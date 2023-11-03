@@ -9,8 +9,11 @@ class Feira extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'nome',
+        'descricao',
         'horarios_funcionamento',
-        'bairro_id'
+        'bairro_id',
+        'associacao_id'
     ];
     protected $casts = [
         'horarios_funcionamento' => 'array'

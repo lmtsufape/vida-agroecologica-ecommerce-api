@@ -17,6 +17,12 @@ class StoreFeiraRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation()
+    {
+        $horarios_funcionamento = json_decode($this->input('horarios_funcionamento'), true);
+        $this->merge(['horarios_funcionamento' => $horarios_funcionamento]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,8 +30,6 @@ class StoreFeiraRequest extends FormRequest
      */
     public function rules()
     {
-        $validDiasSemana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
-
         $rules = [
             'nome' => [
                 'required',
@@ -46,17 +50,23 @@ class StoreFeiraRequest extends FormRequest
             'horarios_funcionamento' => [
                 'required',
                 'array',
-                'min:1', // Certifica-se de que haja 7 dias da semana
+                'min:1',
                 'max:7',
-                'each' => [
-                    'array',
-                    'size:2', // Certifica-se de que haja 2 horários (abertura e fechamento)
-                    Rule::in($validDiasSemana), // Verifica se a chave está em $validDiasSemana
-                ],
-                'distinct', // Certifica-se de que não existam dias repetidos
+                function ($attribute, $value, $fail) {
+                    $allowedKeys = ['domingo', 'segunda-feira', 'terca-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+                    foreach ($value as $key => $val) {
+                        if (!in_array($key, $allowedKeys)) {
+                            $fail("A chave '$key' do elemento não pertence ao conjunto de valores permitidos: " . implode(', ', $allowedKeys));
+                        }
+                    }
+                },
+            ],
+            'horarios_funcionamento.*' => [
+                'array',
+                'size:2'
             ],
             'horarios_funcionamento.*.0' => [
-                'date_format:H:i'
+                'date_format:H:i',
             ],
             'horarios_funcionamento.*.1' => [
                 'date_format:H:i',
