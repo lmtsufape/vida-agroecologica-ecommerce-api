@@ -93,8 +93,11 @@ Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanc
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update');
+    Route::patch('/{feira}', 'update')->middleware('role:administrador');
     Route::delete('/{id}', 'destroy');
+
+    Route::get('/{feira}/imagem', 'getImagem');
+    Route::delete('/{feira}/imagem', 'deleteImagem');
 });
 
 # Bairros
