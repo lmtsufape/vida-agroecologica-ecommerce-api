@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Contracts\ImageableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class ProdutoTabelado extends Model
+class ProdutoTabelado extends Model implements ImageableInterface
 {
     use HasFactory;
 

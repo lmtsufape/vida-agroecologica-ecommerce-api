@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\ImageableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Feira extends Model
+class Feira extends Model implements ImageableInterface
 {
     use HasFactory;
     protected $fillable = [
@@ -34,7 +36,7 @@ class Feira extends Model
         return $this->belongsTo(Associacao::class);
     }
 
-    public function imagem()
+    public function imagem(): MorphOne
     {
         return $this->morphOne(Imagem::class, 'imageable');
     }

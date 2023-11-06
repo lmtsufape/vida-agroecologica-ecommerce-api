@@ -7,12 +7,20 @@ use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UpdateBancaRequest;
 use App\Models\Banca;
 use App\Models\User;
+use App\Services\ImageService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class BancaController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     public function index()
     {
         $bancas = Banca::all();
@@ -30,6 +38,7 @@ class BancaController extends Controller
         foreach ($request->bairro_entrega as $bairro_info) {
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
         }
+        
         if ($banca->agricultor->associacao) {
             if ($banca->agricultor->associacao->feiras()->where('id', $banca->feira_id)->exists() || $banca->agricultor->organizacao->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
                 $banca->ativa = true;
@@ -38,20 +47,9 @@ class BancaController extends Controller
             $banca->save();
         }
 
-        // Imagem
         if ($request->hasFile('imagem')) {
-            $imagem = $request->file('imagem');
-            $nomeImagem = $banca->id . '.' . $imagem->getClientOriginalExtension();
-
-            $caminho = $imagem->storeAs('public/uploads/imagens/banca', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
-
-            if (!$caminho) {
-                DB::rollBack();
-                return response()->json(['error' => 'Não foi possível fazer upload da imagem.'], 500);
-            }
-
-            $banca->imagem()->create(['caminho' => $caminho]);
-        }
+            $this->imageService->storeImage($request->file('imagem'), $banca); // Armazenar a imagem
+        } 
         DB::commit();
 
         return response()->json(['banca' => $banca], 201);
@@ -77,26 +75,8 @@ class BancaController extends Controller
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
         }
 
-        // Imagem
         if ($request->hasFile('imagem')) {
-            $imagem = $request->file('imagem');
-            $nomeImagem = $banca->id . '.' . $imagem->getClientOriginalExtension();
-            $imagensAntigas = glob(storage_path("app/public/uploads/imagens/banca/{$banca->id}.*"));
-
-            $caminho = $imagem->storeAs('public/uploads/imagens/banca', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
-
-            if (!$caminho) {
-                DB::rollBack();
-                return response()->json(['error' => 'Não foi possível fazer upload da imagem.'], 500);
-            }
-
-            $imagemBanco = $banca->imagem()->updateOrCreate(['imageable_id' => $banca->id, 'imageable_type' => 'banca'], ['caminho' => $caminho]);
-
-            foreach ($imagensAntigas as $arquivo) {
-                if (basename($arquivo) != $nomeImagem) {
-                    File::delete($arquivo);
-                }
-            }
+            $this->imageService->updateImage($request->file('imagem'), $banca); // Atualizar a imagem
         }
         DB::commit();
 
@@ -122,16 +102,11 @@ class BancaController extends Controller
 
     public function getImagem($id)
     {
-        $imagem = Banca::findOrFail($id)->imagem;
+        $banca = Banca::findOrFail($id);
 
-        if (!$imagem || !Storage::exists($imagem->caminho)) {
-            return response()->json(["error" => "imagem não encontrada."], 404);
-        }
+        $dados = $this->imageService->getImage($banca);
 
-        $file = Storage::get($imagem->caminho);
-        $mimeType = Storage::mimeType($imagem->caminho);
-
-        return response($file)->header('Content-Type', $mimeType);
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 
     public function deleteImagem($id)
@@ -139,19 +114,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('deleteImagem', $banca);
 
-        $imagem = $banca->imagem;
-
-        if (!$imagem) {
-            return response()->json(['error' => 'Imagem não encontrada.'], 404);
-        }
-
-        $imagens = glob(storage_path('app/') . $imagem->caminho);
-
-        foreach ($imagens as $arquivo) {
-            File::delete($arquivo);
-        }
-
-        $imagem->delete();
+        $this->imageService->deleteImage($banca);
 
         return response()->noContent();
     }

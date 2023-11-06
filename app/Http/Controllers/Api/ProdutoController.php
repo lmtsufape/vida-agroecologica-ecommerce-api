@@ -8,10 +8,17 @@ use App\Models\ProdutoTabelado;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
+use App\Services\ImageService;
 
 class ProdutoController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +42,7 @@ class ProdutoController extends Controller
         $validatedData = $request->validated();
         $banca = Banca::find($request->banca_id);
 
-        $produto = Produto::onlyTrashed()->where(['banca_id' => $validatedData['banca_id'], 'produto_tabelado_id' => $validatedData['produto_tabelado_id']])->first();
+        $produto = $banca->produtos()->onlyTrashed()->where(['produto_tabelado_id' => $validatedData['produto_tabelado_id']])->first();
 
         if($produto) {
             $produto->restore();
@@ -114,15 +121,10 @@ class ProdutoController extends Controller
 
     public function getImagem($id)
     {
-        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
+        $produto = ProdutoTabelado::findOrFail($id);
 
-        if (!$imagem || !Storage::exists($imagem->caminho)) {
-            return response()->json(["error" => "imagem não encontrada."], 404);
-        }
+        $dados = $this->imageService->getImage($produto);
 
-        $file = Storage::get($imagem->caminho);
-        $mimeType = Storage::mimeType($imagem->caminho);
-
-        return response($file)->header('Content-Type', $mimeType);
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 }

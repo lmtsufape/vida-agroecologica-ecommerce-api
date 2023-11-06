@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\ImageableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Reuniao extends Model
+class Reuniao extends Model implements ImageableInterface
 {
     use HasFactory;
 
@@ -33,5 +35,15 @@ class Reuniao extends Model
     public function anexos()
     {
         return $this->morphMany(Imagem::class, 'imageable');
+    }
+    
+    public function ata(): MorphOne
+    {
+        return $this->imagem();
+    }
+
+    public function imagem(): MorphOne
+    {
+        return $this->morphOne(Imagem::class, 'imageable');
     }
 }

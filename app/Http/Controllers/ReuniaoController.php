@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReuniaoRequest;
 use App\Models\Reuniao;
-use App\Models\Associacao;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ReuniaoController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     public function index()
     {
         $reunioes = Reuniao::all();
@@ -28,7 +34,7 @@ class ReuniaoController extends Controller
             $reuniao->save();
         }
 
-        return response()->json(['reuniao' => $reuniao]);
+        return response()->json(['reuniao' => $reuniao], 201);
     }
 
     public function update(StoreReuniaoRequest $request, $id)
@@ -48,6 +54,18 @@ class ReuniaoController extends Controller
         $reuniao->delete();
 
         return response()->noContent();
+    }
+
+    public function anexarAta(Request $request, $id)
+    {
+        $request->validate(['ata' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
+
+        $reuniao = Reuniao::findOrFail($id);
+        $ata = $request->file('ata');
+
+        $this->imageService->updateImage($ata, $reuniao);
+
+        return response()->json(['success' => 'Ata anexada com sucesso'], 200);
     }
 }
 
