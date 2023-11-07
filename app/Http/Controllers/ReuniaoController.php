@@ -67,5 +67,13 @@ class ReuniaoController extends Controller
 
         return response()->json(['success' => 'Ata anexada com sucesso'], 200);
     }
+
+    public function verAta($id)
+    {
+        $reuniao = Reuniao::findOrFail($id);
+        $dados = $this->imageService->getImage($reuniao);
+
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
+    }
 }
 

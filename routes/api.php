@@ -150,6 +150,7 @@ Route::controller(BuscaController::class)->prefix('/buscar')->group(function () 
 # Reuniões
 Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
     Route::post('/{reuniao}/ata','anexarAta');
+    Route::get('/{reuniao}/ata','verAta');
 });
 
 Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');

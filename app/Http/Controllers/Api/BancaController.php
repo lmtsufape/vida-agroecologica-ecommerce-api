@@ -103,7 +103,6 @@ class BancaController extends Controller
     public function getImagem($id)
     {
         $banca = Banca::findOrFail($id);
-
         $dados = $this->imageService->getImage($banca);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
