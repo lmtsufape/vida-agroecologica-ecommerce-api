@@ -24,7 +24,7 @@ class StoreReuniaoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => [
+            'titulo' => [
                 'required',
                 'string',
                 'max:60'

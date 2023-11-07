@@ -40,7 +40,8 @@ class AppServiceProvider extends ServiceProvider
             'associacao' => 'App\Models\Associacao',
             'organizacao' => 'App\Models\OrganizacaoControleSocial',
             'propriedade' => 'App\Models\Propriedade',
-            'feira' => 'App\Models\Feira'
+            'feira' => 'App\Models\Feira',
+            'reuniao' => 'App\Models\Reuniao'
         ]);
     }
 }

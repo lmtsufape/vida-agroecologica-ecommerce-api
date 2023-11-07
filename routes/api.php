@@ -36,6 +36,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+# Auth
+Route::controller(ApiAuthController::class)->group(function () {
+    Route::post('/sanctum/token', 'token')->middleware('guest');
+    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
+    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
+});
+
 # Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
@@ -132,21 +142,17 @@ Route::get('/propriedades/user/{user_id}', [PropriedadeController::class, 'getPr
 
 Route::apiResource('/propriedades', PropriedadeController::class)->middleware('auth:sanctum');
 
-# Auth
-Route::controller(ApiAuthController::class)->group(function () {
-    Route::post('/sanctum/token', 'token')->middleware('guest');
-    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
-    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
-    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
-    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
-});
-
 # Buscas
 Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
     Route::post('/', 'buscar');
 });
 
+# Reuniões
+Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
+    Route::post('/{reuniao}/ata','anexarAta');
+});
+
+Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
@@ -160,12 +166,6 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
     Route::get('/associacoes', [AssociacaoController::class, 'index']); //funcionando
     Route::post('/associacoes', [AssociacaoController::class, 'store']); //funcionando
     Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']); //funcionando
-});
-
-Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::patch('/{cidade}', 'update');
 });
 
 Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
