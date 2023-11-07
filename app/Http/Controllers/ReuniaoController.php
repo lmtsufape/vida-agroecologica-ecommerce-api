@@ -75,5 +75,13 @@ class ReuniaoController extends Controller
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
+
+    public function deletarAta($id)
+    {
+        $reuniao = Reuniao::findOrFail($id);
+        $this->imageService->deleteImage($reuniao);
+
+        return response()->noContent();
+    }
 }
 
