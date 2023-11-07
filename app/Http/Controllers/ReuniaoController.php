@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReuniaoRequest;
+use App\Models\Imagem;
 use App\Models\Reuniao;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
@@ -64,7 +65,7 @@ class ReuniaoController extends Controller
         $reuniao = Reuniao::findOrFail($id);
         $ata = $request->file('ata');
 
-        $this->imageService->updateImage($ata, $reuniao);
+        $this->imageService->storeImage(array($ata), $reuniao, '/atas');
 
         return response()->json(['success' => 'Ata anexada com sucesso'], 200);
     }
@@ -83,6 +84,29 @@ class ReuniaoController extends Controller
         $this->imageService->deleteImage($reuniao);
 
         return response()->noContent();
+    }
+
+    public function enviarAnexos(Request $request, $id)
+    {
+        $request->validate([
+            'anexos' => 'required|array|min:1',
+            'anexos.*'=> 'file|max:2048'
+        ]);
+
+        $reuniao = Reuniao::findOrFail($id);
+        $this->imageService->storeImage($request->file('anexos'), $reuniao, '/anexos');        
+    }
+
+    public function atualizarAnexo(Request $request, $arquivo_id)
+    {
+        $request->validate([
+            'anexo' => 'required|file|max:2048'
+        ]);
+
+        $fileInfo = Imagem::findOrFail($arquivo_id);
+        $this->imageService->updateImage($request->file('anexo'), $fileInfo);
+
+        return response()->json(['success' => 'Anexo atualizado com sucesso.']);
     }
 }
 

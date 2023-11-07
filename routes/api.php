@@ -152,6 +152,9 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])-
     Route::post('/{reuniao}/ata','anexarAta');
     Route::get('/{reuniao}/ata','verAta');
     Route::delete('/{reuniao}/ata','deletarAta');
+
+    Route::post('/{reuniao}/anexos','enviarAnexos');
+    Route::post('/{arquivo_id}/anexos/atualizar','atualizarAnexo');
 });
 
 Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');

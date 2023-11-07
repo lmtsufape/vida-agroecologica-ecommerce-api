@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\ImageableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Reuniao extends Model implements ImageableInterface
@@ -34,16 +35,16 @@ class Reuniao extends Model implements ImageableInterface
 
     public function anexos()
     {
-        return $this->morphMany(Imagem::class, 'imageable');
+        return $this->imagem()->where('caminho', 'like', 'public/uploads/files/reuniao/anexos/%');
     }
     
-    public function ata(): MorphOne
+    public function ata()
     {
-        return $this->imagem();
+        return $this->imagem()->where('caminho', 'like', 'public/uploads/files/reuniao/atas/%');
     }
 
-    public function imagem(): MorphOne
+    public function imagem(): MorphMany
     {
-        return $this->morphOne(Imagem::class, 'imageable');
+        return $this->morphMany(Imagem::class, 'imageable');
     }
 }

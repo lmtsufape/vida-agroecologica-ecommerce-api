@@ -2,89 +2,71 @@
 
 namespace App\Services;
 
+use App\Contracts\ImageableInterface;
+use App\Models\Imagem;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ImageService
 {
-    public function verificarInterface(Model $model)
+    public function verificarInterface(Model|ImageableInterface $model)
     {
         if (!in_array('App\Contracts\ImageableInterface', class_implements($model))) {
             throw new Exception('O model precisa implementar a interface "ImageableInterface".');
         }
     }
 
-    public function storeImage(UploadedFile $imagem, Model $model)
+    public function storeImage(array $files, Model|ImageableInterface $model, $directoryName = null)
     {
         $this->verificarInterface($model);
 
         $modelName = Str::lower(class_basename($model));
-        $nomeImagem = $model->id . '.' . $imagem->getClientOriginalExtension();
 
-        $caminho = $imagem->storeAs('public/uploads/imagens/' . $modelName, $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/*.
+        $erro = false;
+        foreach ($files as $file) {
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
 
-        if (!$caminho) {
-            throw new Exception('Não foi possível fazer upload da imagem.');
-        }
+            $caminho = $file->storeAs('public/uploads/files/' . $modelName . $directoryName, $fileName);
 
-        $model->imagem()->create(['caminho' => $caminho]);
-    }
-
-    public function updateImage(UploadedFile $imagem, Model $model)
-    {
-        $this->verificarInterface($model);
-
-        $modelName = Str::lower(class_basename($model));
-        $nomeImagem = $model->id . '.' . $imagem->getClientOriginalExtension();
-        $imagensAntigas = glob(storage_path("app/public/uploads/imagens/{$modelName}/{$model->id}.*"));
-
-        $caminho = $imagem->storeAs('public/uploads/imagens/' . $modelName, $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/*.
-
-        if (!$caminho) {
-            throw new Exception('Não foi possível fazer upload da imagem.');
-        }
-
-        $model->imagem()->updateOrCreate(['imageable_id' => $model->id, 'imageable_type' => $modelName], ['caminho' => $caminho]);
-
-        foreach ($imagensAntigas as $arquivo) {
-            if (basename($arquivo) != $nomeImagem) {
-                File::delete($arquivo);
+            if (!$caminho) {
+                $erro = true;
+                continue;
             }
+            
+            $model->imagem()->create(['caminho' => $caminho]);
+        }
+        if ($erro) {
+            throw new Exception('Não foi possível fazer upload de um ou mais arquivos.');
         }
     }
 
-    public function deleteImage(Model $model)
+    public function updateImage(UploadedFile $file, Imagem $fileInfo)
     {
-        $this->verificarInterface($model);
-
-        $imagem = $model->imagem;
-
-        if (!$imagem) {
-            throw new Exception('Imagem não encontrada.');
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        
+        $caminho = $file->storeAs(pathinfo($fileInfo->caminho)['dirname'], $fileName);
+        
+        if (!$caminho) {
+            throw new Exception('Não foi possível fazer upload do arquivo.');
         }
-
-        $imagens = glob(storage_path('app/') . $imagem->caminho);
-
-        File::delete($imagens);
-        $imagem->delete();
+        
+        Storage::delete($fileInfo->caminho);
+        $fileInfo->update(['caminho' => $caminho]);
     }
 
-    public function getImage(Model $model)
+    public function deleteImage(Imagem $fileInfo)
     {
-        $this->verificarInterface($model);
+        Storage::delete($fileInfo->caminho);
+        $fileInfo->delete();
+    }
 
-        $imagem = $model->imagem;
-
-        if (!$imagem || !Storage::exists($imagem->caminho)) {
-            throw new Exception('Imagem não encontrada.');
-        }
-
-        $file = Storage::get($imagem->caminho);
-        $mimeType = Storage::mimeType($imagem->caminho);
+    public function getImage(Imagem $fileInfo)
+    {
+        $file = Storage::get($fileInfo->caminho);
+        $mimeType = Storage::mimeType($fileInfo->caminho);
 
         return compact('file', 'mimeType');
     }
