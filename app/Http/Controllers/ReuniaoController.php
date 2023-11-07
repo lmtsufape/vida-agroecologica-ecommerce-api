@@ -19,11 +19,11 @@ class ReuniaoController extends Controller
 
     public function index()
     {
-        $reunioes = Reuniao::all();
+        $reunioes = Reuniao::all()->load(['ata', 'anexos']);
 
-        return response()->json(['reunioes'=> $reunioes]);
+        return response()->json(['reunioes' => $reunioes]);
     }
-    
+
     public function store(StoreReuniaoRequest $request)
     {
         $validatedData = $request->validated();
@@ -51,8 +51,8 @@ class ReuniaoController extends Controller
     public function destroy($id)
     {
         $reuniao = Reuniao::findOrFail($id);
-        
-        $this->imageService->deleteImage($reuniao);
+
+        $this->imageService->deleteAllFiles($reuniao);
         $reuniao->delete();
 
         return response()->noContent();
@@ -65,23 +65,27 @@ class ReuniaoController extends Controller
         $reuniao = Reuniao::findOrFail($id);
         $ata = $request->file('ata');
 
-        $this->imageService->storeImage(array($ata), $reuniao, '/atas');
+        if (!$reuniao->ata()) {
+            $this->imageService->storeImage(array($ata), $reuniao, '/atas');
+        } else {
+            $this->imageService->updateImage($ata, $reuniao->ata());
+        }
 
         return response()->json(['success' => 'Ata anexada com sucesso'], 200);
     }
 
     public function verAta($id)
     {
-        $reuniao = Reuniao::findOrFail($id);
-        $dados = $this->imageService->getImage($reuniao);
+        $fileInfo = Imagem::findOrFail($id);
+        $dados = $this->imageService->getImage($fileInfo);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 
     public function deletarAta($id)
     {
-        $reuniao = Reuniao::findOrFail($id);
-        $this->imageService->deleteImage($reuniao);
+        $fileInfo = Imagem::findOrFail($id);
+        $this->imageService->deleteImage($fileInfo);
 
         return response()->noContent();
     }
@@ -90,11 +94,11 @@ class ReuniaoController extends Controller
     {
         $request->validate([
             'anexos' => 'required|array|min:1',
-            'anexos.*'=> 'file|max:2048'
+            'anexos.*' => 'file|max:2048'
         ]);
 
         $reuniao = Reuniao::findOrFail($id);
-        $this->imageService->storeImage($request->file('anexos'), $reuniao, '/anexos');        
+        $this->imageService->storeImage($request->file('anexos'), $reuniao, '/anexos');
     }
 
     public function atualizarAnexo(Request $request, $arquivo_id)
@@ -109,4 +113,3 @@ class ReuniaoController extends Controller
         return response()->json(['success' => 'Anexo atualizado com sucesso.']);
     }
 }
-

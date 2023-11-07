@@ -57,17 +57,27 @@ class ImageService
         $fileInfo->update(['caminho' => $caminho]);
     }
 
+    
+    public function getImage(Imagem $fileInfo)
+    {
+        $file = Storage::get($fileInfo->caminho);
+        $mimeType = Storage::mimeType($fileInfo->caminho);
+        
+        return compact('file', 'mimeType');
+    }
+    
     public function deleteImage(Imagem $fileInfo)
     {
         Storage::delete($fileInfo->caminho);
         $fileInfo->delete();
     }
 
-    public function getImage(Imagem $fileInfo)
+    public function deleteAllFiles(Model $model)
     {
-        $file = Storage::get($fileInfo->caminho);
-        $mimeType = Storage::mimeType($fileInfo->caminho);
+        $this->verificarInterface($model);
 
-        return compact('file', 'mimeType');
+        foreach ($model->imagem as $file) {
+            $this->deleteImage($file);
+        }
     }
 }

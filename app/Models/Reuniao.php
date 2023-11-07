@@ -40,7 +40,7 @@ class Reuniao extends Model implements ImageableInterface
     
     public function ata()
     {
-        return $this->imagem()->where('caminho', 'like', 'public/uploads/files/reuniao/atas/%');
+        return $this->imagem()->where('caminho', 'like', 'public/uploads/files/reuniao/atas/%')->first();
     }
 
     public function imagem(): MorphMany
