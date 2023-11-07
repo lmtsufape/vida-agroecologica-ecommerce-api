@@ -51,6 +51,7 @@ class ReuniaoController extends Controller
     {
         $reuniao = Reuniao::findOrFail($id);
         
+        $this->imageService->deleteImage($reuniao);
         $reuniao->delete();
 
         return response()->noContent();

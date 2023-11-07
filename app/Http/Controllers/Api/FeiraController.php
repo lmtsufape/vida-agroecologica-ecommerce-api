@@ -60,6 +60,7 @@ class FeiraController extends Controller
     {
         $feira = Feira::findOrFail($id);
 
+        $this->imageService->deleteImage($feira);
         $feira->delete();
 
         return response()->noContent();

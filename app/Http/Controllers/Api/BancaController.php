@@ -88,6 +88,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('delete', $banca);
 
+        $this->imageService->deleteImage($banca);
         $banca->delete();
 
         return response()->noContent();
