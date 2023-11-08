@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Models\Feira;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFeiraRequest;
-use App\Services\ImageService;
+use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class FeiraController extends Controller
 {
-    protected $imageService;
+    protected $fileService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(FileService $fileService)
     {
-        $this->imageService = $imageService;
+        $this->fileService = $fileService;
     }
 
     public function index()
@@ -33,7 +33,7 @@ class FeiraController extends Controller
         $feira = Feira::create($validatedData);
 
         if ($request->hasFile('imagem')) {
-            $this->imageService->storeImage($request->file('imagem'), $feira); // Armazenar a imagem
+            $this->fileService->storeFile($request->file('imagem'), $feira); // Armazenar a imagem
         } 
         DB::commit();
 
@@ -49,7 +49,7 @@ class FeiraController extends Controller
         $feira->update($validatedData);
 
         if ($request->hasFile('imagem')) {
-            $this->imageService->updateImage($request->file('imagem'), $feira); // Atualizar a imagem
+            $this->fileService->updateFile($request->file('imagem'), $feira); // Atualizar a imagem
         }
         DB::commit();
 
@@ -60,7 +60,7 @@ class FeiraController extends Controller
     {
         $feira = Feira::findOrFail($id);
 
-        $this->imageService->deleteImage($feira);
+        $this->fileService->deleteFile($feira);
         $feira->delete();
 
         return response()->noContent();
@@ -70,7 +70,7 @@ class FeiraController extends Controller
     {
         $feira = Feira::findOrFail($id);
 
-        $dados = $this->imageService->getImage($feira);
+        $dados = $this->fileService->getFile($feira);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
@@ -80,7 +80,7 @@ class FeiraController extends Controller
         $feira = Feira::findOrFail($id);
         $this->authorize('deleteImagem', $feira);
 
-        $this->imageService->deleteImage($feira);
+        $this->fileService->deleteFile($feira);
 
         return response()->noContent();
     }

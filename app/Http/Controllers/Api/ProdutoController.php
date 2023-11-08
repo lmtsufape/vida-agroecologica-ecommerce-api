@@ -8,15 +8,15 @@ use App\Models\ProdutoTabelado;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Http\Controllers\Controller;
-use App\Services\ImageService;
+use App\Services\FileService;
 
 class ProdutoController extends Controller
 {
-    protected $imageService;
+    protected $fileService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(FileService $fileService)
     {
-        $this->imageService = $imageService;
+        $this->fileService = $fileService;
     }
 
     /**
@@ -123,7 +123,7 @@ class ProdutoController extends Controller
     {
         $produto = ProdutoTabelado::findOrFail($id);
 
-        $dados = $this->imageService->getImage($produto);
+        $dados = $this->fileService->getFile($produto);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }

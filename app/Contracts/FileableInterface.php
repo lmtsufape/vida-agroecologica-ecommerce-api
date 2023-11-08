@@ -4,7 +4,7 @@ namespace App\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 
-interface ImageableInterface
+interface FileableInterface
 {
-    public function imagem(): MorphOneOrMany;
+    public function file(): MorphOneOrMany;
 }

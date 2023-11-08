@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
 use App\Models\User;
-use App\Services\ImageService;
+use App\Services\FileService;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,11 +21,11 @@ use Illuminate\Support\Facades\DB;
 
 class VendaController extends Controller
 {
-    protected $imageService;
+    protected $fileService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(FileService $fileService)
     {
-        $this->imageService = $imageService;
+        $this->fileService = $fileService;
     }
 
     public function index()
@@ -215,7 +215,7 @@ class VendaController extends Controller
         }
 
         $comprovante = $request->file('comprovante');
-        $this->imageService->updateImage($comprovante, $venda);
+        $this->fileService->updateFile($comprovante, $venda);
 
         DB::beginTransaction();
         $venda->status = 'comprovante anexado';
@@ -231,7 +231,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
 
-        $dados = $this->imageService->getImage($venda);
+        $dados = $this->fileService->getFile($venda);
 
         return response($dados['file'])->header('Content-Type', $dados['$mimeType']);
     }

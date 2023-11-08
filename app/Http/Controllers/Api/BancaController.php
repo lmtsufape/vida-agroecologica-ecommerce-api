@@ -7,18 +7,16 @@ use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UpdateBancaRequest;
 use App\Models\Banca;
 use App\Models\User;
-use App\Services\ImageService;
+use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class BancaController extends Controller
 {
-    protected $imageService;
+    protected $fileService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(FileService $fileService)
     {
-        $this->imageService = $imageService;
+        $this->fileService = $fileService;
     }
 
     public function index()
@@ -48,7 +46,7 @@ class BancaController extends Controller
         }
 
         if ($request->hasFile('imagem')) {
-            $this->imageService->storeImage($request->file('imagem'), $banca); // Armazenar a imagem
+            $this->fileService->storeFile($request->file('imagem'), $banca); // Armazenar a imagem
         } 
         DB::commit();
 
@@ -76,7 +74,7 @@ class BancaController extends Controller
         }
 
         if ($request->hasFile('imagem')) {
-            $this->imageService->updateImage($request->file('imagem'), $banca); // Atualizar a imagem
+            $this->fileService->updateFile($request->file('imagem'), $banca); // Atualizar a imagem
         }
         DB::commit();
 
@@ -88,7 +86,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('delete', $banca);
 
-        $this->imageService->deleteImage($banca);
+        $this->fileService->deleteFile($banca);
         $banca->delete();
 
         return response()->noContent();
@@ -104,7 +102,7 @@ class BancaController extends Controller
     public function getImagem($id)
     {
         $banca = Banca::findOrFail($id);
-        $dados = $this->imageService->getImage($banca);
+        $dados = $this->fileService->getFile($banca);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
@@ -114,7 +112,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('deleteImagem', $banca);
 
-        $this->imageService->deleteImage($banca);
+        $this->fileService->deleteFile($banca);
 
         return response()->noContent();
     }
