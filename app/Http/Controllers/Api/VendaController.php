@@ -215,7 +215,12 @@ class VendaController extends Controller
         }
 
         $comprovante = $request->file('comprovante');
-        $this->fileService->updateFile($comprovante, $venda);
+        if ($venda->comprovante) {
+            $this->fileService->updateFile($comprovante, $venda->comprovante);
+        } else {
+            $this->fileService->storeFile($comprovante, $venda, 'comprovantes');
+
+        }
 
         DB::beginTransaction();
         $venda->status = 'comprovante anexado';
@@ -231,7 +236,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
 
-        $dados = $this->fileService->getFile($venda);
+        $dados = $this->fileService->getFile($venda->comprovante);
 
         return response($dados['file'])->header('Content-Type', $dados['$mimeType']);
     }

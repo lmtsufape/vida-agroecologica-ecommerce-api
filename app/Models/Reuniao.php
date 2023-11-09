@@ -6,7 +6,6 @@ use App\Contracts\FileableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Reuniao extends Model implements FileableInterface
 {
@@ -40,7 +39,7 @@ class Reuniao extends Model implements FileableInterface
     
     public function ata()
     {
-        return $this->file()->where('path', 'like', 'public/uploads/files/reuniao/atas/%')->first();
+        return $this->file()->where('path', 'like', 'public/uploads/files/reuniao/atas/%');
     }
 
     public function file(): MorphMany

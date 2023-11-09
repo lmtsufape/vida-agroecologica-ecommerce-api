@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UpdateBancaRequest;
 use App\Models\Banca;
+use App\Models\File;
 use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
@@ -86,7 +87,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('delete', $banca);
 
-        $this->fileService->deleteFile($banca);
+        $this->fileService->deleteFile($banca->file);
         $banca->delete();
 
         return response()->noContent();
@@ -102,7 +103,7 @@ class BancaController extends Controller
     public function getImagem($id)
     {
         $banca = Banca::findOrFail($id);
-        $dados = $this->fileService->getFile($banca);
+        $dados = $this->fileService->getFile($banca->file);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
@@ -112,7 +113,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('deleteImagem', $banca);
 
-        $this->fileService->deleteFile($banca);
+        $this->fileService->deleteFile($banca->file);
 
         return response()->noContent();
     }

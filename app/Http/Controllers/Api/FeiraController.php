@@ -70,7 +70,7 @@ class FeiraController extends Controller
     {
         $feira = Feira::findOrFail($id);
 
-        $dados = $this->fileService->getFile($feira);
+        $dados = $this->fileService->getFile($feira->file);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
@@ -80,7 +80,7 @@ class FeiraController extends Controller
         $feira = Feira::findOrFail($id);
         $this->authorize('deleteImagem', $feira);
 
-        $this->fileService->deleteFile($feira);
+        $this->fileService->deleteFile($feira->file);
 
         return response()->noContent();
     }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\EnderecoController;
 use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\BairroController;
 use App\Http\Controllers\Api\BancaController;

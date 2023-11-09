@@ -123,7 +123,7 @@ class ProdutoController extends Controller
     {
         $produto = ProdutoTabelado::findOrFail($id);
 
-        $dados = $this->fileService->getFile($produto);
+        $dados = $this->fileService->getFile($produto->file);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }

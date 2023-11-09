@@ -19,13 +19,15 @@ class FileService
         }
     }
 
-    public function storeFile(array $files, Model|FileableInterface $model, $directoryName = null)
+    public function storeFile(array|UploadedFile $files, Model|FileableInterface $model, $directoryName = null)
     {
         $this->verificarInterface($model);
 
         $modelName = Str::lower(class_basename($model));
 
         $erro = false;
+        $files = is_array($files) ? $files : array($files);
+        
         foreach ($files as $file) {
             $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
 

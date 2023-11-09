@@ -65,10 +65,10 @@ class ReuniaoController extends Controller
         $reuniao = Reuniao::findOrFail($id);
         $ata = $request->file('ata');
 
-        if (!$reuniao->ata()) {
-            $this->fileService->storeFile(array($ata), $reuniao, '/atas');
+        if (!$reuniao->ata()->exists()) {
+            $this->fileService->storeFile($ata, $reuniao, '/atas');
         } else {
-            $this->fileService->updateFile($ata, $reuniao->ata());
+            $this->fileService->updateFile($ata, $reuniao->ata()->first());
         }
 
         return response()->json(['success' => 'Ata anexada com sucesso'], 200);
@@ -76,16 +76,16 @@ class ReuniaoController extends Controller
 
     public function verAta($id)
     {
-        $fileInfo = File::findOrFail($id);
-        $dados = $this->fileService->getFile($fileInfo);
+        $reuniao = Reuniao::findOrFail($id);
+        $dados = $this->fileService->getFile($reuniao->ata->first());
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 
     public function deletarAta($id)
     {
-        $fileInfo = File::findOrFail($id);
-        $this->fileService->deleteFile($fileInfo);
+        $reuniao = Reuniao::findOrFail($id);
+        $this->fileService->deleteFile($reuniao->ata()->first());
 
         return response()->noContent();
     }
