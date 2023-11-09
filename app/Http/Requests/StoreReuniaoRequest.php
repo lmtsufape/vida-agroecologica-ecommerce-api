@@ -42,6 +42,15 @@ class StoreReuniaoRequest extends FormRequest
                 'string',
                 'in:ordinaria,extraordinaria,multirao'
             ],
+            'participantes' => [
+                'required',
+                'array',
+                'min:2'
+            ],
+            'participantes.*' => [
+                'integer',
+                'exists:users,id'
+            ],
             'associacao_id' => [
                 'required',
                 'integer',

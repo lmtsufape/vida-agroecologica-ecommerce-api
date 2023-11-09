@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\Reuniao;
 use App\Services\FileService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReuniaoController extends Controller
 {
@@ -19,7 +20,7 @@ class ReuniaoController extends Controller
 
     public function index()
     {
-        $reunioes = Reuniao::all()->load(['ata', 'anexos']);
+        $reunioes = Reuniao::all()->load(['ata', 'anexos', 'participantes']);
 
         return response()->json(['reunioes' => $reunioes]);
     }
@@ -28,7 +29,10 @@ class ReuniaoController extends Controller
     {
         $validatedData = $request->validated();
 
+        DB::beginTransaction();
         $reuniao = Reuniao::create($validatedData);
+        $reuniao->participantes()->sync($validatedData['participantes']);
+        DB::commit();
 
         if ($request->user()->hasAnyRoles(['administrador', 'presidente', 'secretario'])) {
             $reuniao->status = 'Aprovada';
@@ -42,8 +46,11 @@ class ReuniaoController extends Controller
     {
         $validatedData = $request->validated();
         $reuniao = Reuniao::findOrFail($id);
-
+        
+        DB::beginTransaction();
         $reuniao->update($validatedData);
+        $reuniao->participantes()->sync($validatedData['participantes']);
+        DB::commit();
 
         return response()->json(['reuniao' => $reuniao]);
     }
@@ -52,8 +59,10 @@ class ReuniaoController extends Controller
     {
         $reuniao = Reuniao::findOrFail($id);
 
+        DB::beginTransaction();
         $this->fileService->deleteAllFiles($reuniao);
         $reuniao->delete();
+        DB::commit();
 
         return response()->noContent();
     }

@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('reuniao_user', function (Blueprint $table) {
             $table->id();
 
-            $table->boolean('presenca');
+            $table->boolean('presenca')->default(false);
 
-            $table->foreignId('reuniao_id')->constrained('reunioes');
-            $table->foreignId('participante_id')->constrained('users');
+            $table->foreignId('reuniao_id')->constrained('reunioes')->cascadeOnDelete();
+            $table->foreignId('participante_id')->constrained('users')->nullOnDelete();
 
             $table->timestamps();
         });
