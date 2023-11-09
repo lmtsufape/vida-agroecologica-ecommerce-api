@@ -24,7 +24,6 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         'name',
         'email',
         'password',
-        'apelido',
         'cpf'
     ];
 
@@ -100,5 +99,10 @@ class User extends Authenticatable implements MustVerifyEmail, reset
     public function bancas()
     {
         return $this->hasMany(Banca::class, 'agricultor_id');
+    }
+
+    public function reunioes()
+    {
+        return $this->belongsToMany(Reuniao::class, 'participante_id', 'reuniao_id')->withPivot('presenca')->withTimestamps();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\PedidoConfirmadoEvent;
 use App\Models\ItemVenda;
 use App\Models\User;
+use App\Services\FileService;
 use Brick\Math\BigDecimal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,11 +18,16 @@ use App\Models\Venda;
 use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class VendaController extends Controller
 {
+    protected $fileService;
+
+    public function __construct(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     public function index()
     {
         $this->authorize('viewAny', Venda::class);
@@ -95,7 +101,7 @@ class VendaController extends Controller
             }
 
             $item = new ItemVenda();
-            $item->tipo_unidade = $prod->tipo_unidade;
+            $item->tipo_medida = $prod->tipo_medida;
             $item->quantidade = $produto[1];
             $item->preco = BigDecimal::of($prod->preco);
             $item->venda()->associate($venda);
@@ -199,7 +205,8 @@ class VendaController extends Controller
 
     public function anexarComprovante(Request $request, $id)
     {
-        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
+        $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']); // Aceita somente jpeg, png e pdf
+        
         $venda = Venda::findOrFail($id);
         $this->authorize('anexarComprovante', $venda);
 
@@ -207,28 +214,19 @@ class VendaController extends Controller
             return response()->json(['error' => 'Não é possível anexar comprovante a esta venda.'], 400);
         }
 
-        $imagem = $request->file('comprovante');
-        $nomeImagem = $venda->id . '.' . $imagem->getClientOriginalExtension();
-        $comprovanteAntigo = glob(storage_path("app/public/uploads/imagens/comprovante/{$venda->id}.*"));
+        $comprovante = $request->file('comprovante');
+        if ($venda->comprovante) {
+            $this->fileService->updateFile($comprovante, $venda->comprovante);
+        } else {
+            $this->fileService->storeFile($comprovante, $venda, 'comprovantes');
 
-        $caminho = $imagem->storeAs('public/uploads/imagens/comprovante', $nomeImagem); // O caminho completo é storage/app/public/uploads/imagens/banca.
-
-        if (!$caminho) {
-            return response()->json(['erro' => 'Não foi possível fazer upload do comprovante'], 500);
         }
 
         DB::beginTransaction();
-        $venda->comprovante()->updateOrCreate(['imageable_id' => $venda->id, 'imageable_type' => 'venda'], ['caminho' => $caminho]);
         $venda->status = 'comprovante anexado';
         $venda->data_pagamento = now();
         $venda->save();
         DB::commit();
-
-        foreach ($comprovanteAntigo as $arquivo) {
-            if (basename($arquivo) != $nomeImagem) {
-                File::delete($arquivo);
-            }
-        }
 
         return response()->json(['success' => 'Comprovante enviado.'], 200);
     }
@@ -237,16 +235,10 @@ class VendaController extends Controller
     {
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
-        $comprovante = $venda->comprovante;
 
-        if (!$comprovante || !Storage::exists($comprovante->caminho)) {
-            return response()->json(['error' => 'A venda não possui comprovante de pagamento.'], 404);
-        }
+        $dados = $this->fileService->getFile($venda->comprovante);
 
-        $file = Storage::get($comprovante->caminho);
-        $mimeType = Storage::mimeType($comprovante->caminho);
-
-        return response($file)->header('Content-Type', $mimeType);
+        return response($dados['file'])->header('Content-Type', $dados['$mimeType']);
     }
 
     public function marcarEnviado($id)

@@ -28,7 +28,7 @@ class StoreProdutoRequest extends FormRequest
     {
         return [
             'descricao' =>  'required|max:120|string',
-            'tipo_unidade' => 'required|in:unidade,fracionario,peso',
+            'tipo_medida' => 'required|in:unidade,fracionario,peso',
             'estoque' => 'required|numeric',
             'preco' => 'required|decimal:2',
             'custo' => 'required|decimal:2',

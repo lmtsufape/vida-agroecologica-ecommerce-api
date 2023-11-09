@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\BuscaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\PropriedadeController;
-use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ApiUserController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\Web\AssociacaoController;
 use App\Http\Controllers\Web\OrganizacaoControleSocialController;
 use App\Http\Contollers\Web\UserAgricultorController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -35,13 +35,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-# Consumidores
-Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
-    Route::get('/enderecos', 'indexEndereco');
-    Route::post('/enderecos', 'storeEndereco');
-    Route::get('/enderecos/{endereco}', 'showEndereco');
-    Route::patch('/enderecos/{endereco}', 'updateEndereco');
-    Route::delete('/enderecos/{endereco}', 'destroyEndereco');
+# Auth
+Route::controller(ApiAuthController::class)->group(function () {
+    Route::post('/sanctum/token', 'token')->middleware('guest');
+    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
+    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
 });
 
 # Usuários
@@ -49,6 +50,11 @@ Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
 });
+
+Route::get('/users/enderecos', [UserController::class, 'indexEndereco'])->middleware('auth:sanctum');
+Route::post('/users/enderecos', [UserController::class, 'createNewEndereco'])->middleware('auth:sanctum');
+Route::patch('/users/enderecos/{endereco}', [UserController::class, 'updateEndereco'])->middleware('auth:sanctum');
+Route::delete('/users/enderecos/{endereco}', [UserController::class, 'destroyEndereco'])->middleware('auth:sanctum'); // Posteriormente, alterar classe para ApiUserController.
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
@@ -96,8 +102,11 @@ Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanc
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update');
+    Route::patch('/{feira}', 'update')->middleware('role:administrador');
     Route::delete('/{id}', 'destroy');
+
+    Route::get('/{feira}/imagem', 'getImagem');
+    Route::delete('/{feira}/imagem', 'deleteImagem');
 });
 
 # Bairros
@@ -132,21 +141,22 @@ Route::get('/propriedades/user/{user_id}', [PropriedadeController::class, 'getPr
 
 Route::apiResource('/propriedades', PropriedadeController::class)->middleware('auth:sanctum');
 
-# Auth
-Route::controller(ApiAuthController::class)->group(function () {
-    Route::post('/sanctum/token', 'token')->middleware('guest');
-    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
-    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
-    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
-    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
-});
-
 # Buscas
 Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
     Route::post('/', 'buscar');
 });
 
+# Reuniões
+Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
+    Route::post('/{reuniao}/ata','anexarAta');
+    Route::get('/{reuniao}/ata','verAta');
+    Route::delete('/{reuniao}/ata','deletarAta');
+
+    Route::post('/{reuniao}/anexos','enviarAnexos');
+    Route::post('/{arquivo_id}/anexos/atualizar','atualizarAnexo');
+});
+
+Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
@@ -160,12 +170,6 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
     Route::get('/associacoes', [AssociacaoController::class, 'index']); //funcionando
     Route::post('/associacoes', [AssociacaoController::class, 'store']); //funcionando
     Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']); //funcionando
-});
-
-Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::patch('/{cidade}', 'update');
 });
 
 Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {

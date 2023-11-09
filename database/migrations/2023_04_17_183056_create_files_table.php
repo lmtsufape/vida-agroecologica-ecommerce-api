@@ -13,16 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('itens_venda', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->id();
 
-            $table->string('tipo_medida', 30);
-            $table->double('quantidade', 6, 3);
-            $table->decimal('preco');
-
-            $table->foreignId('produto_id')->constrained()->restrictOnDelete();
-            $table->foreignId('venda_id')->constrained()->cascadeOnDelete();
-            $table->unique(['produto_id', 'venda_id']);
+            $table->string('path');
+            $table->morphs('fileable');
 
             $table->timestamps();
         });
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itens_venda');
+        Schema::dropIfExists('files');
     }
 };

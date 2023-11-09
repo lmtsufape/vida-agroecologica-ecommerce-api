@@ -32,11 +32,6 @@ class UpdateUserRequest extends FormRequest
                 'min:3',
                 'max:60'
             ],
-            'apelido' => [
-                'nullable',
-                'string',
-                'max:30'
-            ],
             'telefone' => [
                 'required',
                 'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
