@@ -100,4 +100,9 @@ class User extends Authenticatable implements MustVerifyEmail, reset
     {
         return $this->hasMany(Banca::class, 'agricultor_id');
     }
+
+    public function reunioes()
+    {
+        return $this->belongsToMany(Reuniao::class, 'participante_id', 'reuniao_id')->withPivot('presenca')->withTimestamps();
+    }
 }

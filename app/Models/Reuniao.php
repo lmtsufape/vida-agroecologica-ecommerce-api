@@ -46,4 +46,9 @@ class Reuniao extends Model implements FileableInterface
     {
         return $this->morphMany(File::class, 'fileable');
     }
+
+    public function participantes()
+    {
+        return $this->belongsToMany(User::class, 'reuniao_user', 'reuniao_id', 'participante_id')->withPivot('presenca')->withTimestamps();
+    }
 }
