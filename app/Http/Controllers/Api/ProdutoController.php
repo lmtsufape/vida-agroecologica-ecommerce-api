@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Http\Controllers\Controller;
 use App\Services\FileService;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -104,6 +105,13 @@ class ProdutoController extends Controller
     {
         $produtos = ProdutoTabelado::all();
 
+        $produtos->map(function ($produto) {
+            $arquivo = $produto->file;
+            if ($arquivo) {
+                $produto->setAttribute('imagem', base64_encode(file_get_contents(public_path($arquivo->path))));
+            }
+        });
+
         return response()->json(['produtos' => $produtos], 200);
     }
 
@@ -122,8 +130,10 @@ class ProdutoController extends Controller
     public function getImagem($id)
     {
         $produto = ProdutoTabelado::findOrFail($id);
+        $caminho = $produto->file->path;
 
-        $dados = $this->fileService->getFile($produto->file);
+        $dados['file'] = file_get_contents(public_path($caminho));
+        $dados['mimeType'] = mime_content_type($caminho);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
