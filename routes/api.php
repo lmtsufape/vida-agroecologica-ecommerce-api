@@ -157,6 +157,7 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])-
 });
 
 Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
