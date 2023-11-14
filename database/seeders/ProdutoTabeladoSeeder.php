@@ -30,7 +30,7 @@ class ProdutoTabeladoSeeder extends Seeder
                 $produto->save();
                 $imagens = glob($caminho_imagens . $produto->nome . '.*'); // pega todos os arquivos que estão no $caminho_imagens e tem o nome $produto->nome, independente da extensão do arquivo.
                 if (count($imagens) > 0) {
-                    $produto->file()->create(['path' => str_replace(public_path('\\'), '', $imagens[0])]);
+                    $produto->file()->create(['path' => str_replace(public_path(DIRECTORY_SEPARATOR), '', $imagens[0])]);
                 }
             }
         }
