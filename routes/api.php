@@ -19,6 +19,7 @@ use App\Http\Contollers\Web\UserAgricultorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,7 @@ Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
     Route::get('/users/presidents', 'getPresidents');
+    Route::delete('/users/{id}', 'destroy');
 });
 
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
@@ -171,6 +173,11 @@ Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
 
+    Route::get('/roles', function () {
+        $roles = Role::all();
+        return json_encode($roles);
+    });
+
  # ASSOCIAÇÃO
 
  Route::get('/associacoes', [AssociacaoController::class, 'index']);//funcionando
@@ -185,10 +192,13 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
  Route::get('/ocs/{id}', [OrganizacaoControleSocialController::class, 'show'])->where('id', '[0-9]+');
  Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
  Route::patch('/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
+ Route::delete('/ocs/{id}', [OrganizacaoControleSocialController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
     Route::get('/', 'index');
+    Route::get('/{id}', 'show');
+    Route::delete('/{id}', 'destroy');
     Route::post('/', 'store');
     Route::patch('/{cidade}', 'update');
 

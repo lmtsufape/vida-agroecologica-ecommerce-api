@@ -21,7 +21,7 @@ class AssociacaoController extends Controller
 
     public function show($id)
     {
-    $associacao = Associacao::where('id', $id)->with('presidentes', 'contato')->first();
+    $associacao = Associacao::where('id', $id)->with('presidentes', 'contato', 'endereco')->first();
 
     if (!$associacao) {
         return response()->json(['message' => 'Association not found'], 404);

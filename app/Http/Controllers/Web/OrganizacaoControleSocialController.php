@@ -58,4 +58,28 @@ class OrganizacaoControleSocialController extends Controller
         return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
 
     }
+    public function destroy($id)
+    {
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+
+        $organizacao->delete();
+
+        return response()->json($organizacao);
+    }
 }
+
+
+// $associacao = Associacao::where('id', $id)->first();
+
+// if (!$associacao) {
+//     return response()->json(['message' => 'Associação não encontrada.'], 404);
+// }
+
+// $associacao->update($request->only('nome', 'data_fundacao'));
+// $associacao->contato()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'cep', 'rua', 'numero', 'bairro_id'));
+// $associacao->endereco()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'email','telefone'));
+
+// $associacao->presidentes()->sync($request->input('presidentes_id'));
+// $associacao->secretarios()->sync($request->input('secretarios_id'));
+
+// return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'secretarios', 'endereco'])]);

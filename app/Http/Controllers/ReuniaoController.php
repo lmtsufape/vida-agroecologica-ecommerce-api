@@ -15,14 +15,14 @@ class ReuniaoController extends Controller
 
         return response()->json(['reunioes'=> $reunioes]);
     }
-    
+
     public function store(Request $request)
     {
         if(Auth::user()->roles->whereIn('nome', ['administrador', 'presidente', 'secretario'])->first()){
             $reuniao = Reuniao::create($request->all());
             $associacao = Associacao::findOrFail($request->associacao_id);
             $reuniao->associacao()->associate($associacao);
-            
+
             return response()->json(['reuniao' => $reuniao]);
         }else{
             $reuniao = Reuniao::create($request->except('status'))->refresh();
@@ -30,7 +30,14 @@ class ReuniaoController extends Controller
             $reuniao->associacao()->associate($associacao);
             return response()->json(['reuniao' => $reuniao]);
         }
-       
+
+    }
+
+    public function show($id)
+    {
+        $reuniao = Reuniao::findOrFail($id);
+        $reuniao->load('associacao');
+        return response()->json(['reunioes'=> $reuniao]);
     }
 
     public function update(Request $request, $id)
@@ -48,7 +55,7 @@ class ReuniaoController extends Controller
     public function destroy($id)
     {
         $reuniao = Reuniao::findOrFail($id);
-        
+
         $reuniao->delete();
 
         return response()->noContent();
