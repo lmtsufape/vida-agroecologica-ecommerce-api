@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEnderecoRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Endereco;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,6 +43,7 @@ class UserController extends Controller
         $user = User::make($validatedData);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
+        $user->enderecos()->create($validatedData);
         $user->contato()->create($validatedData);
         $user->roles()->sync($validatedData['roles']);
         DB::commit();
@@ -93,5 +97,44 @@ class UserController extends Controller
         $user->roles()->sync($validatedData);
 
         return true;
+    }
+
+    # Endereços
+
+    public function indexEndereco()
+    {
+        return Auth::user()->enderecos;
+    }
+
+    public function createNewEndereco(StoreEnderecoRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = $request->user();
+        $endereco = $user->enderecos()->create($validatedData);
+
+        return $endereco;
+    }
+
+    public function updateEndereco(StoreEnderecoRequest $request, $id)
+    {
+        $validatedData = $request->validated();
+        
+        $endereco = Endereco::findOrFail($id);
+        $this->authorize('update', $endereco);
+
+        $endereco = $endereco->update($validatedData);
+
+        return $endereco;
+    }
+
+    public function destroyEndereco($id)
+    {
+        $endereco = Endereco::findOrFail($id);
+        $this->authorize('delete', $endereco);
+
+        $endereco->delete();
+
+        return null;
     }
 }

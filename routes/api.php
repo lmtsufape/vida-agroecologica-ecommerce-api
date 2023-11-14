@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\BuscaController;
 use App\Http\Controllers\Api\CidadeController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\PropriedadeController;
-use App\Http\Controllers\Api\UserConsumidorController;
 use App\Http\Controllers\Api\VendaController;
 use App\Http\Controllers\Api\FeiraController;
 use App\Http\Controllers\Api\ApiUserController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\Web\AssociacaoController;
 use App\Http\Controllers\Web\OrganizacaoControleSocialController;
 use App\Http\Contollers\Web\UserAgricultorController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -36,16 +36,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Consumidores
-Route::middleware('auth:sanctum')->controller(UserConsumidorController::class)->prefix('/users')->group(function () {
-    Route::get('/enderecos', 'indexEndereco');
-    Route::post('/enderecos', 'storeEndereco');
-    Route::get('/enderecos/{endereco}', 'showEndereco');
-    Route::patch('/enderecos/{endereco}', 'updateEndereco');
-    Route::delete('/enderecos/{endereco}', 'destroyEndereco');
+# Auth
+Route::controller(ApiAuthController::class)->group(function () {
+    Route::post('/sanctum/token', 'token')->middleware('guest');
+    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
+    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
+    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
+    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
 });
 
-// Usuários
+# Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
@@ -53,11 +54,15 @@ Route::controller(ApiUserController::class)->group(function () {
     Route::delete('/users/{id}', 'destroy');
 });
 
+Route::get('/users/enderecos', [UserController::class, 'indexEndereco'])->middleware('auth:sanctum');
+Route::post('/users/enderecos', [UserController::class, 'createNewEndereco'])->middleware('auth:sanctum');
+Route::patch('/users/enderecos/{endereco}', [UserController::class, 'updateEndereco'])->middleware('auth:sanctum');
+Route::delete('/users/enderecos/{endereco}', [UserController::class, 'destroyEndereco'])->middleware('auth:sanctum'); // Posteriormente, alterar classe para ApiUserController.
+
 Route::apiResource('/users', ApiUserController::class)->except('store')->middleware('auth:sanctum');
 
-// Bancas
+# Bancas
 Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/bancas')->group(function () {
-    Route::get('/{banca}/produtos', 'getProdutos');
     Route::get('/{banca}/imagem', 'getImagem');
     Route::get('/agricultores/{agricultor}', 'getAgricultorBancas');
     Route::delete('/{banca}/imagem', 'deleteImagem');
@@ -65,7 +70,7 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
 
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
 
-// Vendas
+# Vendas
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/transacoes')->group(function () {
     Route::post('/{venda}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
     Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
@@ -85,24 +90,29 @@ Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/
     Route::get('/{venda}', 'show');
 });
 
-// Produtos
+# Produtos
 Route::middleware('auth:sanctum')->controller(ProdutoController::class)->prefix('/produtos')->group(function () {
     Route::get('/categorias', 'getCategorias');
     Route::get('/tabelados', 'getTabelados');
     Route::get('/{produto}/imagem', 'getImagem');
 });
 
+Route::get('/bancas/{banca}/produtos', [ProdutoController::class, 'getBancaProdutos']);
+
 Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanctum');
 
-// Feiras
+# Feiras
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update');
+    Route::patch('/{feira}', 'update')->middleware('role:administrador');
     Route::delete('/{id}', 'destroy');
+
+    Route::get('/{feira}/imagem', 'getImagem');
+    Route::delete('/{feira}/imagem', 'deleteImagem');
 });
 
-// Bairros
+# Bairros
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
@@ -110,7 +120,7 @@ Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('
     Route::delete('/{id}', 'destroy')->middleware('role:administrador');
 });
 
-// Cidades
+# Cidades
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
@@ -118,7 +128,7 @@ Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
 });
 
-// Estados
+# Estados
 Route::middleware('auth:sanctum')->controller(EstadoController::class)->prefix('/estados')->group(function () {
     Route::get('/', 'index');
 });
@@ -129,47 +139,29 @@ Route::get('/locais', function () {
     return response()->json(['estados' => $estados]);
 });
 
-// Propriedades
+# Propriedades
 Route::get('/propriedades/user/{user_id}', [PropriedadeController::class, 'getPropriedades'])->middleware('auth:sanctum');
 
 Route::apiResource('/propriedades', PropriedadeController::class)->middleware('auth:sanctum');
 
-// Auth
-Route::controller(ApiAuthController::class)->group(function () {
-    Route::post('/sanctum/token', 'token')->middleware('guest');
-    Route::post('/sanctum/token/revoke', 'revokeToken')->middleware('auth:sanctum');
-    Route::post('/email/verification-notification', 'resendEmail')->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-    Route::post('/forgot-password', 'sendResetEmail')->middleware('guest')->name('password.email');
-    Route::get('/email/verify', fn () => response()->json(['error' => 'O usuário não está verificado!', 'email' => Auth::user()->email], 403))->middleware('auth:sanctum')->name('verification.notice');
-    Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
-});
-
-//Busca
+# Buscas
 Route::controller(BuscaController::class)->prefix('/buscar')->group(function () {
     Route::post('/', 'buscar');
 });
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------
+# Reuniões
+Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
+    Route::post('/{reuniao}/ata','anexarAta');
+    Route::get('/{reuniao}/ata','verAta');
+    Route::delete('/{reuniao}/ata','deletarAta');
 
-// Parte do gestão web
-
-Route::middleware(['auth:sanctum', 'type.admin'])->group(function () {
-    // Usuario
-    // Route::post('cadastro', [UserController::class, 'store']);
-    // Route::post('atualizar/usuario', [UserController::class, 'update']);
-    // Route::get('users', [UserController::class, 'index']);
-
-    // Associacao
-    Route::get('associacoes', [AssociacaoController::class, 'index']);
+    Route::post('/{reuniao}/anexos','enviarAnexos');
+    Route::post('/{arquivo_id}/anexos/atualizar','atualizarAnexo');
 });
 
-Route::middleware(['auth:sanctum', 'type.presidente'])->group(function () {
-    //minhas associações
-});
+Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');
 
-//Route::post('/verifica', [UserController::class, 'verificaUsuario']);
-
-//Web
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
 
@@ -201,6 +193,7 @@ Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix(
     Route::delete('/{id}', 'destroy');
     Route::post('/', 'store');
     Route::patch('/{cidade}', 'update');
+
 
 });
 

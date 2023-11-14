@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Imagem extends Model
+class File extends Model
 {
     use HasFactory;
 
-    protected $table = 'imagens';
+    protected $table = 'files';
 
-    protected $fillable = ['caminho'];
+    protected $fillable = ['path'];
 
-    public function imageable(): MorphTo
+    public function fileable(): MorphTo
     {
         return $this->morphTo();
     }

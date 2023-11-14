@@ -15,12 +15,15 @@ return new class extends Migration
     {
         Schema::create('reunioes', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo');
-            $table->text('detalhamento');
+
+            $table->string('titulo', 60);
+            $table->text('pauta');
             $table->enum('status', ['Em analise', 'Recusada', 'Aprovada'])->default('Em analise');
-            $table->date('data');
-            $table->enum('tipo', ['Ordinaria', 'extraordinaria', 'multirão']);
+            $table->dateTime('data');
+            $table->enum('tipo', ['ordinaria', 'extraordinaria', 'multirao']);
+
             $table->foreignId('associacao_id')->constrained('associacoes');
+            $table->foreignId('organizacao_id')->constrained('organizacoes_controle_social');
             $table->timestamps();
         });
     }

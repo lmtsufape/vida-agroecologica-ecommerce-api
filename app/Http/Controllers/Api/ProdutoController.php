@@ -8,10 +8,18 @@ use App\Models\ProdutoTabelado;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Http\Controllers\Controller;
+use App\Services\FileService;
 use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
+    protected $fileService;
+
+    public function __construct(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +43,14 @@ class ProdutoController extends Controller
         $validatedData = $request->validated();
         $banca = Banca::find($request->banca_id);
 
-        $produto = $banca->produtos()->create($validatedData);
+        $produto = $banca->produtos()->onlyTrashed()->where(['produto_tabelado_id' => $validatedData['produto_tabelado_id']])->first();
+
+        if($produto) {
+            $produto->restore();
+            $produto->update($validatedData);
+        } else {
+            $produto  = $banca->produtos()->create($validatedData);
+        }
 
         return response()->json(['produto' => $produto], 201);
     }
@@ -89,6 +104,13 @@ class ProdutoController extends Controller
     public function getTabelados()
     {
         $produtos = ProdutoTabelado::all();
+        
+        $produtos->map(function ($produto) {
+            $arquivo = $produto->file;
+            if ($arquivo) {
+                $produto->setAttribute('imagem', base64_encode(file_get_contents($arquivo->path)));
+            }
+        });
 
         return response()->json(['produtos' => $produtos], 200);
     }
@@ -98,17 +120,21 @@ class ProdutoController extends Controller
         return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
     }
 
+    public function getBancaProdutos($id)
+    {
+        $banca = Banca::findOrFail($id);
+
+        return response()->json(['produtos' => $banca->produtos], 200);
+    }
+
     public function getImagem($id)
     {
-        $imagem = ProdutoTabelado::findOrFail($id)->imagem;
+        $produto = ProdutoTabelado::findOrFail($id);
+        $caminho = $produto->file->path;
 
-        if (!$imagem || !Storage::exists($imagem->caminho)) {
-            return response()->json(["error" => "imagem não encontrada."], 404);
-        }
+        $dados['file'] = file_get_contents($caminho);
+        $dados['mimeType'] = mime_content_type($caminho);
 
-        $file = Storage::get($imagem->caminho);
-        $mimeType = Storage::mimeType($imagem->caminho);
-
-        return response($file)->header('Content-Type', $mimeType);
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 }

@@ -17,9 +17,8 @@ class FeiraFactory extends Factory
     public function definition()
     {
         return [
-            'funcionamento' => ['sexta', 'sabado', 'domingo'],
-            'horario_abertura' => '10:00',
-            'horario_fechamento' => '16:00',
+            'nome' => 'Feira de bonito',
+            'horarios_funcionamento' => ['sexta', 'sabado', 'domingo'],
             'bairro_id' => 1,
             'associacao_id' => 1
         ];

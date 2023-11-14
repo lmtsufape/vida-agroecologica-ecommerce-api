@@ -4,12 +4,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cidade;
-use App\Models\Bairro;
-use App\Models\Endereco;
-use App\Models\Feira;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCidadeRequest;
 use App\Http\Requests\UpdateCidadeRequest;
+use Exception;
 
 class CidadeController extends Controller
 {
@@ -40,31 +38,13 @@ class CidadeController extends Controller
     public function destroy($id)
     {
         $cidade = Cidade::findOrFail($id);
-        $bairros = Bairro::where('cidade_id', $cidade->id)->get();
-        $deletar = true;
-        if(sizeof($bairros) != 0){
-            foreach($bairros as $bairro){
-                $feira = Feira::where('bairro_id', $bairro->id)->first();
-                $endereco = Endereco::where('bairro_id', $bairro->id)->first();
-                if($feira || $endereco){
-                    $deletar = false;
-                    break;
-                }
 
-            }
-            if($deletar){
-                $cidade->delete();
-                return response()->noContent();
-            }else{
-                return response()->json("Não é possivel deletar. Feira ou Endereço estão vinculados.");
-            }
-
-
-        }else{
+        try {
             $cidade->delete();
-            return response()->noContent();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Não foi possível deletar esta cidade.'], 400);
         }
 
-
+        return response()->noContent();
     }
 }

@@ -29,7 +29,7 @@ class EnderecoPolicy
      */
     public function viewAny(User $user)
     {
-        return Response::allow();
+        return Response::deny();
     }
 
     /**
@@ -61,10 +61,6 @@ class EnderecoPolicy
      */
     public function create(User $user)
     {
-        if (!$user->hasAnyRoles(['consumidor'])) {
-            return Response::deny();
-        }
-
         return Response::allow();
     }
 
@@ -93,7 +89,7 @@ class EnderecoPolicy
      */
     public function delete(User $user, Endereco $endereco)
     {
-        if ($endereco->addressable_type === 'user' && $endereco->addressable_id === $user->id) {
+        if ($endereco->addressable_type === 'user' && $endereco->addressable_id === $user->id && $user->enderecos->count() > 1) {
             return Response::allow();
         }
 

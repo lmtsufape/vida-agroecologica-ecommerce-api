@@ -41,4 +41,8 @@ class OrganizacaoControleSocial extends Model
 
     }
 
+    public function reunioes()
+    {
+        return $this->hasMany(Reuniao::class, 'organizacao_id');
+    }
 }

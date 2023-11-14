@@ -22,9 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(IOrganizacaoService::class, OrganizacaoService::class);
-        $this->app->bind(IAgricultorService::class, AgricultorService::class);
-        $this->app->bind(IAssociacaoService::class, AssociacaoService::class);
+        
     }
 
     /**
@@ -41,7 +39,9 @@ class AppServiceProvider extends ServiceProvider
             'venda' => 'App\Models\Venda',
             'associacao' => 'App\Models\Associacao',
             'organizacao' => 'App\Models\OrganizacaoControleSocial',
-            'propriedade' => 'App\Models\Propriedade'
+            'propriedade' => 'App\Models\Propriedade',
+            'feira' => 'App\Models\Feira',
+            'reuniao' => 'App\Models\Reuniao'
         ]);
     }
 }

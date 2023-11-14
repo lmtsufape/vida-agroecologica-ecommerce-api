@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class StoreUserRequest extends StoreEnderecoRequest
 {
 
     public function prepareForValidation()
@@ -19,7 +19,7 @@ class StoreUserRequest extends FormRequest
 
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             'name' => [
                 'required',
                 'regex:/^[a-zA-ZÀ-ÿ\s]+$/',  // regex para validar apenas letras do alfabeto (maiúsculas e minúsculas, com acento ou não) e espaços em branco.
@@ -37,11 +37,6 @@ class StoreUserRequest extends FormRequest
                 'required',
                 'string',
                 'min:8',
-                'max:30'
-            ],
-            'apelido' => [
-                'nullable',
-                'string',
                 'max:30'
             ],
             'telefone' => [
@@ -62,7 +57,7 @@ class StoreUserRequest extends FormRequest
                 'integer',
                 'exists:roles,id'
             ]
-        ];
+        ]);
     }
 
     public function messages()

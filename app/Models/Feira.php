@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
+use App\Contracts\FileableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Feira extends Model
+class Feira extends Model implements FileableInterface
 {
     use HasFactory;
     protected $fillable = [
-        'funcionamento',
-        'horario_abertura',
-        'horario_fechamento',
-        'bairro_id'
+        'nome',
+        'descricao',
+        'horarios_funcionamento',
+        'bairro_id',
+        'associacao_id'
     ];
     protected $casts = [
-        'funcionamento' => 'array'
+        'horarios_funcionamento' => 'array'
     ];
 
     public function bairro()
@@ -31,5 +34,10 @@ class Feira extends Model
     public function associacao()
     {
         return $this->belongsTo(Associacao::class);
+    }
+
+    public function file(): MorphOne
+    {
+        return $this->morphOne(File::class, 'fileable');
     }
 }

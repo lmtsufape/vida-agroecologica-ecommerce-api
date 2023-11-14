@@ -28,7 +28,7 @@ class UpdateProdutoRequest extends FormRequest
     {
         return [
             'descricao' => 'nullable|max:120|string',
-            'tipo_unidade' => 'nullable|in:unidade,fracionario,peso',
+            'tipo_medida' => 'nullable|in:unidade,fracionario,peso',
             'estoque' => 'nullable|numeric',
             'preco' => 'nullable|decimal:2',
             'custo' => 'nullable|decimal:2',

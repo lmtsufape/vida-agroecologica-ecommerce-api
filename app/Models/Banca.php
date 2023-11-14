@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\FileableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Banca extends Model
+class Banca extends Model implements FileableInterface
 {
     use HasFactory, SoftDeletes;
 
@@ -35,7 +36,7 @@ class Banca extends Model
         'agricultor_id'
     ];
 
-    public function feira()
+    public function feira(): BelongsTo
     {
         return $this->belongsTo(Feira::class);
     }
@@ -50,9 +51,9 @@ class Banca extends Model
         return $this->belongsTo(User::class, 'agricultor_id');
     }
 
-    public function imagem(): MorphOne
+    public function file(): MorphOne
     {
-        return $this->morphOne(Imagem::class, 'imageable');
+        return $this->morphOne(File::class, 'fileable');
     }
 
     public function formasPagamento(): BelongsToMany

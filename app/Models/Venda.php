@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Contracts\FileableInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Venda extends Model
+class Venda extends Model implements FileableInterface
 {
     use HasFactory;
 
@@ -42,6 +42,11 @@ class Venda extends Model
 
     public function comprovante(): MorphOne
     {
-        return $this->morphOne(Imagem::class, 'imageable');
+        return $this->file();
+    }
+
+    public function file(): MorphOne
+    {
+        return $this->morphOne(File::class, 'fileable');
     }
 }
