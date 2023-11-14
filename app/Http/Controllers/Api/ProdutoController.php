@@ -104,11 +104,11 @@ class ProdutoController extends Controller
     public function getTabelados()
     {
         $produtos = ProdutoTabelado::all();
-
+        
         $produtos->map(function ($produto) {
             $arquivo = $produto->file;
             if ($arquivo) {
-                $produto->setAttribute('imagem', base64_encode(file_get_contents(public_path($arquivo->path))));
+                $produto->setAttribute('imagem', base64_encode(file_get_contents($arquivo->path)));
             }
         });
 
@@ -132,7 +132,7 @@ class ProdutoController extends Controller
         $produto = ProdutoTabelado::findOrFail($id);
         $caminho = $produto->file->path;
 
-        $dados['file'] = file_get_contents(public_path($caminho));
+        $dados['file'] = file_get_contents($caminho);
         $dados['mimeType'] = mime_content_type($caminho);
 
         return response($dados['file'])->header('Content-Type', $dados['mimeType']);
