@@ -10,6 +10,7 @@ use App\Models\Contato;
 use App\Models\Endereco;
 use App\Models\Estado;
 use App\Models\OrganizacaoControleSocial;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 
@@ -34,7 +35,13 @@ class OrganizacaoControleSocialController extends Controller
         $organizacao = OrganizacaoControleSocial::create($request->only('nome', 'cnpj', 'associacao_id', 'user_id'));
         $organizacao->contato()->create($request->only('email', 'telefone'));
         $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
-        $organizacao->agricultores()->sync($request->input('agricultores_id'));
+
+        foreach ($request->agricultores_id as $key)
+        {
+            $user = User::find($key);
+            $user->organizacao()->associate($organizacao)->save();
+        }
+
 
         DB::commit();
         return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
@@ -53,7 +60,11 @@ class OrganizacaoControleSocialController extends Controller
         $organizacao->update($request->only('nome','cnpj'));
         $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
         $organizacao->contato->update($request->only('email', 'telefone'));
-        $organizacao->agricultores()->sync($request->input('agricultores_id'));
+        foreach ($request->agricultores_id as $key)
+        {
+            $user = User::find($key);
+            $user->organizacao()->associate($organizacao)->save();
+        }
 
         return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
 

@@ -37,8 +37,7 @@ class OrganizacaoControleSocial extends Model
 
     public function agricultores()
     {
-        return $this->belongsToMany(User::class, 'ocs_agricultores', 'organizacoes_controle_social_id', 'agricultor_id')->withTimestamps();
-
+        return $this->hasMany(User::class, 'organizacao_id');
     }
 
     public function reunioes()

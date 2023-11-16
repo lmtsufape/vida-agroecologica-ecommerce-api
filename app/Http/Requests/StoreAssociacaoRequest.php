@@ -26,9 +26,9 @@ class StoreAssociacaoRequest extends StoreEnderecoRequest
         return array_merge(parent::rules(), [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
-            "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            "email"             => ['required', 'email', 'max:60', 'unique:contatos'],
             "telefone"          => ['required', "celular_com_ddd"],
-            "presidentes_id"    => ['required', 'array'],
+            "presidentes_id"    => ['required', 'array', 'min:1'],
             "secretarios_id"    => ['required', 'array'],
         ]);
     }
