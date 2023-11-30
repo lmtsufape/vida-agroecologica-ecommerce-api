@@ -90,10 +90,10 @@ Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/
 # Produtos
 Route::middleware('auth:sanctum')->controller(ProdutoController::class)->prefix('/produtos')->group(function () {
     Route::get('/categorias', 'getCategorias');
-    Route::get('/tabelados', 'getTabelados');
     Route::get('/{produto}/imagem', 'getImagem');
 });
 
+Route::get('/produtos/tabelados', [ProdutoController::class, 'getTabelados']);
 Route::get('/bancas/{banca}/produtos', [ProdutoController::class, 'getBancaProdutos']);
 
 Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanctum');
