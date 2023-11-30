@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Http\Controllers\Controller;
 use App\Services\FileService;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
@@ -49,7 +50,14 @@ class ProdutoController extends Controller
             $produto->restore();
             $produto->update($validatedData);
         } else {
-            $produto  = $banca->produtos()->create($validatedData);
+            try {
+                $produto  = $banca->produtos()->create($validatedData);
+            } catch (Exception $e) {
+                if ($e->getCode() === '23505') {
+                    return response()->json(['erro' => 'O produto já existe na banca.'], 400);
+                }
+            }
+
         }
 
         return response()->json(['produto' => $produto], 201);
