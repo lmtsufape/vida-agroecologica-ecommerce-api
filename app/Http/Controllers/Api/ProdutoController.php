@@ -57,7 +57,6 @@ class ProdutoController extends Controller
                     return response()->json(['erro' => 'O produto já existe na banca.'], 400);
                 }
             }
-
         }
 
         return response()->json(['produto' => $produto], 201);
