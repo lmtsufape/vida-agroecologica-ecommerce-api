@@ -37,18 +37,18 @@ class BancaController extends Controller
         foreach ($request->bairro_entrega as $bairro_info) {
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
         }
-        
+
         if ($banca->agricultor->associacao) {
             if ($banca->agricultor->associacao->feiras()->where('id', $banca->feira_id)->exists() || $banca->agricultor->organizacao->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
                 $banca->ativa = true;
             }
-            
+
             $banca->save();
         }
 
         if ($request->hasFile('imagem')) {
             $this->fileService->storeFile($request->file('imagem'), $banca); // Armazenar a imagem
-        } 
+        }
         DB::commit();
 
         return response()->json(['banca' => $banca], 201);
@@ -69,13 +69,17 @@ class BancaController extends Controller
         DB::beginTransaction();
         $banca->update($validatedData);
         $banca->formasPagamento()->sync($validatedData['formas_pagamento']);
+        $banca->bairros_info_entrega()->detach();
         foreach ($request->bairro_entrega as $bairro_info) {
-            $banca->bairros_info_entrega()->detach();
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
         }
 
         if ($request->hasFile('imagem')) {
-            $this->fileService->updateFile($request->file('imagem'), $banca); // Atualizar a imagem
+            if ($banca->file) {
+                $this->fileService->updateFile($request->file('imagem'), $banca->file); // Atualizar a imagem
+            } else {
+                $this->fileService->storeFile($request->file('imagem'), $banca);
+            }
         }
         DB::commit();
 
@@ -87,8 +91,10 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('delete', $banca);
 
-        $this->fileService->deleteFile($banca->file);
-        $banca->delete();
+        DB::transaction(function () use ($banca) {
+            $this->deleteImagem($banca->id);
+            $banca->delete();
+        });
 
         return response()->noContent();
     }
@@ -113,7 +119,7 @@ class BancaController extends Controller
         $banca = Banca::findOrFail($id);
         $this->authorize('deleteImagem', $banca);
 
-        $this->fileService->deleteFile($banca->file);
+        $banca->file ? $this->fileService->deleteFile($banca->file) : null;
 
         return response()->noContent();
     }
