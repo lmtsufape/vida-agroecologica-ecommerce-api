@@ -51,7 +51,6 @@ Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
     Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
     Route::get('/users/presidents', 'getPresidents');
-    Route::delete('/users/{id}', 'destroy');
 });
 
 Route::get('/users/enderecos', [UserController::class, 'indexEndereco'])->middleware('auth:sanctum');
@@ -171,20 +170,12 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
     });
 
  # ASSOCIAÇÃO
-
- Route::get('/associacoes', [AssociacaoController::class, 'index']);//funcionando
- Route::get('/associacoes/{id}', [AssociacaoController::class, 'show']);
- Route::post('/associacoes', [AssociacaoController::class, 'store']);//funcionando
- Route::patch('/associacoes/{id}', [AssociacaoController::class, 'update']);//funcionando
- Route::delete('/associacoes/{id}', [AssociacaoController::class, 'destroy']);
-
+ Route::apiResource('associacoes', AssociacaoController::class)->middleware('auth:sanctum');
 
  # OCS
- Route::get('/ocs', [OrganizacaoControleSocialController::class, 'index']);
  Route::get('/ocs/{id}', [OrganizacaoControleSocialController::class, 'show'])->where('id', '[0-9]+');
- Route::post('/ocs/store', [OrganizacaoControleSocialController::class, 'store']);
- Route::patch('/ocs/{id}', [OrganizacaoControleSocialController::class, 'update']);
- Route::delete('/ocs/{id}', [OrganizacaoControleSocialController::class, 'destroy']);
+ Route::apiResource('ocs', OrganizacaoControleSocialController::class)->except('show')->middleware('auth:sanctum');
+
 });
 
 Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix('/reunioes')->group(function () {
