@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Associacao;
+use App\Models\OrganizacaoControleSocial;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,14 +28,16 @@ class UpdateOrganizacaoRequest extends FormRequest
     {
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
-            "cnpj"              => ['required', 'cnpj', Rule::unique('organizacoes_controle_social')->ignore($this->ocs_id)],
-            "data_fundacao"     => ['required', 'date'],
-            "email"             => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            "cnpj"              => ['required', 'cnpj', Rule::unique('organizacoes_controle_social')->ignore($this->route('id'))],
+            "email"             => ['required', 'email', 'max:60', Rule::unique('contatos', 'email')->ignore(OrganizacaoControleSocial::find($this->route('id'))->contato->id)],
             "telefone"          => ['required', "celular_com_ddd"],
             "rua"               => ['required', 'string', 'min:3', "max:50"],
             "numero"            => ['required', 'numeric'],
             "cep"               => ['required', 'numeric', 'min:0', 'digits:8'],
-            "bairro_id"         => ['required', 'numeric'],
+            "bairro_id"         => ['required', 'integer'],
+            "associacao_id"     => ['required', 'integer', 'exists:associacoes,id'],
+            "agricultores_id"   => ['required', 'array', 'min:1'],
+            'agricultores_id.*' => ['integer', 'exists:users,id'],
         ];
     }
 

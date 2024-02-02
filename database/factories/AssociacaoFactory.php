@@ -17,8 +17,8 @@ class AssociacaoFactory extends Factory
     public function definition()
     {
         return [
-            'codigo' => fake()->unique()->numerify('########'),
             'nome' => 'Associação 1',
+            'data_fundacao' => now()
         ];
     }
 }

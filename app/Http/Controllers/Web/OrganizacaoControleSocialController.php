@@ -10,39 +10,87 @@ use App\Models\Contato;
 use App\Models\Endereco;
 use App\Models\Estado;
 use App\Models\OrganizacaoControleSocial;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 
 class OrganizacaoControleSocialController extends Controller
 {
-    public function index($associacao_id)
+    public function index()
     {
-        $listaOcs = OrganizacaoControleSocial::where('associacao_id', $associacao_id)->get();
-        $listaEstados = Estado::all();
+        $listaOcs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro')->get();
 
-        return response()->json(['Lista OCS'=>$listaOcs, 'Lista Estados' => $listaEstados]);
+        return response()->json(['ocs'=>$listaOcs]);
+    }
+
+    public function show($id)
+    {
+        $ocs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro')->findOrFail($id);
+        return response()->json(['ocs' => $ocs]);
     }
 
     public function store(StoreOrganizacaoRequest $request)
     {
         DB::beginTransaction();
-        $organizacao = OrganizacaoControleSocial::create($request->only('nome', 'cnpj', 'data_fundacao', 'associacao_id'));
+        $organizacao = OrganizacaoControleSocial::create($request->only('nome', 'cnpj', 'associacao_id', 'user_id'));
         $organizacao->contato()->create($request->only('email', 'telefone'));
-        $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id'));
+        $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
 
-        $associacao = Associacao::findOrFail($request->associacao_id);
+        foreach ($request->agricultores_id as $key)
+        {
+            $user = User::find($key);
+            $user->organizacao()->associate($organizacao)->save();
+        }
+
+
         DB::commit();
-        
-        return response()->json(['associacao'=> $associacao->load('organizacoescontrolesocial.endereco')]);
+        return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
+
+       //return response()->json(['associacao'=> $associacao->load('organizacoescontrolesocial.endereco')]);
     }
 
     public function update(UpdateOrganizacaoRequest $request, $id)
     {
-        $organizacao = OrganizacaoControleSocial::findOrFail($id);
-        $organizacao->update($request->only('nome','cnpj','data_fundacao'));
-        $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
-        $organizacao->contato()->udpate($request->only('email','telefone'));
+        $organizacao = OrganizacaoControleSocial::where('id', $id)->first();
 
-        return response()->json(['Organização' => $organizacao]);
+        if (!$organizacao) {
+            return response()->json(['message' => 'OCS não encontrada.'], 404);
+        }
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+        $organizacao->update($request->only('nome','cnpj'));
+        $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
+        $organizacao->contato->update($request->only('email', 'telefone'));
+        foreach ($request->agricultores_id as $key)
+        {
+            $user = User::find($key);
+            $user->organizacao()->associate($organizacao)->save();
+        }
+
+        return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
+
+    }
+    public function destroy($id)
+    {
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+
+        $organizacao->delete();
+
+        return response()->json($organizacao);
     }
 }
+
+
+// $associacao = Associacao::where('id', $id)->first();
+
+// if (!$associacao) {
+//     return response()->json(['message' => 'Associação não encontrada.'], 404);
+// }
+
+// $associacao->update($request->only('nome', 'data_fundacao'));
+// $associacao->contato()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'cep', 'rua', 'numero', 'bairro_id'));
+// $associacao->endereco()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'email','telefone'));
+
+// $associacao->presidentes()->sync($request->input('presidentes_id'));
+// $associacao->secretarios()->sync($request->input('secretarios_id'));
+
+// return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'secretarios', 'endereco'])]);

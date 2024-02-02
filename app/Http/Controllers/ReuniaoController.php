@@ -25,6 +25,7 @@ class ReuniaoController extends Controller
         return response()->json(['reunioes' => $reunioes]);
     }
 
+
     public function store(StoreReuniaoRequest $request)
     {
         $validatedData = $request->validated();
@@ -58,6 +59,8 @@ class ReuniaoController extends Controller
     public function destroy($id)
     {
         $reuniao = Reuniao::findOrFail($id);
+
+
 
         DB::beginTransaction();
         $this->fileService->deleteAllFiles($reuniao);

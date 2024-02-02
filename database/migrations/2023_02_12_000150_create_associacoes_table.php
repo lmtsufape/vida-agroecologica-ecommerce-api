@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('nome', 60);
-            $table->string('codigo')->unique();
+            $table->date('data_fundacao');
 
             $table->timestamps();
         });

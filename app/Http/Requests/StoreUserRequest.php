@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends StoreEnderecoRequest
 {
+
     public function prepareForValidation()
     {
         $roles = $this->input('roles');
