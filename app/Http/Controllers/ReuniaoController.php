@@ -70,6 +70,13 @@ class ReuniaoController extends Controller
         return response()->noContent();
     }
 
+    public function show($id)
+    {
+        $reuniao = Reuniao::findOrFail($id)->load(['ata', 'anexos', 'participantes']);
+
+        return response()->json(['reuniao' => $reuniao]);
+    }
+
     public function anexarAta(Request $request, $id)
     {
         $request->validate(['ata' => 'required|file|mimes:jpeg,png,pdf|max:2048']);
