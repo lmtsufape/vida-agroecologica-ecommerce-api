@@ -174,7 +174,7 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
 
  # OCS
  Route::get('/ocs/{id}', [OrganizacaoControleSocialController::class, 'show'])->where('id', '[0-9]+');
- Route::apiResource('ocs', OrganizacaoControleSocialController::class)->except('show')->middleware('auth:sanctum');
+ Route::apiResource('ocs', OrganizacaoControleSocialController::class)->middleware('auth:sanctum');
 
 });
 
