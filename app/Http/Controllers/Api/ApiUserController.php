@@ -35,8 +35,7 @@ class ApiUserController extends UserController
     {
         $user = parent::show($id);
 
-        $user->load('roles');
-        $user->load('contato');
+        $user->load(['roles', 'contato']);
 
         return response()->json(['user' => $user], 200);
     }
@@ -60,10 +59,4 @@ class ApiUserController extends UserController
         return response()->json($user);
     }
 
-    public function updateUserRoles(Request $request, $id)
-    {
-        parent::updateUserRoles($request, $id);
-
-        return response()->json(['message' => 'Roles alteradas com sucesso.'], 200);
-    }
 }
