@@ -19,7 +19,6 @@ class OrganizacaoControleSocialFactory extends Factory
         return [
             'nome' => 'Organização de Controle Social',
             'cnpj' => '000.000.000-00',
-            'data_fundacao' => today(),
             'associacao_id' => 1,
         ];
     }

@@ -13,18 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('organizacoes_controle_social', function (Blueprint $table) {
+        Schema::create('associacao_secretario', function (Blueprint $table) {
             $table->id();
 
-            $table->string('nome', 60);
-            $table->string('cnpj', 18)->unique();
-
-            $table->foreignId('associacao_id')->constrained('associacoes')->restrictOnDelete();
+            $table->foreignId('associacao_id')->constrained('associacoes')->cascadeOnDelete();
+            $table->foreignId('secretario_id')->constrained('users')->restrictOnDelete();
+            $table->unique(['associacao_id', 'secretario_id']);
 
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organizacoes_controle_social');
+        Schema::dropIfExists('associacao_secretario');
     }
 };

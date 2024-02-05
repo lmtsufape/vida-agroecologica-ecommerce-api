@@ -16,15 +16,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/check', function () {
+    return response()->json(['message' => 'Vida Agroecológica API']);
 });
 
 // Auth
 Route::controller(WebAuthController::class)->group(function () {
-    Route::get('/login', 'showLoginForm')->middleware('guest')->name('login');
-    Route::post('/login', 'authenticate')->middleware('guest');
-    Route::post('/logout', 'logout')->middleware('auth')->name('logout');
 
     Route::get('/email/verify', 'showEmailNotice')->middleware('auth')->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', 'verifyEmail')->middleware('signed')->name('verification.verify');
@@ -60,5 +57,5 @@ Route::get('/home', [App\Http\Controllers\Web\HomeController::class, 'index'])->
 
 
 
-   
+
 

@@ -14,10 +14,10 @@ class OrganizacaoControleSocial extends Model
     protected $fillable = [
         "nome",
         "cnpj",
-        "data_fundacao",
         "contato_id",
         "endereco_id",
-        "associacao_id"
+        "associacao_id",
+        "user_id"
     ];
 
     public function endereco()
@@ -37,7 +37,7 @@ class OrganizacaoControleSocial extends Model
 
     public function agricultores()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'organizacao_id');
     }
 
     public function reunioes()
