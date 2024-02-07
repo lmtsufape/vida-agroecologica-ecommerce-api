@@ -30,24 +30,27 @@ class OrganizacaoControleSocialController extends Controller
     }
 
     public function store(StoreOrganizacaoRequest $request)
-    {
-        DB::beginTransaction();
-        $organizacao = OrganizacaoControleSocial::create($request->only('nome', 'cnpj', 'associacao_id', 'user_id'));
-        $organizacao->contato()->create($request->only('email', 'telefone'));
-        $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
-
-        foreach ($request->agricultores_id as $key)
-        {
-            $user = User::find($key);
-            $user->organizacao()->associate($organizacao)->save();
-        }
+{
+    DB::beginTransaction();
+    $organizacaoData = $request->only('nome', 'cnpj', 'associacao_id', 'user_id');
+    $organizacao = OrganizacaoControleSocial::create($organizacaoData);
 
 
-        DB::commit();
-        return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
-
-       //return response()->json(['associacao'=> $associacao->load('organizacoescontrolesocial.endereco')]);
+    if ($request->has('email') && $request->has('telefone')) {
+        $contatoData = $request->only('email', 'telefone');
+        $organizacao->contato()->create($contatoData);
     }
+
+    $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
+
+    foreach ($request->agricultores_id as $key) {
+        $user = User::find($key);
+        $user->organizacao()->associate($organizacao)->save();
+    }
+
+    DB::commit();
+    return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
+}
 
     public function update(UpdateOrganizacaoRequest $request, $id)
     {

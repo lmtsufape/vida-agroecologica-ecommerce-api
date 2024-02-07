@@ -26,20 +26,25 @@ class AssociacaoController extends Controller
     }
 
     public function store(StoreAssociacaoRequest $request)
-    {
+{
+    DB::beginTransaction();
 
-        DB::beginTransaction();
+    $associacaoData = $request->only('nome', 'data_fundacao', 'user_id');
+    $associacao = Associacao::create($associacaoData);
 
-        $associacao = Associacao::create($request->only('nome', 'data_fundacao', 'user_id'));
-        $associacao->contato()->create($request->only('email','telefone'));
-        $associacao->presidentes()->sync($request->input('presidentes_id'));
-        $associacao->secretarios()->sync($request->input('secretarios_id'));
-        $associacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
-        DB::commit();
-
-        return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'endereco', 'secretarios'])]);
+    if ($request->filled('email') && $request->filled('telefone')) {
+        $contatoData = $request->only('email', 'telefone');
+        $associacao->contato()->create($contatoData);
     }
 
+    $associacao->presidentes()->sync($request->input('presidentes_id'));
+    $associacao->secretarios()->sync($request->input('secretarios_id'));
+    $associacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
+
+    DB::commit();
+
+    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'endereco', 'secretarios'])]);
+}
     public function destroy($id)
     {
         $associacao = Associacao::findOrFail($id);
