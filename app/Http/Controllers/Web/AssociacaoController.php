@@ -26,25 +26,25 @@ class AssociacaoController extends Controller
     }
 
     public function store(StoreAssociacaoRequest $request)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    $associacaoData = $request->only('nome', 'data_fundacao', 'user_id');
-    $associacao = Associacao::create($associacaoData);
+        $associacaoData = $request->only('nome', 'data_fundacao', 'user_id');
+        $associacao = Associacao::create($associacaoData);
 
-    if ($request->filled('email') && $request->filled('telefone')) {
-        $contatoData = $request->only('email', 'telefone');
-        $associacao->contato()->create($contatoData);
+        if ($request->filled('email') && $request->filled('telefone')) {
+            $contatoData = $request->only('email', 'telefone');
+            $associacao->contato()->create($contatoData);
+        }
+
+        $associacao->presidentes()->sync($request->input('presidentes_id'));
+        $associacao->secretarios()->sync($request->input('secretarios_id'));
+        $associacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
+
+        DB::commit();
+
+        return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'endereco', 'secretarios'])]);
     }
-
-    $associacao->presidentes()->sync($request->input('presidentes_id'));
-    $associacao->secretarios()->sync($request->input('secretarios_id'));
-    $associacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
-
-    DB::commit();
-
-    return response()->json(['associacao' => $associacao->load(['presidentes', 'contato', 'endereco', 'secretarios'])]);
-}
     public function destroy($id)
     {
         $associacao = Associacao::findOrFail($id);
@@ -61,7 +61,9 @@ class AssociacaoController extends Controller
 
 
         $associacao->update($request->only('nome', 'data_fundacao'));
-        $associacao->contato()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'cep', 'rua', 'numero', 'bairro_id'));
+        if ($request->has('email') && $request->has('telefone')) {
+            $associacao->contato->update($request->only('email', 'telefone'));
+        }
         $associacao->endereco()->update($request->except('_token', 'nome', 'data_fundacao','presidentes_id', 'secretarios_id', 'email','telefone'));
 
         $associacao->presidentes()->sync($request->input('presidentes_id'));

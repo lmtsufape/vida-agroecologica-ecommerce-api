@@ -30,48 +30,52 @@ class OrganizacaoControleSocialController extends Controller
     }
 
     public function store(StoreOrganizacaoRequest $request)
-{
-    DB::beginTransaction();
-    $organizacaoData = $request->only('nome', 'cnpj', 'associacao_id', 'user_id');
-    $organizacao = OrganizacaoControleSocial::create($organizacaoData);
+    {
+        DB::beginTransaction();
+        $organizacaoData = $request->only('nome', 'cnpj', 'associacao_id', 'user_id');
+        $organizacao = OrganizacaoControleSocial::create($organizacaoData);
 
 
-    if ($request->has('email') && $request->has('telefone')) {
-        $contatoData = $request->only('email', 'telefone');
-        $organizacao->contato()->create($contatoData);
+        if ($request->has('email') && $request->has('telefone')) {
+            $contatoData = $request->only('email', 'telefone');
+            $organizacao->contato()->create($contatoData);
+        }
+
+        $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
+
+        foreach ($request->agricultores_id as $key) {
+            $user = User::find($key);
+            $user->organizacao()->associate($organizacao)->save();
+        }
+
+        DB::commit();
+        return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
     }
-
-    $organizacao->endereco()->create($request->only('rua', 'cep', 'numero', 'bairro_id', 'complemento'));
-
-    foreach ($request->agricultores_id as $key) {
-        $user = User::find($key);
-        $user->organizacao()->associate($organizacao)->save();
-    }
-
-    DB::commit();
-    return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
-}
-
     public function update(UpdateOrganizacaoRequest $request, $id)
     {
-        $organizacao = OrganizacaoControleSocial::where('id', $id)->first();
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
 
         if (!$organizacao) {
             return response()->json(['message' => 'OCS não encontrada.'], 404);
         }
-        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+
         $organizacao->update($request->only('nome','cnpj'));
         $organizacao->endereco()->update($request->only('rua','numero','cep','bairro_id'));
-        $organizacao->contato->update($request->only('email', 'telefone'));
-        foreach ($request->agricultores_id as $key)
-        {
+
+        if ($request->has('email') && $request->has('telefone')) {
+            $organizacao->contato->update($request->only('email', 'telefone'));
+        }
+
+        foreach ($request->agricultores_id as $key) {
             $user = User::find($key);
             $user->organizacao()->associate($organizacao)->save();
         }
 
         return response()->json(['organizacao' => $organizacao->load(['agricultores', 'contato', 'endereco', 'associacao'])]);
-
     }
+
+
+
     public function destroy($id)
     {
         $organizacao = OrganizacaoControleSocial::findOrFail($id);
