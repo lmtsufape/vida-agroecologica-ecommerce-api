@@ -57,8 +57,9 @@ class StoreReuniaoRequest extends FormRequest
                 'exists:associacoes,id'
             ],
             'organizacao_id' => [
-                'required',
+                'nullable',
                 'integer',
+                'sometimes',
                 'exists:organizacoes_controle_social,id'
             ],
         ];
