@@ -137,6 +137,9 @@ class ProdutoController extends Controller
     public function getImagem($id)
     {
         $produto = ProdutoTabelado::findOrFail($id);
+
+        if (!$produto->file) return response()->json(['error' => 'Imagem não encontrada.'], 404);
+        
         $caminho = $produto->file->path;
 
         $dados['file'] = file_get_contents($caminho);
