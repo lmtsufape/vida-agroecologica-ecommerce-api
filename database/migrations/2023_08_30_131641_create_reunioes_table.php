@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('tipo', ['ordinaria', 'extraordinaria', 'multirao']);
 
             $table->foreignId('associacao_id')->constrained('associacoes');
-            $table->foreignId('organizacao_id')->constrained('organizacoes_controle_social');
+            $table->foreignId('organizacao_id')->nullable()->constrained('organizacoes_controle_social')->nullOnDelete();
             $table->timestamps();
         });
     }
