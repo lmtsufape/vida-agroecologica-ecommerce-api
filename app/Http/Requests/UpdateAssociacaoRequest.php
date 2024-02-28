@@ -29,7 +29,7 @@ class UpdateAssociacaoRequest extends FormRequest
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
-            "email"             => ['nullable', 'email', 'max:60', Rule::unique('contatos', 'email')->ignore(Associacao::find($this->route('associaco'))->contato->id)],
+            "email"             => ['nullable', 'email', 'max:60', 'unique:contatos'],
             "telefone"          => ['nullable', "celular_com_ddd"],
             "presidentes_id"    => ['required', 'array', 'min:1'],
             "secretarios_id"    => ['required', 'array'],
