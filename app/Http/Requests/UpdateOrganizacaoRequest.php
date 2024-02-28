@@ -44,7 +44,6 @@ class UpdateOrganizacaoRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'cnpj'       => preg_replace('/[^0-9]/', '', $this->cnpj),
             'cep'        => preg_replace('/[^0-9]/', '', $this->cep)
         ]);
     }
