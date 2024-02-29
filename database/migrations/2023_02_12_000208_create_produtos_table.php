@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('descricao', 120);
+            $table->string('titulo', 50);
             $table->string('tipo_medida', 30);
             $table->double('estoque', 6, 3);
             $table->decimal('preco');
@@ -25,7 +26,7 @@ return new class extends Migration
 
             $table->foreignId('banca_id')->constrained('bancas')->cascadeOnDelete();
             $table->foreignId('produto_tabelado_id')->constrained('produtos_tabelados')->restrictOnDelete();
-            $table->unique(['banca_id', 'produto_tabelado_id']);
+
 
             $table->timestamps();
             $table->softDeletes();

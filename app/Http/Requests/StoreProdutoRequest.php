@@ -28,10 +28,11 @@ class StoreProdutoRequest extends FormRequest
     {
         return [
             'descricao' =>  'required|max:120|string',
-            'tipo_medida' => 'required|in:unidade,fracionario,peso',
+            'titulo' => 'required|max:50|string',
+            'tipo_medida' => 'required|in:Unidade,Fracionario,Peso,Molho,Kg,Litro,Pote,Dúzia,Mão,Arroba,Bandeja',
             'estoque' => 'required|numeric',
             'preco' => 'required|decimal:2',
-            'custo' => 'required|decimal:2',
+            'custo' => 'decimal:2',
             'banca_id' => 'required|integer|exists:bancas,id',
             'produto_tabelado_id' => 'required|integer|exists:produtos_tabelados,id'
         ];

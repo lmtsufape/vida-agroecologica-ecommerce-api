@@ -28,7 +28,8 @@ class UpdateProdutoRequest extends FormRequest
     {
         return [
             'descricao' => 'nullable|max:120|string',
-            'tipo_medida' => 'nullable|in:unidade,fracionario,peso',
+            'titulo' => 'required|max:50|string',
+            'tipo_medida' => 'required|in:Unidade,Fracionario,Peso,Molho,Kg,Litro,Pote,Dúzia,Mão,Arroba,Bandeja',
             'estoque' => 'nullable|numeric',
             'preco' => 'nullable|decimal:2',
             'custo' => 'nullable|decimal:2',
