@@ -39,6 +39,7 @@ class ProdutoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function store(StoreProdutoRequest $request)
     {
         $validatedData = $request->validated();
@@ -50,13 +51,7 @@ class ProdutoController extends Controller
             $produto->restore();
             $produto->update($validatedData);
         } else {
-            try {
-                $produto  = $banca->produtos()->create($validatedData);
-            } catch (Exception $e) {
-                if ($e->getCode() === '23505') {
-                    return response()->json(['erro' => 'O produto já existe na banca.'], 400);
-                }
-            }
+            $produto  = $banca->produtos()->create($validatedData);
         }
 
         return response()->json(['produto' => $produto], 201);
@@ -111,7 +106,7 @@ class ProdutoController extends Controller
     public function getTabelados()
     {
         $produtos = ProdutoTabelado::all();
-        
+
         $produtos->map(function ($produto) {
             $arquivo = $produto->file;
             if ($arquivo) {
@@ -139,7 +134,7 @@ class ProdutoController extends Controller
         $produto = ProdutoTabelado::findOrFail($id);
 
         if (!$produto->file) return response()->json(['error' => 'Imagem não encontrada.'], 404);
-        
+
         $caminho = $produto->file->path;
 
         $dados['file'] = file_get_contents($caminho);
