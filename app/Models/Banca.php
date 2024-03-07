@@ -21,6 +21,7 @@ class Banca extends Model implements FileableInterface
         'horario_abertura',
         'horario_fechamento',
         'preco_minimo',
+        'entrega',
         'feira_id',
         'agricultor_id'
     ];
@@ -31,6 +32,7 @@ class Banca extends Model implements FileableInterface
         'descricao',
         'horario_abertura',
         'horario_fechamento',
+        'entrega',
         'preco_minimo',
         'feira_id',
         'agricultor_id'

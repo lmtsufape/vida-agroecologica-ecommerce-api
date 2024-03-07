@@ -28,12 +28,15 @@ class StoreBancaRequest extends FormRequest
             }
             $this->merge(['bairro_entrega' => $valores]); // Atualiza o valor no request
         }
+
+        $entrega = $this->input('entrega');
+        $this->merge(['entrega' => filter_var($entrega, FILTER_VALIDATE_BOOLEAN)]);
     }
 
     public function authorize(): bool
     {
         $user = User::findOrFail($this->input('agricultor_id'));
-        
+
         return $this->user()->can('create', [Banca::class, $user]);
     }
 
@@ -61,8 +64,11 @@ class StoreBancaRequest extends FormRequest
                 'date_format:H:i',
                 'after:horario_abertura'
             ],
-            'preco_minimo' => [
+            'entrega' => [
                 'required',
+                'boolean'
+            ],
+            'preco_minimo' => [
                 'string'
             ],
             'imagem' => [
