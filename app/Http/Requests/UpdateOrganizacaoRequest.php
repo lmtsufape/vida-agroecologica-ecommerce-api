@@ -29,7 +29,7 @@ class UpdateOrganizacaoRequest extends FormRequest
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "cnpj"              => ['required', 'cnpj', Rule::unique('organizacoes_controle_social')->ignore($this->route('id'))],
-            "email"             => ['nullable', 'email', 'max:60', Rule::unique('contatos', 'email')->ignore(OrganizacaoControleSocial::find($this->route('oc'))->contato->id)],
+            "email"             => ['nullable', 'email', 'max:60', 'unique:contatos'],
             "telefone"          => ['nullable', "celular_com_ddd"],
             "rua"               => ['required', 'string', 'min:3', "max:50"],
             "numero"            => ['required', 'numeric'],
@@ -44,7 +44,6 @@ class UpdateOrganizacaoRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'cnpj'       => preg_replace('/[^0-9]/', '', $this->cnpj),
             'cep'        => preg_replace('/[^0-9]/', '', $this->cep)
         ]);
     }
