@@ -35,8 +35,7 @@ class OrganizacaoControleSocialController extends Controller
         $organizacaoData = $request->only('nome', 'cnpj', 'associacao_id', 'user_id');
         $organizacao = OrganizacaoControleSocial::create($organizacaoData);
 
-
-        if ($request->has('email') && $request->has('telefone')) {
+        if ($request->filled('email') && $request->filled('telefone')) {
             $contatoData = $request->only('email', 'telefone');
             $organizacao->contato()->create($contatoData);
         }
