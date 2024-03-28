@@ -84,4 +84,13 @@ class FeiraController extends Controller
 
         return response()->noContent();
     }
+
+    public function getBancas($id)
+    {
+        $feira = Feira::findOrFail($id);
+
+        $bancas = $feira->bancas;
+
+        return response()->json(['bancas' => $bancas], 200);
+    }
 }
