@@ -44,4 +44,12 @@ class BairroController extends Controller
 
         return response()->noContent();
     }
+
+    public function bairrosPorCidade($cidade_id)
+    {
+        $cidade = Cidade::findOrFail($cidade_id);
+        $bairros = $cidade->bairros;
+
+        return response()->json(['bairros' => $bairros], 200);
+    }
 }
