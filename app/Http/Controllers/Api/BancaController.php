@@ -22,8 +22,8 @@ class BancaController extends Controller
     public function index()
     {
         $bancas = Banca::whereHas('agricultor', function ($query) {
-            return $query->ativo;
-        });
+            $query->where('ativo', true);
+        })->get();
 
         return response()->json(['bancas' => $bancas], 200);
     }
