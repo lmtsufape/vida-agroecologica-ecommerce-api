@@ -32,13 +32,14 @@ class UserSeeder extends Seeder
             $user = User::factory()->create([
                 'email' => $emails[$indice],
                 'cpf' => '999.999.999-9' . (9 - $indice),
+                'ativo' => true
             ]);
 
             $user->roles()->attach($role);
             $user->contato()->save($contatos[$indice]);
         }
 
-        $banca = Banca::factory()->create(['ativa' => true]);
+        $banca = Banca::factory()->create();
         $banca->formasPagamento()->attach(1);
 
         Endereco::factory()->create();

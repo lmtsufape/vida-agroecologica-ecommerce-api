@@ -27,7 +27,7 @@ class UpdateProdutoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' => 'nullable|max:120|string',
+            'descricao' => 'nullable|string',
             'titulo' => 'required|max:50|string',
             'tipo_medida' => 'required|in:Unidade,Fracionario,Peso,Molho,Kg,Litro,Pote,Dúzia,Mão,Arroba,Bandeja',
             'estoque' => 'nullable|numeric',

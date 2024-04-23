@@ -77,7 +77,7 @@ class VendaPolicy
     public function create(User $user, Banca $banca)
     {
         if ($user->hasAnyRoles(['consumidor'])) {
-            if ($banca->ativa) {
+            if ($banca->agricultor->ativo) {
                 return Response::allow();
             }
         }

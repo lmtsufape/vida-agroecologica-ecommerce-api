@@ -27,7 +27,7 @@ class StoreProdutoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' =>  'required|max:120|string',
+            'descricao' =>  'required|string',
             'titulo' => 'required|max:50|string',
             'tipo_medida' => 'required|in:Unidade,Fracionario,Peso,Molho,Kg,Litro,Pote,Dúzia,Mão,Arroba,Bandeja',
             'estoque' => 'required|numeric',

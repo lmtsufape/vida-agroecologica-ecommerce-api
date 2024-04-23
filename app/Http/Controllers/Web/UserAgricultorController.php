@@ -26,6 +26,7 @@ class UserAgricultorController extends Controller
         $organizacao = OrganizacaoControleSocial::findOrFail($request->organizacao_id);
 
         $agricultor->organizacao()->associate($organizacao);
+        $agricultor->ativo = true;
         $agricultor->save();
 
         return response()->json();

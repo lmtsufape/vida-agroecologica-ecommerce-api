@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBancaRequest;
 use App\Http\Requests\UpdateBancaRequest;
 use App\Models\Banca;
-use App\Models\File;
 use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +21,9 @@ class BancaController extends Controller
 
     public function index()
     {
-        $bancas = Banca::all();
+        $bancas = Banca::whereHas('agricultor', function ($query) {
+            return $query->ativo;
+        });
 
         return response()->json(['bancas' => $bancas], 200);
     }
@@ -36,14 +37,6 @@ class BancaController extends Controller
         $banca->formasPagamento()->sync($validatedData['formas_pagamento']);
         foreach ($request->bairro_entrega as $bairro_info) {
             $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
-        }
-
-        if ($banca->agricultor->associacao) {
-            if ($banca->agricultor->associacao->feiras()->where('id', $banca->feira_id)->exists() || $banca->agricultor->organizacao->associacao->feiras()->where('id', $banca->feira_id)->exists()) {
-                $banca->ativa = true;
-            }
-
-            $banca->save();
         }
 
         if ($request->hasFile('imagem')) {

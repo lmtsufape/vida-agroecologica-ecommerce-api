@@ -24,7 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail, reset
         'name',
         'email',
         'password',
-        'cpf'
+        'cpf',
+        'ativo'
     ];
 
     /**
@@ -65,6 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail, reset
     {
         return $this->belongsToMany(Associacao::class, 'associacao_presidente', 'presidente_id', 'associacao_id')->withTimestamps();
     }
+    
     public function assocacoesGerenciadas() //Secretarios
     {
         return $this->belongsToMany( Associacao::class, 'associacao_secretario', 'secretario_id', 'associacao_id')->withTimestamps();
