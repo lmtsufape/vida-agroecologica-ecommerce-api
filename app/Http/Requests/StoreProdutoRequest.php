@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Banca;
+use App\Models\Produto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProdutoRequest extends FormRequest

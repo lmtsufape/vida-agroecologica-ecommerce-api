@@ -7,10 +7,9 @@ use App\Models\Produto;
 use App\Models\ProdutoTabelado;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\FileService;
-use Exception;
-use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -122,11 +121,14 @@ class ProdutoController extends Controller
         return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
     }
 
-    public function getBancaProdutos($id)
+    public function getBancaProdutos(Request $request, $id)
     {
         $banca = Banca::findOrFail($id);
+        $produtos = $banca->produtos()->whereHas('produtoTabelado', function ($query) use ($request) {
+            $query->where('nome', 'ilike', "%$request->search%");
+        })->get();
 
-        return response()->json(['produtos' => $banca->produtos], 200);
+        return response()->json(['produtos' => $produtos], 200);
     }
 
     public function getImagem($id)
