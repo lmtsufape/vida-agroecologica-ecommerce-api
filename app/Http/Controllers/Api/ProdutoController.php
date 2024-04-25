@@ -118,7 +118,7 @@ class ProdutoController extends Controller
 
     public function getCategorias()
     {
-        return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
+        return response()->json(['categorias' => ProdutoTabelado::distinct()->whereNotNull('categoria')->pluck('categoria')], 200);
     }
 
     public function getBancaProdutos(Request $request, $id)
