@@ -124,9 +124,11 @@ class ProdutoController extends Controller
     public function getBancaProdutos(Request $request, $id)
     {
         $banca = Banca::findOrFail($id);
-        $produtos = $banca->produtos()->whereHas('produtoTabelado', function ($query) use ($request) {
+        $produtos = $banca->produtos()->whereHas('produtoTabelado', function ($query) use ($request) {  // Produtos da banca de id $id, filtrados pelo termo de busca e agrupados por categoria
             $query->where('nome', 'ilike', "%$request->search%");
-        })->get();
+        })->with('produtoTabelado')->get()->groupBy(function ($produto) {
+            return $produto->produtoTabelado->categoria;
+        })->setHidden(['produtoTabelado']);
 
         return response()->json(['produtos' => $produtos], 200);
     }
