@@ -124,9 +124,7 @@ class ProdutoController extends Controller
     public function getBancaProdutos(Request $request, $id)
     {
         $banca = Banca::findOrFail($id);
-        $produtos = $banca->produtos()->whereHas('produtoTabelado', function ($query) use ($request) {  // Produtos da banca de id $id, filtrados pelo termo de busca e adicionado o campo categoria.
-            $query->where('nome', 'ilike', "%$request->search%");
-        })->get()->map(function ($produto) {
+        $produtos = $banca->produtos()->where('titulo', 'ilike', "%$request->search%")->get()->map(function ($produto) {
             $produto->categoria = $produto->produtoTabelado->categoria;
             return $produto;
         })->setHidden(['produtoTabelado']);
