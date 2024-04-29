@@ -8,12 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Enums\VendaStatusEnum;
 
 class Venda extends Model implements FileableInterface
 {
     use HasFactory;
 
     protected $fillable = ['tipo_entrega'];
+
+    protected $enumCasts = [
+        'status' => VendaStatusEnum::class,
+    ];
 
     public function banca(): BelongsTo
     {
