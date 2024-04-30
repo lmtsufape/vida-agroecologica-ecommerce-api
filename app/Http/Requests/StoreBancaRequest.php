@@ -100,6 +100,10 @@ class StoreBancaRequest extends FormRequest
             'bairro_entrega.*.1' => [
                 'string'
             ],
+            'pix' => [
+                'nullable',
+                'string'
+            ],
             'feira_id' => [
                 'required',
                 'integer',
