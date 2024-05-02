@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFeiraRequest;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class FeiraController extends Controller
 {
@@ -92,5 +93,13 @@ class FeiraController extends Controller
         $bancas = $feira->bancas;
 
         return response()->json(['bancas' => $bancas], 200);
+    }
+
+    public function buscar(Request $request)
+    {
+        $request->validate(['q' => 'required|string']);
+        $bancas = Feira::where('nome', 'ilike', "%$request->q%")->get();
+
+        return $bancas->count() != 0 ? Response()->json(['success' => 'busca concluída', 'bancas' => $bancas], 200) : abort(404);
     }
 }

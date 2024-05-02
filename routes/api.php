@@ -113,6 +113,8 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
     Route::delete('/{feira}/imagem', 'deleteImagem');
 
     Route::get('/{feira}/bancas', 'getBancas');
+
+    Route::get('/search', 'buscar');
 });
 
 # Bairros
