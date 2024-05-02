@@ -9,6 +9,7 @@ use App\Models\Banca;
 use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class BancaController extends Controller
 {
@@ -115,5 +116,18 @@ class BancaController extends Controller
         $banca->file ? $this->fileService->deleteFile($banca->file) : null;
 
         return response()->noContent();
+    }
+
+    public function updatePix(Request $request, $id)
+    {
+        $request->validate([
+            'pix' => 'required|string'
+        ]);
+        $banca = Banca::findOrFail($id);
+        if (!$request->user()->can('update', $banca)) abort(403);
+
+        $banca->update(['pix' => $request->pix]);
+
+        return response()->json(['success' => $banca], 200);
     }
 }
