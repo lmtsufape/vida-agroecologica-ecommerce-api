@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
     Route::get('/agricultores/{agricultor}', 'getAgricultorBancas');
     Route::delete('/{banca}/imagem', 'deleteImagem');
     Route::put('/{banca}/pix', 'updatePix');
+    Route::get('/search', 'buscar');
 });
 
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');

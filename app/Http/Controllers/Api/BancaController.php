@@ -128,6 +128,14 @@ class BancaController extends Controller
 
         $banca->update(['pix' => $request->pix]);
 
-        return response()->json(['success' => $banca], 200);
+        return response()->json(['success' => 'Pix atualizado', 'banca' => $banca], 200);
+    }
+
+    public function buscar(Request $request)
+    {
+        $request->validate(['q' => 'required|string']);
+        $bancas = Banca::where('nome', 'ilike', "%$request->q%")->get();
+
+        return $bancas->count() != 0 ? Response()->json(['success' => 'busca concluída', 'bancas' => $bancas], 200) : abort(404);
     }
 }
