@@ -132,6 +132,7 @@ Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('
     Route::post('/', 'store')->middleware('role:administrador');
     Route::patch('/{cidade}', 'update')->middleware('role:administrador');
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
+    Route::get('/search', 'buscar');
 });
 
 # Estados

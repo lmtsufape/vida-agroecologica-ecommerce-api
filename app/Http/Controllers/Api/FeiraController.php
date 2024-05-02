@@ -98,8 +98,8 @@ class FeiraController extends Controller
     public function buscar(Request $request)
     {
         $request->validate(['q' => 'required|string']);
-        $bancas = Feira::where('nome', 'ilike', "%$request->q%")->get();
+        $feiras = Feira::where('nome', 'ilike', "%$request->q%")->get();
 
-        return $bancas->count() != 0 ? Response()->json(['success' => 'busca concluída', 'bancas' => $bancas], 200) : abort(404);
+        return $feiras->count() != 0 ? Response()->json(['success' => 'busca concluída', 'feiras' => $feiras], 200) : abort(404);
     }
 }
