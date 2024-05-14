@@ -8,6 +8,7 @@ use App\Models\Reuniao;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use ZipArchive;
 
 class ReuniaoController extends Controller
 {
@@ -131,4 +132,36 @@ class ReuniaoController extends Controller
 
         return response()->json(['success' => 'Anexo atualizado com sucesso.']);
     }
+
+    public function downloadAllAnexos($id)
+    {
+        try {
+
+            $reuniao = Reuniao::with('anexos')->findOrFail($id);
+            $zipFile = tempnam(sys_get_temp_dir(), 'anexos') . '.zip';
+            $zip = new \ZipArchive;
+            if ($zip->open($zipFile, \ZipArchive::CREATE) !== TRUE) {
+                throw new Exception("Cannot open ZIP file");
+            }
+
+            foreach ($reuniao->anexos as $anexo) {
+                $filePath = storage_path('app/' . $anexo->path);
+                if (!file_exists($filePath)) {
+                    throw new Exception("File does not exist: " . $filePath);
+                }
+                if (!$zip->addFile($filePath, basename($filePath))) {
+                    throw new Exception("Cannot add file: " . $filePath);
+                }
+            }
+
+            $zip->close();
+
+            return response()->download($zipFile, "reuniao_{$id}_anexos.zip")->deleteFileAfterSend(true);
+            
+        } catch (Exception $e) {
+            \Log::error("Failed to download all anexos: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to process your request'], 500);
+        }
+    }
+    
 }

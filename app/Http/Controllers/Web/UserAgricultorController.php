@@ -31,4 +31,19 @@ class UserAgricultorController extends Controller
 
         return response()->json();
     }
+
+    public function desvincularAgricultor($id)
+    {
+        $agricultor = User::find($id);
+
+        if (!$agricultor) {
+            return response()->json(['message' => 'Agricultor não encontrado.'], 404);
+        }
+
+        $agricultor->organizacao()->dissociate();
+        $agricultor->save();
+
+        return response()->json(['message' => 'Agricultor desvinculado com sucesso da organização.'], 200);
+    }
+
 }
