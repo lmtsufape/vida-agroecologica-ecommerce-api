@@ -15,6 +15,7 @@ use App\Models\Endereco;
 use App\Models\FormaPagamento;
 use App\Models\Produto;
 use App\Models\Venda;
+use App\Enums\VendaStatusEnum;
 use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,7 @@ class VendaController extends Controller
 
         DB::beginTransaction();
         $venda = new Venda();
-        $venda->status = 'pedido realizado';
+        $venda->status = VendaStatusEnum::A_CONFIRMACAO();
         $venda->tipo_entrega = $validatedData['tipo_entrega'];
         $venda->data_pedido = now();
         $venda->consumidor()->associate($consumidor);
@@ -140,13 +141,17 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('confirmarVenda', $venda);
 
-        if ($venda->status != 'pedido realizado') {
+        if ($venda->status != VendaStatusEnum::A_CONFIRMACAO()) {
             return response()->json(['error' => 'Esta venda já foi confirmada ou recusada.'], 400);
         }
 
         if ($request->confirmacao) {
             DB::beginTransaction();
-            $venda->status = 'pagamento pendente';
+            if ($venda->forma_pagamento_id == 'dinheiro') {
+                $venda->status = $venda->tipo_entrega == 'retirada' ? VendaStatusEnum::A_RETIRADA() : VendaStatusEnum::A_ENVIO();
+            } else {
+                $venda->status = VendaStatusEnum::PA_PENDENTE();
+            }
             $venda->data_confirmacao = now();
             $venda->save();
             DB::commit();
@@ -165,7 +170,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('cancelarCompra', $venda);
 
-        if ($venda->status != 'pedido realizado' && $venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
+        if (!in_array($venda->status, [VendaStatusEnum::A_CONFIRMACAO(), VendaStatusEnum::PA_PENDENTE(), VendaStatusEnum::CO_ANEXADO(), VendaStatusEnum::A_RETIRADA(), VendaStatusEnum::A_ENVIO()])) {
             return response()->json(['error' => 'Esta venda não pode mais ser cancelada.'], 400);
         }
 
@@ -181,18 +186,18 @@ class VendaController extends Controller
         if ($user) {
             switch ($user->id) {
                 case $venda->consumidor_id:
-                    $status = 'pedido cancelado';
+                    $status = VendaStatusEnum::PE_CANCELADO();
                     break;
                 case $venda->banca->agricultor_id:
-                    if ($venda->status == 'pedido realizado') {
-                        $status = 'pedido recusado';
-                    } elseif ($venda->status == 'comprovante anexado') {
-                        $status = 'comprovante recusado';
+                    if ($venda->status == VendaStatusEnum::A_CONFIRMACAO()) {
+                        $status = VendaStatusEnum::PE_RECUSADO();
+                    } elseif ($venda->status == VendaStatusEnum::CO_ANEXADO()) {
+                        $status = VendaStatusEnum::CO_RECUSADO();
                     }
                     break;
             }
         } else {
-            $status = 'pagamento expirado';
+            $status = VendaStatusEnum::PA_EXPIRADO();
         }
 
         $venda->status = $status;
@@ -210,7 +215,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('anexarComprovante', $venda);
 
-        if ($venda->status != 'pagamento pendente' && $venda->status != 'comprovante anexado') {
+        if ($venda->status != VendaStatusEnum::PA_PENDENTE() && $venda->status != VendaStatusEnum::CO_ANEXADO()) {
             return response()->json(['error' => 'Não é possível anexar comprovante a esta venda.'], 400);
         }
 
@@ -223,7 +228,7 @@ class VendaController extends Controller
         }
 
         DB::beginTransaction();
-        $venda->status = 'comprovante anexado';
+        $venda->status = VendaStatusEnum::CO_ANEXADO();
         $venda->data_pagamento = now();
         $venda->save();
         DB::commit();
@@ -246,12 +251,12 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('marcarEnviado', $venda);
 
-        if ($venda->status != 'comprovante anexado') {
+        if ($venda->status != VendaStatusEnum::CO_ANEXADO() && $venda->status != VendaStatusEnum::A_ENVIO()) {
             return response()->json(['error' => 'Esta venda não pode ser marcada como "enviada".'], 400);
         }
 
         DB::beginTransaction();
-        $venda->status = $venda->tipo_entrega == 'entrega' ? 'enviado' : 'aguardando retirada';
+        $venda->status = $venda->tipo_entrega == 'entrega' ? VendaStatusEnum::PE_ENVIADO() : VendaStatusEnum::A_RETIRADA();
         $venda->data_envio = now();
         $venda->save();
         DB::commit();
@@ -266,12 +271,12 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('marcarEntregue', $venda);
 
-        if ($venda->status != 'enviado' && $venda->status != 'aguardando retirada') {
+        if ($venda->status != VendaStatusEnum::PE_ENVIADO() && $venda->status != VendaStatusEnum::A_RETIRADA()) {
             return response()->json(['error' => 'Esta venda não pode ser marcada como "entregue".'], 400);
         }
 
         DB::beginTransaction();
-        $venda->status = 'entregue';
+        $venda->status = VendaStatusEnum::PE_ENTREGUE();
         $venda->data_entrega = now();
         $venda->save();
         DB::commit();
@@ -307,6 +312,5 @@ class VendaController extends Controller
         $vendas = $banca->vendas;
 
         return response()->json(['vendas' => $vendas], 200);
-
     }
 }

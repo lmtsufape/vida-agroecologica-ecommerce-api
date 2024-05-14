@@ -66,6 +66,8 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
     Route::get('/{banca}/imagem', 'getImagem');
     Route::get('/agricultores/{agricultor}', 'getAgricultorBancas');
     Route::delete('/{banca}/imagem', 'deleteImagem');
+    Route::put('/{banca}/pix', 'updatePix');
+    Route::get('/search', 'buscar');
 });
 
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
@@ -110,22 +112,28 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
 
     Route::get('/{feira}/imagem', 'getImagem');
     Route::delete('/{feira}/imagem', 'deleteImagem');
+
+    Route::get('/{feira}/bancas', 'getBancas');
+
+    Route::get('/search', 'buscar');
 });
 
 # Bairros
+Route::get('/bairros', [BairroController::class, 'index']);
+Route::get('bairros/cidade/{cidade_id}', [BairroController::class, 'bairrosPorCidade']);
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
-    Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
     Route::patch('/{bairro}', 'update');
     Route::delete('/{id}', 'destroy')->middleware('role:administrador');
 });
 
 # Cidades
+Route::get('/cidades', [CidadeController::class, 'index']);
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
-    Route::get('/', 'index');
     Route::post('/', 'store')->middleware('role:administrador');
     Route::patch('/{cidade}', 'update')->middleware('role:administrador');
     Route::delete('{id}', 'destroy')->middleware('role:administrador');
+    Route::get('/search', 'buscar');
 });
 
 # Estados

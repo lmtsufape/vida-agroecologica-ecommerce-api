@@ -7,6 +7,7 @@ use App\Models\Cidade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCidadeRequest;
 use App\Http\Requests\UpdateCidadeRequest;
+use Illuminate\Http\Request;
 use Exception;
 
 class CidadeController extends Controller
@@ -46,5 +47,13 @@ class CidadeController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function buscar(Request $request)
+    {
+        $request->validate(['q' => 'required|string']);
+        $cidades = Cidade::where('nome', 'ilike', "%$request->q%")->get();
+
+        return $cidades->count() != 0 ? Response()->json(['success' => 'busca concluída', 'cidades' => $cidades], 200) : abort(404);
     }
 }

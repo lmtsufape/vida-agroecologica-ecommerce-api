@@ -21,19 +21,10 @@ class Banca extends Model implements FileableInterface
         'horario_abertura',
         'horario_fechamento',
         'preco_minimo',
+        'entrega',
         'feira_id',
-        'agricultor_id'
-    ];
-
-    protected $visible = [
-        'id',
-        'nome',
-        'descricao',
-        'horario_abertura',
-        'horario_fechamento',
-        'preco_minimo',
-        'feira_id',
-        'agricultor_id'
+        'agricultor_id',
+        'pix'
     ];
 
     public function feira(): BelongsTo

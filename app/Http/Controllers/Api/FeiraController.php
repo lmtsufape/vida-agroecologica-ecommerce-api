@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFeiraRequest;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class FeiraController extends Controller
 {
@@ -83,5 +84,22 @@ class FeiraController extends Controller
         $this->fileService->deleteFile($feira->file);
 
         return response()->noContent();
+    }
+
+    public function getBancas($id)
+    {
+        $feira = Feira::findOrFail($id);
+
+        $bancas = $feira->bancas;
+
+        return response()->json(['bancas' => $bancas], 200);
+    }
+
+    public function buscar(Request $request)
+    {
+        $request->validate(['q' => 'required|string']);
+        $feiras = Feira::where('nome', 'ilike', "%$request->q%")->get();
+
+        return $feiras->count() != 0 ? Response()->json(['success' => 'busca concluída', 'feiras' => $feiras], 200) : abort(404);
     }
 }

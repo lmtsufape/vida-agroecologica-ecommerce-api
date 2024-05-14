@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('cpf', 14)->unique();
+            $table->boolean('ativo')->default(false); // Se o agricultor tem permissão para vender
 
             $table->foreignId('associacao_id')->nullable()->constrained('associacoes')->nullOnDelete();
             $table->foreignId('organizacao_id')->nullable()->constrained('organizacoes_controle_social')->nullOnDelete();

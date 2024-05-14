@@ -7,10 +7,9 @@ use App\Models\Produto;
 use App\Models\ProdutoTabelado;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\FileService;
-use Exception;
-use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -119,14 +118,18 @@ class ProdutoController extends Controller
 
     public function getCategorias()
     {
-        return response()->json(['categorias' => ProdutoTabelado::distinct()->pluck('categoria')], 200);
+        return response()->json(['categorias' => ProdutoTabelado::distinct()->whereNotNull('categoria')->pluck('categoria')], 200);
     }
 
-    public function getBancaProdutos($id)
+    public function getBancaProdutos(Request $request, $id)
     {
         $banca = Banca::findOrFail($id);
+        $produtos = $banca->produtos()->where('titulo', 'ilike', "%$request->search%")->get()->map(function ($produto) {
+            $produto->categoria = $produto->produtoTabelado->categoria;
+            return $produto;
+        })->setHidden(['produtoTabelado']);
 
-        return response()->json(['produtos' => $banca->produtos], 200);
+        return response()->json(['produtos' => $produtos], 200);
     }
 
     public function getImagem($id)

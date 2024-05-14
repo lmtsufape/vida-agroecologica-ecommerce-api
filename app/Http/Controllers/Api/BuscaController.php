@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 
 class BuscaController extends Controller
 {
-    
-
     public function buscar(Request $request)
     {
         $busca = $request->input('search');
@@ -44,7 +42,4 @@ class BuscaController extends Controller
         }
         return response()->json($tabelas, 200);
     }
-
-
-
 }
