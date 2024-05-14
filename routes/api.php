@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -156,6 +157,9 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])-
 
     Route::post('/{reuniao}/anexos','enviarAnexos');
     Route::post('/{arquivo_id}/anexos/atualizar','atualizarAnexo');
+    Route::get('/{id}/anexos/download-all', 'downloadAllAnexos');
+;
+
 });
 
 Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middleware('auth:sanctum');
@@ -174,7 +178,9 @@ Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(func
 
  # OCS
  Route::get('/ocs/{id}', [OrganizacaoControleSocialController::class, 'show'])->where('id', '[0-9]+');
+ Route::get('/ocs/participantes/{id}', [OrganizacaoControleSocialController::class, 'getUsersByOCS']);
  Route::apiResource('ocs', OrganizacaoControleSocialController::class)->middleware('auth:sanctum');
+ Route::post('/api/ocs/add-user/{ocsId}', [OrganizacaoControleSocialController::class, 'addUserToOCS']);
 
 });
 
@@ -188,7 +194,8 @@ Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix(
 
 });
 
-Route::middleware('role:administrador,presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+Route::middleware('auth:sanctum' , 'role:administrador, presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
     Route::get('/', 'index');
     Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao');
+    Route::delete('/desvincular/{id}', 'desvincularAgricultor');
 });

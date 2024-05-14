@@ -74,7 +74,6 @@ class OrganizacaoControleSocialController extends Controller
     }
 
 
-
     public function destroy($id)
     {
         $organizacao = OrganizacaoControleSocial::findOrFail($id);
@@ -83,6 +82,19 @@ class OrganizacaoControleSocialController extends Controller
 
         return response()->json($organizacao);
     }
+
+    public function getUsersByOCS($id)
+    {
+        $organizacao = OrganizacaoControleSocial::findOrFail($id);
+    
+        if ($organizacao) {
+            $users = User::with('roles')->where('organizacao_id', $organizacao->id)->get();
+            return response()->json(['users' => $users]);
+        } else {
+            return response()->json(['message' => 'Organização de Controle Social não encontrada.'], 404);
+        }
+    }
+    
 }
 
 
