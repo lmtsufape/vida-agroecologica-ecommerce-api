@@ -224,7 +224,6 @@ class VendaController extends Controller
             $this->fileService->updateFile($comprovante, $venda->comprovante);
         } else {
             $this->fileService->storeFile($comprovante, $venda, 'comprovantes');
-
         }
 
         DB::beginTransaction();
@@ -241,9 +240,11 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
 
+        if (! $venda->comprovante) return response()->json(['error' => 'Esta venda não possui comprovante.'], 404);
+
         $dados = $this->fileService->getFile($venda->comprovante);
 
-        return response($dados['file'])->header('Content-Type', $dados['$mimeType']);
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 
     public function marcarEnviado($id)
