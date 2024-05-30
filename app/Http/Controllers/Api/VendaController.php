@@ -292,7 +292,7 @@ class VendaController extends Controller
 
         $compras = $user->compras;
 
-        return response()->json(['compras' => $compras], 200);
+        return response()->json(['compras' => $compras->load(['banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function getVendas($agricultorId)
@@ -302,7 +302,8 @@ class VendaController extends Controller
 
         $vendas = $user->vendas;
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
+        
     }
 
     public function getBancaVendas($bancaId)
@@ -312,6 +313,6 @@ class VendaController extends Controller
 
         $vendas = $banca->vendas;
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'formaPagamento', 'itens.produto'])], 200);
     }
 }
