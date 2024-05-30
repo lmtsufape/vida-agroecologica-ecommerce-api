@@ -34,7 +34,7 @@ class VendaController extends Controller
         $this->authorize('viewAny', Venda::class);
         $vendas = Venda::orderBy('data_pedido', 'desc')->get();
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function store(StoreVendaRequest $request)
@@ -132,7 +132,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('view', $venda);
 
-        return response()->json(['venda' => $venda], 200);
+        return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function confirmarVenda(Request $request, $id)
