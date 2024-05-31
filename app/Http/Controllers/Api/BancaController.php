@@ -138,4 +138,10 @@ class BancaController extends Controller
 
         return $bancas->count() != 0 ? Response()->json(['success' => 'busca concluída', 'bancas' => $bancas], 200) : abort(404);
     }
+    public function getAgricultor($id)
+    {
+        $agricultor = User::findOrFail($id);
+
+        return response()->json(['agricultor' => $agricultor], 200);
+    }
 }
