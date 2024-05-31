@@ -59,14 +59,22 @@ class FeiraController extends Controller
 
     public function destroy($id)
     {
-        $feira = Feira::findOrFail($id);
+    $feira = Feira::findOrFail($id);
 
-        $this->fileService->deleteFile($feira);
+    if ($feira->bancas()->count() > 0) {
+        return response()->json(['error' => 'Esta feira tem uma ou mais bancas associadas e não pode ser excluída.'], 400);
+    }
+    DB::transaction(function () use ($feira) {
+        if ($feira->file) {
+            $this->fileService->deleteFile($feira->file);
+        }
         $feira->delete();
+    });
 
-        return response()->noContent();
+    return response()->noContent();
     }
 
+    
     public function getImagem($id)
     {
         $feira = Feira::findOrFail($id);
@@ -93,6 +101,12 @@ class FeiraController extends Controller
         $bancas = $feira->bancas;
 
         return response()->json(['bancas' => $bancas], 200);
+    }
+
+    public function getFeira($id)
+    {
+        $feira = Feira::findOrFail($id);
+        return response()->json(['feira' => $feira], 200);
     }
 
     public function buscar(Request $request)

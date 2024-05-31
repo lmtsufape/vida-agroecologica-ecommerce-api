@@ -78,7 +78,7 @@ class StoreFeiraRequest extends FormRequest
                 'exists:bairros,id'
             ],
             'associacao_id' => [
-                'required',
+                'nullable',
                 'integer',
                 'exists:associacoes,id'
             ]
