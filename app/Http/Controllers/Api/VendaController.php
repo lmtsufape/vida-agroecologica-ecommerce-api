@@ -34,7 +34,7 @@ class VendaController extends Controller
         $this->authorize('viewAny', Venda::class);
         $vendas = Venda::orderBy('data_pedido', 'desc')->get();
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function store(StoreVendaRequest $request)
@@ -132,7 +132,7 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('view', $venda);
 
-        return response()->json(['venda' => $venda], 200);
+        return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function confirmarVenda(Request $request, $id)
@@ -224,7 +224,6 @@ class VendaController extends Controller
             $this->fileService->updateFile($comprovante, $venda->comprovante);
         } else {
             $this->fileService->storeFile($comprovante, $venda, 'comprovantes');
-
         }
 
         DB::beginTransaction();
@@ -241,9 +240,11 @@ class VendaController extends Controller
         $venda = Venda::findOrFail($id);
         $this->authorize('verComprovante', $venda);
 
+        if (! $venda->comprovante) return response()->json(['error' => 'Esta venda não possui comprovante.'], 404);
+
         $dados = $this->fileService->getFile($venda->comprovante);
 
-        return response($dados['file'])->header('Content-Type', $dados['$mimeType']);
+        return response($dados['file'])->header('Content-Type', $dados['mimeType']);
     }
 
     public function marcarEnviado($id)
@@ -291,7 +292,7 @@ class VendaController extends Controller
 
         $compras = $user->compras;
 
-        return response()->json(['compras' => $compras], 200);
+        return response()->json(['compras' => $compras->load(['banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
     public function getVendas($agricultorId)
@@ -301,7 +302,8 @@ class VendaController extends Controller
 
         $vendas = $user->vendas;
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
+        
     }
 
     public function getBancaVendas($bancaId)
@@ -311,6 +313,6 @@ class VendaController extends Controller
 
         $vendas = $banca->vendas;
 
-        return response()->json(['vendas' => $vendas], 200);
+        return response()->json(['vendas' => $vendas->load(['consumidor', 'formaPagamento', 'itens.produto'])], 200);
     }
 }
