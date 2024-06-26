@@ -52,7 +52,7 @@ class StoreReuniaoRequest extends FormRequest
                 'exists:users,id'
             ],
             'associacao_id' => [
-                'required',
+                'nullable',
                 'integer',
                 'exists:associacoes,id'
             ],

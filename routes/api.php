@@ -47,6 +47,7 @@ Route::controller(ApiAuthController::class)->group(function () {
     Route::get('/login', fn () => response()->json(['error' => 'Unathorized'], 401))->middleware('guest')->name('login');
 });
 
+
 # Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
@@ -68,6 +69,8 @@ Route::middleware('auth:sanctum')->controller(BancaController::class)->prefix('/
     Route::delete('/{banca}/imagem', 'deleteImagem');
     Route::put('/{banca}/pix', 'updatePix');
     Route::get('/search', 'buscar');
+    Route::get('/agricultor/{id}', [BancaController::class, 'getAgricultor']);
+    Route::get('/feiras/{id}', [BancaController::class, 'getFeira']);
 });
 
 Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum');
@@ -116,6 +119,7 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
     Route::get('/{feira}/bancas', 'getBancas');
 
     Route::get('/search', 'buscar');
+    Route::get('/{id}', 'getFeira');
 });
 
 # Bairros
