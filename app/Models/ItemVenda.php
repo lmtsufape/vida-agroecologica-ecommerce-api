@@ -16,7 +16,7 @@ class ItemVenda extends Model
 
     public function produto(): BelongsTo
     {
-        return $this->belongsTo(Produto::class);
+        return $this->belongsTo(Produto::class)->withTrashed();
     }
 
     public function venda(): BelongsTo
