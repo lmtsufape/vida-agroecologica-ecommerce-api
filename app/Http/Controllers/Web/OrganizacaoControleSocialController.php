@@ -25,7 +25,7 @@ class OrganizacaoControleSocialController extends Controller
 
     public function show($id)
     {
-        $ocs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro')->findOrFail($id);
+        $ocs = OrganizacaoControleSocial::with('associacao', 'endereco', 'contato', 'endereco.bairro', 'agricultores')->findOrFail($id);
         return response()->json(['ocs' => $ocs]);
     }
 

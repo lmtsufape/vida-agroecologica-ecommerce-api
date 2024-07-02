@@ -13,7 +13,7 @@ class BairroController extends Controller
 {
     public function index()
     {
-        $todos = Bairro::all();
+        $todos = Bairro::with('cidade')->get();
 
         return response()->json(['bairros' => $todos]);
     }
