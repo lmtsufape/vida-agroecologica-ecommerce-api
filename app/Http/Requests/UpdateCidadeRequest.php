@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Cidade;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCidadeRequest extends FormRequest
@@ -23,17 +25,15 @@ class UpdateCidadeRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'nome' => [
                 'required',
                 'regex:/[a-zA-ZÀ-ÿ\s]/',
-                'unique:cidades,nome',
+                Rule::unique('cidades', 'nome')->ignore($this->route('cidade')),
                 'max:30',
                 'min:3'
             ]
-
         ];
-        
-        return $rules;
     }
+    
 }
