@@ -124,6 +124,7 @@ Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/
 
 # Bairros
 Route::get('/bairros', [BairroController::class, 'index']);
+Route::get('/bairros/{id}', [BairroController::class, 'show']);
 Route::get('bairros/cidade/{cidade_id}', [BairroController::class, 'bairrosPorCidade']);
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
     Route::post('/', 'store')->middleware('role:administrador');
@@ -133,6 +134,7 @@ Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('
 
 # Cidades
 Route::get('/cidades', [CidadeController::class, 'index']);
+Route::get('/cidades/{id}', [CidadeController::class, 'show']);
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
     Route::post('/', 'store')->middleware('role:administrador');
     Route::patch('/{cidade}', 'update')->middleware('role:administrador');

@@ -18,6 +18,12 @@ class BairroController extends Controller
         return response()->json(['bairros' => $todos]);
     }
 
+    public function show($id)
+    {
+        $bairro = Bairro::with('cidade')->findOrFail($id);
+        return response()->json(['bairro' => $bairro]);
+    }
+
     public function store(StoreBairroRequest $request)
     {
         $bairro = Bairro::create($request->all());
@@ -31,7 +37,7 @@ class BairroController extends Controller
     {
         $bairro = Bairro::findOrFail($id);
 
-        $bairro->update($request);
+        $bairro->update($request->all());
 
         return response()->json(['bairro' => $bairro], 200);
     }

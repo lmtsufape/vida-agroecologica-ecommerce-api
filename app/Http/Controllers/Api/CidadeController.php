@@ -12,6 +12,12 @@ use Exception;
 
 class CidadeController extends Controller
 {
+    public function show($id)
+    {
+        $cidade = Cidade::with('estado')->findOrFail($id);
+        return response()->json(['cidade' => $cidade]);
+    }
+
     public function index()
     {
         $cidades = Cidade::with('estado')->get();
