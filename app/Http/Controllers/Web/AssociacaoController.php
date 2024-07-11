@@ -15,13 +15,13 @@ class AssociacaoController extends Controller
     public function index()
     {
         return response()->json([
-            'associacoes' => Associacao::with('presidentes', 'contato')->get()
+            'associacoes' => Associacao::with('presidentes', 'secretarios', 'contato')->get()
         ]);
     }
 
     public function show($id)
     {
-        $associacao = Associacao::findOrFail($id)->load('presidentes', 'contato', 'endereco');
+        $associacao = Associacao::findOrFail($id)->load('presidentes', 'secretarios', 'contato', 'endereco');
         return response()->json(['associacao' => $associacao]);
     }
 
