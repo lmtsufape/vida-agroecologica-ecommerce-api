@@ -19,7 +19,12 @@ class StoreFeiraRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $horarios_funcionamento = json_decode($this->input('horarios_funcionamento'), true);
+        $horarios_funcionamento = $this->input('horarios_funcionamento');
+        
+        if (is_string($horarios_funcionamento)) {
+            $horarios_funcionamento = json_decode($horarios_funcionamento, true);
+        }
+        
         $this->merge(['horarios_funcionamento' => $horarios_funcionamento]);
     }
 

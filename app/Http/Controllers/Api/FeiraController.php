@@ -52,7 +52,7 @@ class FeiraController extends Controller
 
         //if ($request->hasFile('imagem')) {
             //$this->fileService->updateFile($request->file('imagem'), $feira); }
-        //DB::commit();
+        DB::commit();
 
         return response()->json(['feira'=> $feira], 200);
     }
