@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Feira;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFeiraRequest;
+use App\Http\Requests\UpdateFeiraRequest;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class FeiraController extends Controller
         return response()->json(['feira' => $feira], 201);
     }
 
-    public function update(StoreFeiraRequest $request, $id)
+    public function update(UpdateFeiraRequest $request, $id)
     {
         $validatedData = $request->validated();
         $feira = Feira::findOrFail($id);
@@ -49,29 +50,28 @@ class FeiraController extends Controller
         DB::beginTransaction();
         $feira->update($validatedData);
 
-        if ($request->hasFile('imagem')) {
-            $this->fileService->updateFile($request->file('imagem'), $feira); // Atualizar a imagem
-        }
-        DB::commit();
+        //if ($request->hasFile('imagem')) {
+            //$this->fileService->updateFile($request->file('imagem'), $feira); }
+        //DB::commit();
 
         return response()->json(['feira'=> $feira], 200);
     }
 
     public function destroy($id)
     {
-    $feira = Feira::findOrFail($id);
+        $feira = Feira::findOrFail($id);
 
-    if ($feira->bancas()->count() > 0) {
-        return response()->json(['error' => 'Esta feira tem uma ou mais bancas associadas e não pode ser excluída.'], 400);
-    }
-    DB::transaction(function () use ($feira) {
-        if ($feira->file) {
-            $this->fileService->deleteFile($feira->file);
+        if ($feira->bancas()->count() > 0) {
+            return response()->json(['error' => 'Esta feira tem uma ou mais bancas associadas e não pode ser excluída.'], 400);
         }
-        $feira->delete();
-    });
+        DB::transaction(function () use ($feira) {
+            if ($feira->file) {
+                $this->fileService->deleteFile($feira->file);
+            }
+            $feira->delete();
+        });
 
-    return response()->noContent();
+        return response()->noContent();
     }
 
     
