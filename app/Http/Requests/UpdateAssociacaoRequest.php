@@ -26,10 +26,12 @@ class UpdateAssociacaoRequest extends FormRequest
      */
     public function rules()
     {
+        $associacaoId = $this->route('associaco');
+
         return [
             "nome"              => ['required', 'string', 'min:10', 'max:255', 'regex:/^[A-Za-záâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ\s]+$/'],
             "data_fundacao"     => ['required', 'date'],
-            "email"             => ['nullable', 'email', 'max:60', 'unique:contatos'],
+            "email"             => ['nullable', 'email', 'max:60', Rule::unique('contatos', 'email')->ignore(Associacao::find($associacaoId)->contato->id)],
             "telefone"          => ['nullable', "celular_com_ddd"],
             "presidentes_id"    => ['required', 'array', 'min:1'],
             "secretarios_id"    => ['required', 'array'],
