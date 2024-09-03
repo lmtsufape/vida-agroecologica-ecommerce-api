@@ -24,6 +24,12 @@ class ApiUserController extends UserController
         return response()->json(['users' => $users], 200);
     }
 
+    public function updateUserRoles(Request $request, $id){
+        $roles = parent::updateUserRoles($request, $id);
+        return response()->json(['roles' => $roles], 200);
+        
+    }
+
     public function store(StoreUserRequest $request)
     {
         $user = parent::store($request);
@@ -43,12 +49,18 @@ class ApiUserController extends UserController
     public function update(UpdateUserRequest $request, $id)
     {
         $user = parent::update($request, $id);
+    
+        $newRoles = collect($request->roles)->sort()->values();
+        $currentRoles = $user->roles->pluck('id')->sort()->values();
 
-        $roleIds = $request->roles;
-        $user->roles()->sync($roleIds);
-
-        return response()->json(['user' => $user]);
+    
+        if ($newRoles->diff($currentRoles)->isNotEmpty() || $currentRoles->diff($newRoles)->isNotEmpty()) {
+            $this->updateUserRoles($request, $id);
+        }
+    
+        return response()->json(['user' => $user->refresh()]);
     }
+    
 
     public function destroy($id)
     {

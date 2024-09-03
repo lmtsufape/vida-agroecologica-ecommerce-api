@@ -51,7 +51,7 @@ Route::controller(ApiAuthController::class)->group(function () {
 # Usuários
 Route::controller(ApiUserController::class)->group(function () {
     Route::post('/users', 'store')->middleware('storeUser');
-    Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware('auth:sanctum, role:administrador');
+    Route::put('/users/{user}/updateroles', 'updateUserRoles')->middleware(['auth:sanctum', 'role:administrador,presidente']);
     Route::get('/users/presidents', 'getPresidents');
 });
 

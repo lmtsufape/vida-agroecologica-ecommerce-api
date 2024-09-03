@@ -102,6 +102,10 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
+        if ($user->hasAnyRoles(['administrador', 'presidente'])) {
+            return Response::allow();
+        }
+        
         return $user->id === $model->id
             ? Response::allow()
             : Response::deny();
@@ -164,10 +168,10 @@ class UserPolicy
     public function updateUserRoles(User $user, User $model, $roles_id)
     {
         if ($model->hasAnyRoles(['administrador'])) {
-            return Response::deny();
+            return Response::deny('A role administrador não pode ser modificada');
         }
 
-        if (!$user->hasAnyRoles(['administrador'])) {
+        if (!$user->hasAnyRoles(['administrador', 'presidente'])) {
             return Response::deny();
         }
 
@@ -193,5 +197,7 @@ class UserPolicy
         if (in_array('administrador', $roles)) {
             return Response::deny();
         }
+
+        return Response::allow();
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class UserController extends Controller
 {
@@ -92,11 +93,12 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+
         $this->authorize('updateUserRoles', [$user, $request->roles]);
 
-        $user->roles()->sync($validatedData);
+        $user->roles()->sync($validatedData['roles']);
 
-        return true;
+        return $user->roles;
     }
 
     # Endereços
