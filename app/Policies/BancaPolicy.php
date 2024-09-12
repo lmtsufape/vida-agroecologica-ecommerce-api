@@ -63,12 +63,7 @@ class BancaPolicy
         }
         
         if ($agricultor->hasAnyRoles(['agricultor']) && $user->id === $agricultor->id) {
-            if ($agricultor->associacao && $agricultor->associacao()->whereHas('feiras', function ($query) use ($feira_id) {  // Se a feira que em que a banca está sendo cadastrada pertence a uma organização ou associação em que o agricultor está associado.
-                $query->where('id', $feira_id);
-            })->exists()) {
-                return Response::allow();
-            }
-            else if ($agricultor->organizacao && $agricultor->organizacao->associacao()->whereHas('feiras', function ($query) use ($feira_id) {
+            if ($agricultor->associacao && $agricultor->associacao()->whereHas('feiras', function ($query) use ($feira_id) {  // Se a feira que em que a banca está sendo cadastrada pertence a uma associação em que o agricultor está associado.
                 $query->where('id', $feira_id);
             })->exists()) {
                 return Response::allow();
