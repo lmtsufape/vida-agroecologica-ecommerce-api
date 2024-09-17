@@ -43,6 +43,7 @@ class UserController extends Controller
         DB::beginTransaction();
         $user = User::make($validatedData);
         $user->password = Hash::make($validatedData['password']);
+        $user->ativo = true;
         $user->save();
         $user->enderecos()->create($validatedData);
         $user->contato()->create($validatedData);
@@ -121,7 +122,7 @@ class UserController extends Controller
     public function updateEndereco(StoreEnderecoRequest $request, $id)
     {
         $validatedData = $request->validated();
-        
+
         $endereco = Endereco::findOrFail($id);
         $this->authorize('update', $endereco);
 

@@ -35,7 +35,11 @@ class UpdateUserRequest extends FormRequest
             'telefone' => [
                 'required',
                 'regex:/^\(\d{2}\)\s\d{5}\-\d{4}$/', // considerando telefone no formato "(99) 99999-9999"
-            ]
+            ],
+            'ativo' => [
+                'required',
+                'boolean'
+            ],
         ];
     }
 
