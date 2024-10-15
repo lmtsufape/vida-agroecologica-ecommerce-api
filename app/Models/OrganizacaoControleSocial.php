@@ -32,7 +32,7 @@ class OrganizacaoControleSocial extends Model
 
     public function associacao()
     {
-        return $this->belongsTo(Associacao::class);
+        return $this->belongsTo(Associacao::class, 'associacao_id');
     }
 
     public function agricultores()
