@@ -41,7 +41,9 @@ class VincularAgricultorRequest extends FormRequest
     public function messages()
     {
         return [
-            "organizacao_id.numeric"    => "Organização inválida"
+            "organizacao_id.integer"    => "Organização inválida",
+            "organizacao_id.required"   => "O campo de organização é obrigatório.",
+            "organizacao_id.exists"     => "A organização selecionada não existe."
         ];
     }
 }

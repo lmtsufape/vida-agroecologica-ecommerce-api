@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VincularAgricultorRequest;
+use App\Models\Associacao;
 use App\Models\OrganizacaoControleSocial;
 use App\Models\User;
 
@@ -24,8 +25,10 @@ class UserAgricultorController extends Controller
     {
         $agricultor = User::findOrFail($id);
         $organizacao = OrganizacaoControleSocial::findOrFail($request->organizacao_id);
+        $associacao = Associacao::findOrFail($organizacao->associacao_id);
 
         $agricultor->organizacao()->associate($organizacao);
+        $agricultor->organizacao()->associate($associacao);
         $agricultor->ativo = true;
         $agricultor->save();
 
@@ -41,6 +44,7 @@ class UserAgricultorController extends Controller
         }
 
         $agricultor->organizacao()->dissociate();
+        $agricultor->associacao()->dissociate();
         $agricultor->save();
 
         return response()->json(['message' => 'Agricultor desvinculado com sucesso da organização.'], 200);
