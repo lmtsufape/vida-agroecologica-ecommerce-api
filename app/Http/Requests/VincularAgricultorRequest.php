@@ -17,14 +17,15 @@ class VincularAgricultorRequest extends FormRequest
         if ($this->user()->hasAnyRoles(['administrador'])) {
             return true;
         } elseif ($this->user()->hasAnyRoles(['presidente'])) {
-            $organizacao = OrganizacaoControleSocial::findOrFail($this->input('organizacao_id'));
-            if ($organizacao->associacao->presidentes()->where('id', $this->user()->id)->exists()) {
+            $organizacao = OrganizacaoControleSocial::with('associacao.presidentes')->findOrFail($this->input('organizacao_id'));
+            if ($organizacao->associacao->id && $this->user()->associacao->id) {
                 return true;
             }
         }
 
         return false;
     }
+
 
     /**
      * Get the validation rules that apply to the request.

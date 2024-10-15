@@ -105,7 +105,7 @@ class UserPolicy
         if ($user->hasAnyRoles(['administrador', 'presidente'])) {
             return Response::allow();
         }
-        
+
         return $user->id === $model->id
             ? Response::allow()
             : Response::deny();
