@@ -208,7 +208,7 @@ Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix(
 
 });
 
-Route::middleware('auth:sanctum' , 'role:administrador, presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
     Route::get('/', 'index');
     Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao');
     Route::delete('/desvincular/{id}', 'desvincularAgricultor');
