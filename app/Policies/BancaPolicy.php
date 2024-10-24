@@ -62,7 +62,7 @@ class BancaPolicy
             return Response::deny();
         }
         
-        if ($user->id === $agricultor->id) {
+        if ($user->hasAnyRoles(['administrador']) || $user->id === $agricultor->id) {
             return Response::allow();
         }
 
