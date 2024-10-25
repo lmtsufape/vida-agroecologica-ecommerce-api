@@ -50,7 +50,7 @@ class UserController extends Controller
         $user->roles()->sync($validatedData['roles']);
         DB::commit();
 
-        event(new Registered($user));
+        //event(new Registered($user));
 
         return $user;
     }
