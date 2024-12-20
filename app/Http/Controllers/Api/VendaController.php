@@ -66,7 +66,6 @@ class VendaController extends Controller
 
         DB::beginTransaction();
         $venda = new Venda();
-        $venda->status = VendaStatusEnum::A_CONFIRMACAO();
         $venda->tipo_entrega = $validatedData['tipo_entrega'];
         $venda->data_pedido = now();
         $venda->consumidor()->associate($consumidor);
@@ -74,6 +73,13 @@ class VendaController extends Controller
         $venda->formaPagamento()->associate($formaPagamento);
         $subtotal = BigDecimal::of('0.00');
         $taxaEntrega = BigDecimal::of('0.00');
+        if ($formaPagamento->tipo == 'dinheiro') {
+            $venda->status = $validatedData['tipo_entrega'] == 'retirada' 
+                ? VendaStatusEnum::A_RETIRADA() 
+                : VendaStatusEnum::A_ENVIO();
+        } else {
+            $venda->status = VendaStatusEnum::PA_PENDENTE();
+        }
         $venda->save();
 
         if ($validatedData['tipo_entrega'] == 'entrega') {
@@ -121,8 +127,14 @@ class VendaController extends Controller
         $venda->subtotal = $subtotal;
         $venda->taxa_entrega = $taxaEntrega;
         $venda->total = $subtotal->plus($taxaEntrega);
+
+
         $venda->save();
         DB::commit();
+
+        if ($venda->status == VendaStatusEnum::A_RETIRADA() || $venda->status == VendaStatusEnum::A_ENVIO()) {
+            event(new PedidoConfirmadoEvent($venda));
+        }
 
         return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'enderecoEntrega', 'formaPagamento', 'itens.produto']), 'produtos fora de estoque' => $produtosForaEstoque], 201);
     }
