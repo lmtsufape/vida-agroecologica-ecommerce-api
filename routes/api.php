@@ -77,7 +77,6 @@ Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum'
 
 # Vendas
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/transacoes')->group(function () {
-    Route::post('/{venda}/confirmar', 'confirmarVenda')->middleware('role:agricultor');
     Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
     Route::get('/{agricultorId}/vendas', 'getVendas')->middleware('role:agricultor');
     Route::get('/bancas/{banca}', 'getBancaVendas')->middleware('role:agricultor');
@@ -208,7 +207,7 @@ Route::middleware('auth:sanctum')->controller(ReuniaoController::class)->prefix(
 
 });
 
-Route::middleware('auth:sanctum' , 'role:administrador, presidente')->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
+Route::middleware(['auth:sanctum' , 'role:administrador,presidente'])->controller(UserAgricultorController::class)->prefix('/agricultores')->group(function () {
     Route::get('/', 'index');
     Route::put('/vincular/{id}', 'vincularAgricultorOrganizacao');
     Route::delete('/desvincular/{id}', 'desvincularAgricultor');
