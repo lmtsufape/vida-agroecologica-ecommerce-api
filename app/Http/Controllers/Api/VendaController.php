@@ -147,34 +147,6 @@ class VendaController extends Controller
         return response()->json(['venda' => $venda->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
     }
 
-    public function confirmarVenda(Request $request, $id)
-    {
-        $request->validate(['confirmacao' => 'required|boolean']);
-        $venda = Venda::findOrFail($id);
-        $this->authorize('confirmarVenda', $venda);
-
-        if ($venda->status != VendaStatusEnum::A_CONFIRMACAO()) {
-            return response()->json(['error' => 'Esta venda já foi confirmada ou recusada.'], 400);
-        }
-
-        if ($request->confirmacao) {
-            DB::beginTransaction();
-            if ($venda->forma_pagamento_id == 'dinheiro') {
-                $venda->status = $venda->tipo_entrega == 'retirada' ? VendaStatusEnum::A_RETIRADA() : VendaStatusEnum::A_ENVIO();
-            } else {
-                $venda->status = VendaStatusEnum::PA_PENDENTE();
-            }
-            $venda->data_confirmacao = now();
-            $venda->save();
-            DB::commit();
-
-            event(new PedidoConfirmadoEvent($venda));
-
-            return response()->json(['success' => 'O pedido foi confirmado.', 'pedido' => $venda->refresh()]);
-        } else {
-            return $this->cancelarCompra($venda->id);
-        }
-    }
 
     public function cancelarCompra($id)
     {
