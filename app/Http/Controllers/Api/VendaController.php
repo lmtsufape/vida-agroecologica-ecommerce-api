@@ -104,7 +104,7 @@ class VendaController extends Controller
             } elseif ($banca->id != $prod->banca->id) {
                 DB::rollBack();
                 
-                return response()->json(['error' => 'O produto não pertence à banca especificada.', 'produto' => $prod], 400);
+                return response()->json(['error' => 'Não é possível realizar a compra com produtos de bancas diferentes.', 'produto' => $prod], 400);
             }
 
             $item = new ItemVenda();
