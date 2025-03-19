@@ -16,17 +16,18 @@ class UpdateBancaRequest extends FormRequest
             $this->merge(['formas_pagamento' => $campo]); // Atualiza o valor no request
         }
 
-        $bairroEntrega = $this->input('bairro_entrega');
+        // $bairroEntrega = $this->input('bairro_entrega');
 
-        if (!is_array($bairroEntrega)) {
-            $array = explode(',', $bairroEntrega); // Transforma o valor em um array
-            $valores = [];
-            foreach ($array as $campo) {
-                $campo = explode('=>', $campo);
-                array_push($valores, $campo);
-            }
-            $this->merge(['bairro_entrega' => $valores]); // Atualiza o valor no request
-        }
+        // if (!is_array($bairroEntrega)) {
+        //     $array = explode(',', $bairroEntrega); // Transforma o valor em um array
+        //     $valores = [];
+        //     foreach ($array as $campo) {
+        //         $campo = explode('=>', $campo);
+        //         array_push($valores, $campo);
+        //     }
+        //     $this->merge(['bairro_entrega' => $valores]); // Atualiza o valor no request
+        // }
+        
         $entrega = $this->input('entrega');
         $this->merge(['entrega' => filter_var($entrega, FILTER_VALIDATE_BOOLEAN)]);
     }
@@ -93,21 +94,21 @@ class UpdateBancaRequest extends FormRequest
                 'integer',
                 'exists:formas_pagamento,id'
             ],
-            'bairro_entrega' => [
-                'Required',
-                'array'
-            ],
-            'bairro_entrega.*' => [
-                'array',
-                'size:2'
-            ],
-            'bairro_entrega.*.0' => [
-                'integer',
-                'exists:bairros,id'
-            ],
-            'bairro_entrega.*.1' => [
-                'string'
-            ],
+            // 'bairro_entrega' => [
+            //     'Required',
+            //      'array'
+            // ],
+            // 'bairro_entrega.*' => [
+            //     'array',
+            //     'size:2'
+            // ],
+            // 'bairro_entrega.*.0' => [
+            //     'integer',
+            //     'exists:bairros,id'
+            // ],
+            // 'bairro_entrega.*.1' => [
+            //     'string'
+            // ],
             'pix' => [
                 'nullable',
                 'string'

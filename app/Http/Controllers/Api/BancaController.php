@@ -36,9 +36,9 @@ class BancaController extends Controller
         DB::beginTransaction();
         $banca = Banca::create($validatedData);
         $banca->formasPagamento()->sync($validatedData['formas_pagamento']);
-        foreach ($request->bairro_entrega as $bairro_info) {
-            $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
-        }
+        // foreach ($request->bairro_entrega as $bairro_info) {
+        //     $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
+        // }
 
         if ($request->hasFile('imagem')) {
             $this->fileService->storeFile($request->file('imagem'), $banca); // Armazenar a imagem
@@ -64,9 +64,9 @@ class BancaController extends Controller
         $banca->update($validatedData);
         $banca->formasPagamento()->sync($validatedData['formas_pagamento']);
         $banca->bairros_info_entrega()->detach();
-        foreach ($request->bairro_entrega as $bairro_info) {
-            $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
-        }
+        // foreach ($request->bairro_entrega as $bairro_info) {
+        //     $banca->bairros_info_entrega()->attach($bairro_info[0], ['taxa' => $bairro_info[1]]);
+        // }
 
         if ($request->hasFile('imagem')) {
             if ($banca->file) {
