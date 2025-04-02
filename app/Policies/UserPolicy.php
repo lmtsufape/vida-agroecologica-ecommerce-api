@@ -102,7 +102,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        if ($user->hasAnyRoles(['administrador', 'presidente'])) {
+        if ($user->hasAnyRoles(['administrador', 'presidente', 'secretario'])) {
             return Response::allow();
         }
 
@@ -171,7 +171,7 @@ class UserPolicy
             return Response::deny('A role administrador não pode ser modificada');
         }
 
-        if (!$user->hasAnyRoles(['administrador', 'presidente'])) {
+        if (!$user->hasAnyRoles(['administrador', 'presidente', 'secretario'])) {
             return Response::deny();
         }
 
