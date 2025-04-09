@@ -108,12 +108,12 @@ Route::apiResource('/produtos', ProdutoController::class)->middleware('auth:sanc
 # Feiras
 Route::middleware('auth:sanctum')->controller(FeiraController::class)->prefix('/feiras')->group(function () {
     Route::get('/', 'index');
-    Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{feira}', 'update')->middleware('role:administrador');
-    Route::delete('/{id}', 'destroy');
+    Route::post('/', 'store')->middleware('role:administrador,presidente');
+    Route::patch('/{feira}', 'update')->middleware('role:administrador,presidente');
+    Route::delete('/{id}', 'destroy')->middleware('role:administrador,presidente');
 
     Route::get('/{feira}/imagem', 'getImagem');
-    Route::delete('/{feira}/imagem', 'deleteImagem');
+    Route::delete('/{feira}/imagem', 'deleteImagem')->middleware('role:administrador,presidente');
 
     Route::get('/{feira}/bancas', 'getBancas');
 
@@ -126,18 +126,18 @@ Route::get('/bairros', [BairroController::class, 'index']);
 Route::get('/bairros/{id}', [BairroController::class, 'show']);
 Route::get('bairros/cidade/{cidade_id}', [BairroController::class, 'bairrosPorCidade']);
 Route::middleware('auth:sanctum')->controller(BairroController::class)->prefix('/bairros')->group(function () {
-    Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{bairro}', 'update');
-    Route::delete('/{id}', 'destroy')->middleware('role:administrador');
+    Route::post('/', 'store')->middleware('role:administrador,presidente,secretario');
+    Route::patch('/{bairro}', 'update')->middleware('role:administrador,presidente,secretario');
+    Route::delete('/{id}', 'destroy')->middleware('role:administrador,presidente,secretario');
 });
 
 # Cidades
 Route::get('/cidades', [CidadeController::class, 'index']);
 Route::get('/cidades/{id}', [CidadeController::class, 'show']);
 Route::middleware('auth:sanctum')->controller(CidadeController::class)->prefix('/cidades')->group(function () {
-    Route::post('/', 'store')->middleware('role:administrador');
-    Route::patch('/{cidade}', 'update')->middleware('role:administrador');
-    Route::delete('{id}', 'destroy')->middleware('role:administrador');
+    Route::post('/', 'store')->middleware('role:administrador,presidente');
+    Route::patch('/{cidade}', 'update')->middleware('role:administrador,presidente');
+    Route::delete('{id}', 'destroy')->middleware('role:administrador,presidente');
     Route::get('/search', 'buscar');
 });
 
