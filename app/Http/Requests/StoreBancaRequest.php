@@ -31,6 +31,16 @@ class StoreBancaRequest extends FormRequest
 
         $entrega = $this->input('entrega');
         $this->merge(['entrega' => filter_var($entrega, FILTER_VALIDATE_BOOLEAN)]);
+
+
+        //tratamento do json de horarios_funcionamento
+        $horarios_funcionamento = $this->input('horarios_funcionamento');
+        
+        if (is_string($horarios_funcionamento)) {
+            $horarios_funcionamento = json_decode($horarios_funcionamento, true);
+        }
+        
+        $this->merge(['horarios_funcionamento' => $horarios_funcionamento]);
     }
 
     public function authorize(): bool
@@ -54,15 +64,30 @@ class StoreBancaRequest extends FormRequest
                 'string',
                 'max:120'
             ],
-            'horario_abertura' => [
+            'horarios_funcionamento' => [
                 'required',
-                'date_format:H:i',
-                'before:horario_fechamento'
+                'array',
+                'min:1',
+                'max:7',
+                function ($attribute, $value, $fail) {
+                    $allowedKeys = ['domingo', 'segunda-feira', 'terca-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+                    foreach ($value as $key => $val) {
+                        if (!in_array($key, $allowedKeys)) {
+                            $fail("A chave '$key' do elemento não pertence ao conjunto de valores permitidos: " . implode(', ', $allowedKeys));
+                        }
+                    }
+                },
             ],
-            'horario_fechamento' => [
-                'required',
+            'horarios_funcionamento.*' => [
+                'array',
+                'size:2'
+            ],
+            'horarios_funcionamento.*.0' => [
                 'date_format:H:i',
-                'after:horario_abertura'
+            ],
+            'horarios_funcionamento.*.1' => [
+                'date_format:H:i',
+                'after:horarios_funcionamento.*.0'
             ],
             'entrega' => [
                 'required',
