@@ -148,8 +148,12 @@ class UpdateBancaRequest extends FormRequest
             'min' => 'o campo :attribute deve ter no mínimo :min caracteres.',
             'string' => 'o campo :attribute deve ser uma string.',
             'date_format' => 'o campo :attribute deve estar no formato hora:minuto.',
-            'horario_abertura.before' => 'Horário de abertura deve ser antes do Horário de fechamento.',
-            'horario_fechamento.after' => 'Horário de fechamento deve ser depois do Horário de abertura.',
+            'horarios_funcionamento.min'                => 'É necessário ao menos um dia de funcionamento.',
+            'horarios_funcionamento.max'                => 'Não é permitido mais de 7 dias de funcionamento.',
+            'horarios_funcionamento.*.array'            => 'Cada dia deve ser um array com horário de abertura e fechamento.',
+            'horarios_funcionamento.*.0.date_format'    => 'O horário de abertura deve estar no formato hora:minuto.',
+            'horarios_funcionamento.*.1.date_format'    => 'O horário de fechamento deve estar no formato hora:minuto.',
+            'horarios_funcionamento.*.1.after'          => 'O horário de fechamento deve ser depois do horário de abertura.',
             'imagem.image' => 'O arquivo enviado não é uma imagem',
             'imagem.max' => 'A imagem enviada é muito grande (máximo de :max KB)'
         ];
