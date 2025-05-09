@@ -33,9 +33,10 @@ class StoreBairroRequest extends FormRequest
             'cidade_id' => [
                 'required',
                 'integer',
-                'max:5'
+                'exists:cidades,id'
             ]
         ];
+        
         return $rules;
     }
 }
