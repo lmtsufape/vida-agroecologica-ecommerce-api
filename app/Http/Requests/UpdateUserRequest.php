@@ -42,10 +42,6 @@ class UpdateUserRequest extends FormRequest
                 'email',
                 'max:60'
             ],
-            'ativo' => [
-                'required',
-                'boolean'
-            ],
         ];
     }
 

@@ -179,7 +179,7 @@ Route::apiResource('/reunioes', ReuniaoController::class)->except('show')->middl
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Route::middleware(['auth:sanctum', 'role:administrador,presidente'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:administrador,presidente,secretario'])->group(function () {
 
     Route::get('/roles', function () {
         $roles = Role::all();

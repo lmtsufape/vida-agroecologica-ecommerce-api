@@ -19,8 +19,15 @@ class BancaFactory extends Factory
         return [
             "nome" => "Feira bicho",
             "descricao" => "Loja de frutas",
-            "horario_abertura" => "00:00:00",
-            "horario_fechamento" => "23:59:00",
+            "horarios_funcionamento" => [
+                'domingo'        => ['08:00', '18:00'],
+                'segunda-feira'  => ['08:00', '18:00'],
+                'terca-feira'    => ['08:00', '18:00'],
+                'quarta-feira'   => ['08:00', '18:00'],
+                'quinta-feira'   => ['08:00', '18:00'],
+                'sexta-feira'    => ['08:00', '18:00'],
+                'sábado'         => ['08:00', '18:00'],
+            ],
             "entrega" => true,
             "preco_minimo" => 1.00,
             "feira_id" => 1,
