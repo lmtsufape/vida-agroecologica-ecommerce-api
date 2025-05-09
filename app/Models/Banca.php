@@ -10,22 +10,59 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Banca extends Model implements FileableInterface
 {
     use HasFactory, SoftDeletes;
 
+    protected $jsonOptions = JSON_UNESCAPED_UNICODE;
+
     protected $fillable = [
         'nome',
         'descricao',
-        'horario_abertura',
-        'horario_fechamento',
+        'horarios_funcionamento',
         'preco_minimo',
         'entrega',
         'feira_id',
         'agricultor_id',
         'pix'
     ];
+
+    protected $casts = [
+        'horarios_funcionamento' => 'array'
+    ];
+
+    protected function asJson($value): string
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function isOpen(): bool
+    {
+        $map = [
+            'Sunday'    => 'domingo',
+            'Monday'    => 'segunda-feira',
+            'Tuesday'   => 'terca-feira',
+            'Wednesday' => 'quarta-feira',
+            'Thursday'  => 'quinta-feira',
+            'Friday'    => 'sexta-feira',
+            'Saturday'  => 'sábado',
+        ];
+
+        $hojeEn = Carbon::now()->format('l');
+        $diaPt = $map[$hojeEn] ?? null;
+
+        if (! $diaPt || ! isset($this->horarios_funcionamento[$diaPt])) {
+            return false;
+        }
+
+        [$ab, $fe] = $this->horarios_funcionamento[$diaPt];
+        $ab = Carbon::createFromFormat('H:i', $ab);
+        $fe = Carbon::createFromFormat('H:i', $fe);
+
+        return Carbon::now()->between($ab, $fe, true);
+    }
 
     public function feira(): BelongsTo
     {
