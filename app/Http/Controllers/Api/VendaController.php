@@ -19,6 +19,7 @@ use App\Enums\VendaStatusEnum;
 use App\Notifications\EnviarEmailCompra;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class VendaController extends Controller
 {
@@ -46,10 +47,10 @@ class VendaController extends Controller
         $enderecoEntrega = Endereco::find($request->endereco_id);
         $formaPagamento = FormaPagamento::findOrFail($validatedData['forma_pagamento_id']);
 
-        if (!now()->isBetween($banca->horario_abertura, $banca->horario_fechamento, true)) {
+        if (! $banca->isOpen()) {
             return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
         }
-
+        
         if (!$formaPagamento->bancas()->where('banca_id', $banca->id)->exists()) {
             return response()->json(['error' => 'A banca não aceita ' . $formaPagamento->tipo]);
         }
