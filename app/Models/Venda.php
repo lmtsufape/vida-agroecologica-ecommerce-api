@@ -20,6 +20,15 @@ class Venda extends Model implements FileableInterface
         'status' => VendaStatusEnum::class,
     ];
 
+    protected $casts = [
+        'data_pedido' => 'datetime',
+        'data_cancelamento' => 'datetime',
+        'data_pagamento' => 'datetime',
+        'data_envio' => 'datetime',
+        'data_entrega' => 'datetime',
+        'valor_total' => 'decimal:2',
+    ];
+
     public function banca(): BelongsTo
     {
         return $this->belongsTo(Banca::class);

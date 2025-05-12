@@ -50,7 +50,7 @@ class VendaController extends Controller
         if (! $banca->isOpen()) {
             return response()->json(['error' => 'O pedido não pode ser feito fora do horário de funcionamento da banca.'], 400);
         }
-        
+
         if (!$formaPagamento->bancas()->where('banca_id', $banca->id)->exists()) {
             return response()->json(['error' => 'A banca não aceita ' . $formaPagamento->tipo]);
         }
@@ -75,8 +75,8 @@ class VendaController extends Controller
         $subtotal = BigDecimal::of('0.00');
         $taxaEntrega = BigDecimal::of('0.00');
         if ($formaPagamento->tipo == 'dinheiro') {
-            $venda->status = $validatedData['tipo_entrega'] == 'retirada' 
-                ? VendaStatusEnum::A_RETIRADA() 
+            $venda->status = $validatedData['tipo_entrega'] == 'retirada'
+                ? VendaStatusEnum::A_RETIRADA()
                 : VendaStatusEnum::A_ENVIO();
         } else {
             $venda->status = VendaStatusEnum::PA_PENDENTE();
@@ -104,7 +104,7 @@ class VendaController extends Controller
                 array_push($produtosForaEstoque, $prod);
             } elseif ($banca->id != $prod->banca->id) {
                 DB::rollBack();
-                
+
                 return response()->json(['error' => 'Não é possível realizar a compra com produtos de bancas diferentes.', 'produto' => $prod], 400);
             }
 
@@ -196,7 +196,7 @@ class VendaController extends Controller
     public function anexarComprovante(Request $request, $id)
     {
         $request->validate(['comprovante' => 'required|file|mimes:jpeg,png,pdf|max:2048']); // Aceita somente jpeg, png e pdf
-        
+
         $venda = Venda::findOrFail($id);
         $this->authorize('anexarComprovante', $venda);
 
@@ -288,7 +288,6 @@ class VendaController extends Controller
         $vendas = $user->vendas;
 
         return response()->json(['vendas' => $vendas->load(['consumidor', 'banca', 'formaPagamento', 'itens.produto'])], 200);
-        
     }
 
     public function getBancaVendas($bancaId)
@@ -299,5 +298,45 @@ class VendaController extends Controller
         $vendas = $banca->vendas;
 
         return response()->json(['vendas' => $vendas->load(['consumidor', 'formaPagamento', 'itens.produto'])], 200);
+    }
+
+    public function gerarRelatorioAnual(Request $request)
+    {
+        $request->validate(['ano' => 'required|integer|max:' . Carbon::now()->year]);
+
+        $user = auth()->user();
+        $ano = $request->ano;
+
+        $vendas = $user->vendas()
+            ->whereYear('data_pedido', $ano)
+            ->where('status', VendaStatusEnum::PE_ENTREGUE())
+            ->get();
+
+        $totaisPorMes = $vendas->groupBy(function ($venda) {
+            return $venda->data_pedido->format('n');
+        })->map(function ($grupo) {
+            return $grupo->sum('total');
+        });
+
+        $nomesDosMeses = [
+            'Janeiro',
+            'Fevereiro',
+            'Março',
+            'Abril',
+            'Maio',
+            'Junho',
+            'Julho',
+            'Agosto',
+            'Setembro',
+            'Outubro',
+            'Novembro',
+            'Dezembro',
+        ];
+
+        $relatorio = collect($nomesDosMeses)->mapWithKeys(function ($nomeMes, $mes) use ($totaisPorMes) {
+            return [$nomeMes => $totaisPorMes[$mes + 1] ?? 0];
+        });
+
+        return response()->json($relatorio, 200);
     }
 }

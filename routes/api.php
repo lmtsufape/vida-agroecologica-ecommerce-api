@@ -77,6 +77,7 @@ Route::apiResource('/bancas', BancaController::class)->middleware('auth:sanctum'
 
 # Vendas
 Route::middleware('auth:sanctum')->controller(VendaController::class)->prefix('/transacoes')->group(function () {
+    Route::get('/relatorio', 'gerarRelatorioAnual')->middleware('role:agricultor');
     Route::post('/{venda}/enviar', 'marcarEnviado')->middleware('role:agricultor');
     Route::get('/{agricultorId}/vendas', 'getVendas')->middleware('role:agricultor');
     Route::get('/bancas/{banca}', 'getBancaVendas')->middleware('role:agricultor');
