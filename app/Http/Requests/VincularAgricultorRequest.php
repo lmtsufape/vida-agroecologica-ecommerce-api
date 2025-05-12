@@ -14,11 +14,12 @@ class VincularAgricultorRequest extends FormRequest
      */
     public function authorize()
     {
-        if ($this->user()->hasAnyRoles(['administrador'])) {
+        if (auth()->user()->hasAnyRoles(['administrador'])) {
             return true;
-        } elseif ($this->user()->hasAnyRoles(['presidente'])) {
-            $organizacao = OrganizacaoControleSocial::with('associacao.presidentes')->findOrFail($this->input('organizacao_id'));
-            if ($organizacao->associacao->id && $this->user()->associacao->id) {
+        } elseif (auth()->user()->hasAnyRoles(['presidente'])) {
+            $organizacao = OrganizacaoControleSocial::findOrFail($this->input('organizacao_id'));
+
+            if (auth()->user()->associacoesPresididas()->whereIn($organizacao->associacao->id, 'id')->exists()) {
                 return true;
             }
         }
