@@ -21,7 +21,7 @@ class VincularAgricultorRequest extends FormRequest
         } elseif ($user->hasAnyRoles(['presidente'])) {
             $organizacao = OrganizacaoControleSocial::findOrFail($this->input('organizacao_id'));
 
-            if ($user->associacoesPresididas()->where('id', $organizacao->associacao->id)->exists()) {
+            if ($user->associacoesPresididas()->where('associacoes.id', $organizacao->associacao->id)->exists()) {
                 return true;
             }
         }
